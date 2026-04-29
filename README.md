@@ -20,7 +20,33 @@ The demo is built around a fictional hotel search experience — visually polish
 
 > _Slide assets: `docs/presentation/`_
 
-_[Slide outline TBD — fill in before event]_
+**Slide 1–2: Opening — Jina AI is Elastic (2 min)**
+- Jina AI is now part of Elastic — this is the first SKO where we're enabling FEs on their model portfolio
+- The acquisition brings best-in-class neural search models directly into the Elastic platform
+- FEs don't need to learn a new vendor or new API — it's the same Elastic they already know
+
+**Slide 3–6: The Model Portfolio — 5 Models, One Platform (5 min)**
+- **Jina Reader** — give it any URL, get back clean structured text. No scraper setup, no HTML parsing, one API call
+- **Jina Embeddings v5** — state-of-the-art text embeddings. Understands meaning, not keywords. Multilingual for free — same model handles English, German, Japanese, 89 languages
+- **Jina Reranker v3** — takes search results and re-reads them alongside your query. Finds the precise answer that broad similarity search misses. Before/after is the "wow" moment
+- **Jina CLIP v2** — multimodal embeddings. Images and text in the same vector space — search by image, find by text, or mix both
+- **Jina VLM** — point it at any image and get a detailed natural language description. Architecture diagrams, hotel photos, product images — all become searchable text
+
+**Slide 7–9: What EIS Gives You — Enterprise-Ready (3 min)**
+- Every Serverless and Cloud Hosted cluster already has `.jina-embeddings-v5-text-small` and `.jina-reranker-v3` pre-configured — zero setup
+- `semantic_text` field type: one field declaration, Elastic handles embedding at index time. No ML pipeline to build, no embeddings to manage
+- Auth, scaling, observability — all handled by Elastic. The same Inference API shape whether it's embeddings, reranking, or chat: `_inference/{task}/{id}`
+
+**Slide 10–13: The Business Conversation — What FEs Should Say (4 min)**
+- Discovery question: "Does your search today return the right result or just the most popular keyword match?"
+- Reranker is the upgrade path from basic semantic search — customers who've already deployed embeddings are ready for this
+- CLIP/VLM unlock new use cases: e-commerce visual search, document intelligence, multimodal RAG
+- Competitive positioning: this is Jina's model quality running on Elastic's enterprise infrastructure — not a point tool, not a cloud function, a production-grade service
+
+**Slide 14–15: Demo Setup — What You're About to See (3 min)**
+- Horizon: a travel hotel search app built on ~150 hotels across Las Vegas, Europe, Asia Pacific, and beyond
+- 6 stations, each one isolates a single model so the "this model did that" moment is obvious
+- Watch for the before/after at the Rank station — that's the conversation starter with customers
 
 ---
 
