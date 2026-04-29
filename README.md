@@ -2,27 +2,53 @@
 
 **Event**: SKO FY27 — May 13, 2026 · Venetian Las Vegas  
 **Audience**: ~296 Field Engineers  
-**Format**: 17-min slides → 33-min live demo → 5-min Q&A
+**Format**: 17-min slides → 33-min live demo (6 stations) → 5-min Q&A
 
 ---
 
 ## What This Is
 
-Horizon is a live travel hotel search app built specifically for SKO FY27 to teach Field Engineers how to sell and explain Jina AI's model portfolio when integrated with Elastic. Every station in the demo maps to a real Jina AI model, showing what it does, why it matters, and how Elastic makes it deployable at enterprise scale.
+Horizon is a live travel hotel search app built specifically for SKO FY27 to teach Field Engineers how to sell and explain Jina AI's model portfolio, now available natively through Elastic. Every station in the demo maps to a real Jina model, showing what it does, why it matters, and how Elastic makes it enterprise-ready.
 
 The demo is built around a fictional hotel search experience — visually polished, realistic enough to feel like a real product, engineered with deliberate semantic traps and edge cases that make each Jina model shine in exactly the right moment.
 
 ---
 
+## Full Session Breakdown
+
+### Part 1 — Slides (17 min)
+
+> _Slide assets: `docs/presentation/`_
+
+_[Slide outline TBD — fill in before event]_
+
+---
+
+### Part 2 — Live Demo (33 min, 6 stations)
+
+Presenter-only. ~296 Field Engineers watch live while the presenter walks through each station in sequence. Each station is self-contained with a clear before/after moment.
+
+> See [The 6 Demo Stations](#the-6-demo-stations) below.
+
+---
+
+### Part 3 — Q&A (5 min)
+
+Open floor.
+
+---
+
 ## The Business Story
 
-Elastic is partnering with Jina AI to bring best-in-class AI models into the Elastic Inference Service (EIS). Field Engineers need to be able to:
+Jina AI is now part of Elastic. Their model portfolio — embeddings, reranking, multimodal search, and web reading — is being integrated into the Elastic Inference Service (EIS), making it available natively within the Elastic platform. SKO FY27 is the first time Field Engineers are being enabled on this capability at scale.
+
+Field Engineers need to be able to:
 
 1. **Explain** what each Jina model does in plain language
 2. **Demo** it live in a realistic product context
 3. **Position** Elastic as the platform that makes these models enterprise-ready (auth, scaling, data pipeline, observability)
 
-This demo gives them a script to follow, a live app to show, and 6 discrete moments where the technology does something genuinely impressive.
+The session gives Field Engineers a script to follow, a live app to show, and 6 discrete moments where the technology does something genuinely impressive.
 
 ---
 
