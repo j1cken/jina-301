@@ -17,6 +17,7 @@ const MapPanel = dynamic(() => import('./MapPanel'), { ssr: false });
 interface TravelHomeProps {
   onShowDemo: () => void;
   onSelectStation: (s: 'find' | 'rank' | 'look' | 'describe' | 'ingest' | 'capstone' | 'agent') => void;
+  onOpenAgent: () => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
   demoMode: boolean;
@@ -162,7 +163,7 @@ function FeaturedCard({ hotel, onClick }: { hotel: typeof FEATURED[0]; onClick: 
   );
 }
 
-export default function TravelHome({ onShowDemo, onSelectStation, theme, onToggleTheme, demoMode, onToggleDemo }: TravelHomeProps) {
+export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, theme, onToggleTheme, demoMode, onToggleDemo }: TravelHomeProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(false);
@@ -441,7 +442,7 @@ export default function TravelHome({ onShowDemo, onSelectStation, theme, onToggl
                   </div>
                 </div>
                 {/* AI concierge CTA */}
-                <button onClick={() => onSelectStation('agent')} className="rounded-2xl p-4 text-left w-full"
+                <button onClick={() => onOpenAgent()} className="rounded-2xl p-4 text-left w-full"
                   style={{ background: 'linear-gradient(135deg, rgba(0,119,204,0.12), rgba(0,191,179,0.08))', border: '1px solid rgba(0,191,179,0.3)' }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-4 h-4" style={{ color: 'var(--elastic-teal)' }} />
@@ -584,7 +585,7 @@ export default function TravelHome({ onShowDemo, onSelectStation, theme, onToggl
                 </p>
               </div>
               <div className="flex gap-3 flex-shrink-0">
-                <button onClick={() => onSelectStation('agent')}
+                <button onClick={() => onOpenAgent()}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm"
                   style={{ background: 'var(--elastic-blue)', color: '#fff' }}>
                   <Sparkles className="w-4 h-4" /> Chat with AI concierge

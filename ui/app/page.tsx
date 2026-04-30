@@ -10,6 +10,8 @@ import RankStation from '@/components/stations/RankStation';
 import LookStation from '@/components/stations/LookStation';
 import DescribeStation from '@/components/stations/DescribeStation';
 import CapstoneStation from '@/components/stations/CapstoneStation';
+import AgentStation from '@/components/stations/AgentStation';
+import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
 import { DemoModeContext } from '@/lib/demoMode';
 import type { Station, Hotel } from '@/lib/types';
@@ -24,6 +26,7 @@ export default function Home() {
   const [station, setStation] = useState<Station>('ingest');
   const [demoMode, setDemoMode] = useState(false);
   const [findResults, setFindResults] = useState<Hotel[]>([]);
+  const [showAgentChat, setShowAgentChat] = useState(false);
 
   // Read ?mode=demo hatch and persisted preferences on mount
   useEffect(() => {
@@ -77,6 +80,7 @@ export default function Home() {
           <TravelHome
             onShowDemo={() => setViewMode('demo')}
             onSelectStation={(s) => { setViewMode('demo'); setStation(s); }}
+            onOpenAgent={() => setShowAgentChat(true)}
             theme={theme}
             onToggleTheme={toggleTheme}
             demoMode={demoMode}
@@ -102,15 +106,12 @@ export default function Home() {
               {station === 'look' && <LookStation demoMode={demoMode} onVlmPrewarm={prewarmVlm} onSelectStation={s => setStation(s as Station)} />}
               {station === 'describe' && <DescribeStation demoMode={demoMode} hotels={findResults} onSelectStation={s => setStation(s as Station)} />}
               {station === 'capstone' && <CapstoneStation searchResults={findResults} />}
-              {station === 'agent' && (
-                <div className="text-center py-20" style={{ color: 'var(--text-muted)' }}>
-                  Agent station coming soon
-                </div>
-              )}
+              {station === 'agent' && <AgentStation />}
             </main>
           </>
         )}
       </div>
+      {showAgentChat && <AgentChat onClose={() => setShowAgentChat(false)} />}
     </DemoModeContext.Provider>
   );
 }

@@ -20,6 +20,10 @@ fi
 for var in ELASTICSEARCH_URL ELASTICSEARCH_API_KEY JINA_API_KEY; do
   [[ -z "${!var:-}" ]] && { echo "Missing $var"; exit 1; }
 done
+# Kibana/Agent vars are optional (agent station degrades gracefully without them)
+KIBANA_URL="${KIBANA_URL:-}"
+KIBANA_API_KEY="${KIBANA_API_KEY:-}"
+AGENT_ID="${AGENT_ID:-}"
 
 echo "=== 1. Ensure Artifact Registry repo exists ==="
 gcloud artifacts repositories describe demos \
@@ -38,14 +42,17 @@ gcloud builds submit . \
 cd - >/dev/null
 
 echo "=== 3. Store secrets in Secret Manager ==="
-for secret_name in elasticsearch-url elasticsearch-api-key jina-api-key; do
+for secret_name in elasticsearch-url elasticsearch-api-key jina-api-key kibana-url kibana-api-key agent-id; do
   gcloud secrets describe "$secret_name" --project="$PROJECT" &>/dev/null || \
   gcloud secrets create "$secret_name" --project="$PROJECT" --replication-policy=automatic
 done
 
-printf '%s' "$ELASTICSEARCH_URL" | gcloud secrets versions add elasticsearch-url --data-file=- --project="$PROJECT"
-printf '%s' "$ELASTICSEARCH_API_KEY" | gcloud secrets versions add elasticsearch-api-key --data-file=- --project="$PROJECT"
-printf '%s' "$JINA_API_KEY" | gcloud secrets versions add jina-api-key --data-file=- --project="$PROJECT"
+printf '%s' "$ELASTICSEARCH_URL"    | gcloud secrets versions add elasticsearch-url    --data-file=- --project="$PROJECT"
+printf '%s' "$ELASTICSEARCH_API_KEY"| gcloud secrets versions add elasticsearch-api-key --data-file=- --project="$PROJECT"
+printf '%s' "$JINA_API_KEY"         | gcloud secrets versions add jina-api-key          --data-file=- --project="$PROJECT"
+[[ -n "$KIBANA_URL" ]]     && printf '%s' "$KIBANA_URL"     | gcloud secrets versions add kibana-url      --data-file=- --project="$PROJECT"
+[[ -n "$KIBANA_API_KEY" ]] && printf '%s' "$KIBANA_API_KEY" | gcloud secrets versions add kibana-api-key  --data-file=- --project="$PROJECT"
+[[ -n "$AGENT_ID" ]]       && printf '%s' "$AGENT_ID"       | gcloud secrets versions add agent-id        --data-file=- --project="$PROJECT"
 
 echo "=== 4. Deploy Cloud Run service ==="
 gcloud run deploy "$SERVICE" \
@@ -60,7 +67,7 @@ gcloud run deploy "$SERVICE" \
   --min-instances=0 \
   --max-instances=5 \
   --timeout=60 \
-  --set-secrets="ELASTICSEARCH_URL=elasticsearch-url:latest,ELASTICSEARCH_API_KEY=elasticsearch-api-key:latest,JINA_API_KEY=jina-api-key:latest" \
+  --set-secrets="ELASTICSEARCH_URL=elasticsearch-url:latest,ELASTICSEARCH_API_KEY=elasticsearch-api-key:latest,JINA_API_KEY=jina-api-key:latest,KIBANA_URL=kibana-url:latest,KIBANA_API_KEY=kibana-api-key:latest,AGENT_ID=agent-id:latest" \
   --no-allow-unauthenticated
 
 echo "=== 5. Allow Cloud Run invoker (required for IAP + LB) ==="
