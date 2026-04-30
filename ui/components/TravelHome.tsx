@@ -25,7 +25,7 @@ interface TravelHomeProps {
 
 type SortKey = 'relevance' | 'price_asc' | 'price_desc' | 'rating';
 
-const HERO_IMAGE = `${BASE_PATH}/images/hotels/bellagio-las-vegas_1.png`;
+const HERO_IMAGE = resolveImageUrl(`/images/hotels/bellagio-las-vegas_1.png`) ?? `${BASE_PATH}/images/hotels/bellagio-las-vegas_1.png`;
 
 const QUICK_CHIPS = [
   { label: '🌊 Beachfront', query: 'beachfront resort with ocean views' },
@@ -127,7 +127,7 @@ function HotelCard({ hotel, onClick }: { hotel: Hotel; onClick: (h: Hotel) => vo
 
 function FeaturedCard({ hotel, onClick }: { hotel: typeof FEATURED[0]; onClick: (name: string) => void }) {
   const [imgErr, setImgErr] = useState(false);
-  const imgSrc = `${BASE_PATH}/images/hotels/${hotel.slug}_1.png`;
+  const imgSrc = resolveImageUrl(`/images/hotels/${hotel.slug}_1.png`) ?? `${BASE_PATH}/images/hotels/${hotel.slug}_1.png`;
   return (
     <div onClick={() => onClick(hotel.name)} className="rounded-2xl overflow-hidden cursor-pointer group"
       style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', transition: 'all 0.22s ease' }}
