@@ -1,0 +1,29 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { searchWithReranker } from '@/lib/elasticsearch';
+import type { GeoFilter } from '@/lib/types';
+
+export async function POST(req: NextRequest) {
+  const { query, geoFilter, demoMode } = await req.json();
+
+  if (!query?.trim()) {
+    return NextResponse.json({ error: 'query is required' }, { status: 400 });
+  }
+
+  if (demoMode) {
+    try {
+      const res = await fetch(new URL('/fallbacks/rerank.json', req.url));
+      if (res.ok) {
+        const fallbacks = await res.json();
+        const key = Object.keys(fallbacks).find(k => k.toLowerCase().includes(query.toLowerCase().slice(0, 15))) ?? Object.keys(fallbacks)[0];
+        if (key) return NextResponse.json(fallbacks[key]);
+      }
+    } catch { /* fall through to live */ }
+  }
+
+  const geo: GeoFilter | undefined = geoFilter;
+  const naiveStart = Date.now();
+  const { naive, reranked } = await searchWithReranker(query, geo);
+  const rerankTook = Date.now() - naiveStart;
+
+  return NextResponse.json({ naive, reranked, naiveTook: rerankTook, rerankTook });
+}
