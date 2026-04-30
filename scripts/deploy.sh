@@ -43,9 +43,9 @@ for secret_name in elasticsearch-url elasticsearch-api-key jina-api-key; do
   gcloud secrets create "$secret_name" --project="$PROJECT" --replication-policy=automatic
 done
 
-echo "$ELASTICSEARCH_URL" | gcloud secrets versions add elasticsearch-url --data-file=- --project="$PROJECT"
-echo "$ELASTICSEARCH_API_KEY" | gcloud secrets versions add elasticsearch-api-key --data-file=- --project="$PROJECT"
-echo "$JINA_API_KEY" | gcloud secrets versions add jina-api-key --data-file=- --project="$PROJECT"
+printf '%s' "$ELASTICSEARCH_URL" | gcloud secrets versions add elasticsearch-url --data-file=- --project="$PROJECT"
+printf '%s' "$ELASTICSEARCH_API_KEY" | gcloud secrets versions add elasticsearch-api-key --data-file=- --project="$PROJECT"
+printf '%s' "$JINA_API_KEY" | gcloud secrets versions add jina-api-key --data-file=- --project="$PROJECT"
 
 echo "=== 4. Deploy Cloud Run service ==="
 gcloud run deploy "$SERVICE" \
