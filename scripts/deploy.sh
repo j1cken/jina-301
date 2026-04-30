@@ -32,10 +32,9 @@ gcloud artifacts repositories create demos \
 echo "=== 2. Build and push Docker image ==="
 cd "$(dirname "$0")/../ui"
 gcloud builds submit . \
-  --tag="$IMAGE" \
-  --project="$PROJECT" \
-  --build-arg="NEXT_PUBLIC_BASE_PATH=${BASE_PATH}" \
-  --build-arg="NEXT_PUBLIC_IMAGE_BASE=${IMAGE_BASE}"
+  --config=cloudbuild.yaml \
+  --substitutions="_IMAGE=${IMAGE}" \
+  --project="$PROJECT"
 cd - >/dev/null
 
 echo "=== 3. Store secrets in Secret Manager ==="
