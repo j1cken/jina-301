@@ -15,9 +15,66 @@ const DEMO_URLS = [
   'https://www.mgmgrand.com',
 ];
 
+const RAW_HTML_SAMPLE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="google-site-verification" content="qXs4R2yP8kLmN3fT7wVbJcOdEuHiAaZg">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/inter-v13-latin-700.woff2">
+  <link rel="stylesheet" href="/assets/css/main.bundle.f8a3c1d.min.css">
+  <script type="text/javascript">
+    window.__INITIAL_STATE__ = {"config":{"env":"production","cdnBase":"https://assets.cdn.venetian.com/v4","tracking":{"ga4":"G-X8Z2Q9LWMR","gtm":"GTM-K7F3P2X","fbPixel":"892341765012834","hotjar":"3847291"}},"user":{"isLoggedIn":false,"loyaltyTier":null},"session":{"id":"6f2c9d1e-4b8a-4f7c-9e3d-2a1b5c8d0f3e","csrf":"8fK2mN9pLxR4vT7wQ1jY3uA6bE5hD0cZ"}};
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-K7F3P2X');
+  </script>
+</head>
+<body class="page-home has-hero" data-page-type="homepage" data-property="venetian-lv">
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K7F3P2X" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<div id="skip-links"><a href="#main-content" class="skip-link sr-only focusable">Skip to main content</a><a href="#footer" class="skip-link sr-only focusable">Skip to footer</a></div>
+<header class="site-header site-header--transparent" role="banner" aria-label="Site header">
+  <div class="header__inner container--fluid">
+    <a href="/" class="header__logo" aria-label="The Venetian Resort Las Vegas - Home">
+      <img src="/assets/img/logo-venetian-white.svg" alt="The Venetian Resort" width="180" height="48" loading="eager">
+    </a>
+    <nav class="nav-primary" role="navigation" aria-label="Primary navigation">
+      <ul class="nav-primary__list" role="list">
+        <li class="nav-item nav-item--has-mega" data-nav="rooms"><a href="/rooms" class="nav-item__link" aria-haspopup="true" aria-expanded="false">Rooms &amp; Suites <span class="nav-item__chevron" aria-hidden="true">&#x25BE;</span></a>
+          <div class="mega-menu" role="region" aria-label="Rooms submenu">
+            <ul><li><a href="/rooms/standard-suite">Standard Suite</a></li><li><a href="/rooms/luxury-suite">Luxury Suite</a></li><li><a href="/rooms/palazzo-suite">Palazzo Suite</a></li><li><a href="/rooms/grand-suite">Grand Suite</a></li><li><a href="/rooms/penthouse">Penthouse Collection</a></li></ul>
+          </div>
+        </li>
+        <li class="nav-item nav-item--has-mega" data-nav="dining"><a href="/dining" class="nav-item__link">Dining <span class="nav-item__chevron" aria-hidden="true">&#x25BE;</span></a></li>
+        <li class="nav-item nav-item--has-mega" data-nav="entertainment"><a href="/entertainment" class="nav-item__link">Entertainment <span aria-hidden="true">&#x25BE;</span></a></li>
+        <li class="nav-item" data-nav="casino"><a href="/casino" class="nav-item__link">Casino</a></li>
+        <li class="nav-item" data-nav="meetings"><a href="/meetings-events" class="nav-item__link">Meetings &amp; Events</a></li>
+        <li class="nav-item" data-nav="spa"><a href="/spa-wellness" class="nav-item__link">Spa &amp; Pool</a></li>
+        <li class="nav-item" data-nav="offers"><a href="/offers" class="nav-item__link">Offers</a></li>
+      </ul>
+    </nav>
+    <div class="header__actions"><a href="/reservations" class="btn btn--primary btn--sm" data-track="header-book-now">Book Now</a><a href="/account/login" class="btn btn--ghost btn--sm" data-track="header-signin">Sign In</a></div>
+  </div>
+</header>
+<main id="main-content" class="site-main">
+  <section class="hero hero--fullscreen" data-component="hero-slider" aria-label="Featured promotions">
+    <div class="hero__slides swiper-container" data-autoplay="5000">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide hero__slide" data-index="0"><picture><source srcset="https://assets.cdn.venetian.com/v4/hero/spring-offer-2x.webp 2x, https://assets.cdn.venetian.com/v4/hero/spring-offer-1x.webp 1x" type="image/webp"><img src="https://assets.cdn.venetian.com/v4/hero/spring-offer-fallback.jpg" alt="" role="presentation" loading="eager" fetchpriority="high" width="1920" height="1080"></picture></div>
+      </div>
+    </div>
+  </section>`;
+
 interface IngestStationProps {
   demoMode: boolean;
 }
+
+type TransformTab = 'raw' | 'reader' | 'indexed';
+
+const TAB_LABELS: { id: TransformTab; label: string }[] = [
+  { id: 'raw', label: '🌐 Raw HTML' },
+  { id: 'reader', label: '📄 Jina Reader' },
+  { id: 'indexed', label: '🗃️ Indexed Fields' },
+];
 
 export default function IngestStation({ demoMode }: IngestStationProps) {
   const [url, setUrl] = useState(DEMO_URLS[0]);
@@ -25,6 +82,8 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Hotel | null>(null);
+  const [rawMarkdown, setRawMarkdown] = useState<string | null>(null);
+  const [transformTab, setTransformTab] = useState<TransformTab>('raw');
   const [selectedModal, setSelectedModal] = useState<Hotel | null>(null);
   const [clearing, setClearing] = useState(false);
   const [clearConfirm, setClearConfirm] = useState(false);
@@ -34,6 +93,8 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
     setSteps([]);
     setCompletedSteps(new Set());
     setResult(null);
+    setRawMarkdown(null);
+    setTransformTab('raw');
     setLoading(true);
 
     try {
@@ -58,6 +119,10 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
           if (line.startsWith('data: ')) {
             try {
               const event = JSON.parse(line.slice(6)) as IngestStep;
+              if (event.step === 'reader_output') {
+                setRawMarkdown((event.detail?.markdown as string) ?? null);
+                continue;
+              }
               setSteps(prev => {
                 const existing = prev.findIndex(s => s.step === event.step);
                 if (existing >= 0) {
@@ -92,6 +157,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
         setClearSuccess(true);
         setSteps([]);
         setResult(null);
+        setRawMarkdown(null);
       }
     } finally {
       setClearing(false);
@@ -107,6 +173,18 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
     }
     return <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: 'var(--elastic-teal)' }} />;
   };
+
+  const indexedFieldsPreview = result ? {
+    name: result.name,
+    descriptions: result.descriptions,
+    amenities: result.amenities,
+    style: result.style,
+    price_tier: result.price_tier,
+    price_per_night_usd: result.price_per_night_usd,
+    location: result.location,
+    location_name: result.location_name,
+    rating: result.rating,
+  } : null;
 
   return (
     <div className="space-y-6">
@@ -240,6 +318,60 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
         <div>
           <h3 className="mb-3" style={{ color: 'var(--text-secondary)' }}>Ingested Hotel</h3>
           <HotelCard hotel={result} index={0} onClick={setSelectedModal} />
+        </div>
+      )}
+
+      {/* Content Transformation panel */}
+      {result && (
+        <div className="card-enter rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+          {/* Header */}
+          <div className="px-4 pt-4 pb-0" style={{ background: 'var(--bg-card)' }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
+              Content Transformation
+            </p>
+            <div className="flex items-center gap-0">
+              {TAB_LABELS.map((tab, i) => (
+                <div key={tab.id} className="flex items-center">
+                  <button
+                    onClick={() => setTransformTab(tab.id)}
+                    className="px-4 py-2 text-sm font-medium transition-all"
+                    style={{
+                      background: transformTab === tab.id ? 'var(--bg-surface)' : 'transparent',
+                      color: transformTab === tab.id ? 'var(--elastic-gold)' : 'var(--text-muted)',
+                      borderBottom: transformTab === tab.id ? '2px solid var(--elastic-gold)' : '2px solid transparent',
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                  {i < TAB_LABELS.length - 1 && (
+                    <span className="text-xs px-1" style={{ color: 'var(--text-muted)' }}>→</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab content */}
+          <div
+            className="overflow-auto font-mono text-xs leading-relaxed p-4"
+            style={{
+              background: 'var(--bg-surface)',
+              color: transformTab === 'indexed' ? 'var(--elastic-teal)' : 'var(--text-secondary)',
+              maxHeight: '320px',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+            }}
+          >
+            {transformTab === 'raw' && RAW_HTML_SAMPLE}
+            {transformTab === 'reader' && (
+              rawMarkdown
+                ? rawMarkdown.length > 3000
+                  ? rawMarkdown.slice(0, 3000) + '\n\n… (truncated)'
+                  : rawMarkdown
+                : '— No reader output captured —'
+            )}
+            {transformTab === 'indexed' && JSON.stringify(indexedFieldsPreview, null, 2)}
+          </div>
         </div>
       )}
 

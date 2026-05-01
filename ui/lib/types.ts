@@ -71,7 +71,7 @@ export interface GeoFilter {
 export type Station = 'ingest' | 'find' | 'rank' | 'look' | 'describe' | 'capstone' | 'agent';
 
 export interface IngestStep {
-  step: 'fetch' | 'parse' | 'index' | 'complete';
+  step: 'fetch' | 'reader_output' | 'parse' | 'index' | 'complete';
   status: 'start' | 'progress' | 'done' | 'error';
   message: string;
   detail?: Record<string, unknown>;

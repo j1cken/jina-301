@@ -4,7 +4,7 @@ import { getClient } from '@/lib/elasticsearch';
 const INDEX = 'horizon-hotels';
 const EMBEDDING_ID = '.jina-embeddings-v5-text-small';
 
-type StepId = 'fetch' | 'parse' | 'index' | 'complete';
+type StepId = 'fetch' | 'reader_output' | 'parse' | 'index' | 'complete';
 interface ProgressEvent {
   step: StepId;
   status: 'start' | 'progress' | 'done' | 'error';
@@ -63,6 +63,51 @@ function parseHotelFromMarkdown(markdown: string, url: string): Record<string, u
   };
 }
 
+const DEMO_READER_MARKDOWN = `# The Venetian Resort Las Vegas
+
+[Skip to main content](#main-content)[Skip to footer](#footer)[Accessibility Statement](https://www.venetianlasvegas.com/accessibility.html)
+
+[![Venetian Resort Logo](https://assets.venetianlasvegas.com/cdn/logo-venetian-2024.svg)](https://www.venetianlasvegas.com/)
+
+* [Rooms & Suites](https://www.venetianlasvegas.com/rooms.html)
+* [Meetings & Events](https://www.venetianlasvegas.com/meetings.html)[Go to summary](#explore-summary)
+* [Dining](https://www.venetianlasvegas.com/dining.html)[Go to summary](#explore-summary)
+* [Entertainment](https://www.venetianlasvegas.com/entertainment.html)[Go to summary](#explore-summary)
+* [Casino](https://www.venetianlasvegas.com/casino.html)
+* [Spa & Wellness](https://www.venetianlasvegas.com/spa.html)[Go to summary](#explore-summary)
+* [Pool](https://www.venetianlasvegas.com/pool.html)
+* [Offers](https://www.venetianlasvegas.com/offers.html)
+* [Gift Cards](https://www.venetianlasvegas.com/gift-cards.html)
+
+[Book Now](https://reservations.venetianlasvegas.com/)[Sign In](https://www.venetianlasvegas.com/account/login.html)
+
+[!\\[Hero Image\\](https://assets.venetianlasvegas.com/cdn/hero-venetian-strip-2024.jpg)](https://www.venetianlasvegas.com/#hero)
+
+## [Experience the Grandeur](https://www.venetianlasvegas.com/about.html)
+
+[Explore Rooms](https://www.venetianlasvegas.com/rooms.html) [View Offers](https://www.venetianlasvegas.com/offers.html) [Book Now](https://reservations.venetianlasvegas.com/)
+
+* [![Canyon Ranch Spa](https://assets.venetianlasvegas.com/cdn/thumb-spa.jpg)Canyon Ranch Spa Club](https://www.venetianlasvegas.com/spa.html)[Go to summary](https://www.venetianlasvegas.com/#explore-summary)
+* [![Blue Man Group](https://assets.venetianlasvegas.com/cdn/thumb-bmg.jpg)Blue Man Group](https://www.venetianlasvegas.com/entertainment/blue-man-group.html)[Go to summary](https://www.venetianlasvegas.com/#explore-summary)
+* [![The Dorsey Cocktail Bar](https://assets.venetianlasvegas.com/cdn/thumb-dorsey.jpg)The Dorsey](https://www.venetianlasvegas.com/dining/dorsey.html)[Go to summary](https://www.venetianlasvegas.com/#explore-summary)
+* [![TAO Asian Bistro](https://assets.venetianlasvegas.com/cdn/thumb-tao.jpg)TAO Asian Bistro](https://www.venetianlasvegas.com/dining/tao.html)[Go to summary](https://www.venetianlasvegas.com/#explore-summary)
+
+[Converting them to external URLs.](https://www.venetianlasvegas.com/#external-redirect)
+[Converting them to external URLs.](https://www.venetianlasvegas.com/#external-redirect)
+[Converting them to external URLs.](https://www.venetianlasvegas.com/#external-redirect)
+
+The Venetian Resort Las Vegas is an AAA Five Diamond luxury hotel and casino on the Las Vegas Strip. Featuring all-suite accommodations, world-class dining, top entertainment, and the award-winning Canyon Ranch Spa Club.
+
+[Explore All Dining](https://www.venetianlasvegas.com/dining.html) | [Explore All Entertainment](https://www.venetianlasvegas.com/entertainment.html) | [Explore All Rooms](https://www.venetianlasvegas.com/rooms.html) | [See All Offers](https://www.venetianlasvegas.com/offers.html)
+
+* [Privacy Policy](https://www.venetianlasvegas.com/privacy.html)
+* [Terms of Use](https://www.venetianlasvegas.com/terms.html)
+* [Do Not Sell My Personal Information](https://www.venetianlasvegas.com/privacy/ccpa.html)
+* [Accessibility](https://www.venetianlasvegas.com/accessibility.html)
+* [Sitemap](https://www.venetianlasvegas.com/sitemap.html)
+
+© 2024 Las Vegas Sands Corp. All rights reserved. | [Facebook](https://facebook.com/venetianlv) | [Instagram](https://instagram.com/venetianlv) | [Twitter](https://twitter.com/venetianlv)`;
+
 export async function POST(req: NextRequest) {
   const { url, demoMode } = await req.json();
 
@@ -70,6 +115,7 @@ export async function POST(req: NextRequest) {
     const fallbackSteps: ProgressEvent[] = [
       { step: 'fetch', status: 'start', message: 'Jina Reader is fetching the page...' },
       { step: 'fetch', status: 'done', message: 'Received 12,480 characters of clean markdown' },
+      { step: 'reader_output', status: 'done', message: 'Reader markdown captured', detail: { markdown: DEMO_READER_MARKDOWN } },
       { step: 'parse', status: 'start', message: 'Extracting hotel fields from markdown...' },
       { step: 'parse', status: 'done', message: 'Parsed: name, 3 descriptions, amenities, location', detail: { name: 'The Venetian Resort Las Vegas' } },
       { step: 'index', status: 'start', message: 'Indexing to Elasticsearch — semantic_text auto-embedding now...' },
@@ -111,6 +157,7 @@ export async function POST(req: NextRequest) {
         emit({ step: 'fetch', status: 'start', message: `Jina Reader fetching ${url}...` });
         const markdown = await fetchViaReader(url, apiKey);
         emit({ step: 'fetch', status: 'done', message: `Received ${markdown.length.toLocaleString()} characters`, detail: { chars: markdown.length } });
+        emit({ step: 'reader_output', status: 'done', message: 'Reader markdown captured', detail: { markdown: markdown.slice(0, 4000) } });
 
         emit({ step: 'parse', status: 'start', message: 'Extracting hotel fields from markdown...' });
         const hotel = parseHotelFromMarkdown(markdown, url);
