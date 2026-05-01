@@ -21,6 +21,7 @@ export default function ModelBadge({ model, api, size = 'md' }: ModelBadgeProps)
 
   return (
     <span
+      data-model-badge
       className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${textSize} ${px}`}
       style={{ background: `${color}22`, color, border: `1px solid ${color}44` }}
     >

@@ -166,3 +166,144 @@ mark {
   background: rgba(0, 119, 204, 0.18);
   border-bottom: 2px solid var(--elastic-blue);
 }
+
+/* =============================================
+   BLUEPRINT THEME — demo mode only
+   Scoped to .demo-blueprint wrapper
+   ============================================= */
+
+.demo-blueprint {
+  --bg-base:        #F5F5F3;
+  --bg-card:        #FFFFFF;
+  --bg-card-hover:  #F0F0EE;
+  --bg-surface:     #EFEFED;
+  --text-primary:   #1A1A1B;
+  --text-secondary: #3A3A3C;
+  --text-muted:     #6B6B6E;
+  --border:         #1A1A1B;
+  --border-active:  #1A1A1B;
+  background: var(--bg-base);
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+/* Kill rounding, shadows, blur globally inside blueprint */
+.demo-blueprint *,
+.demo-blueprint *::before,
+.demo-blueprint *::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Headings */
+.demo-blueprint h1,
+.demo-blueprint h2,
+.demo-blueprint h3,
+.demo-blueprint h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Inputs */
+.demo-blueprint input,
+.demo-blueprint textarea,
+.demo-blueprint select {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Hide station emoji icons */
+.demo-blueprint [data-station-icon] {
+  display: none;
+}
+
+/* ModelBadge — [LABEL] bracket style */
+.demo-blueprint [data-model-badge] {
+  background: transparent !important;
+  border: 1px solid currentColor !important;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px !important;
+  font-size: 0.7rem !important;
+}
+.demo-blueprint [data-model-badge] > span[class*="rounded-full"],
+.demo-blueprint [data-model-badge] > span[class*="w-1"] {
+  display: none !important;
+}
+.demo-blueprint [data-model-badge]::before { content: '['; }
+.demo-blueprint [data-model-badge]::after  { content: ']'; }
+
+/* JinaCallout override */
+.demo-blueprint .jina-callout {
+  border-left: 2px solid var(--elastic-teal) !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  background: #FFFFFF !important;
+}
+
+/* Score bar override */
+.demo-blueprint .score-bar {
+  height: 3px;
+  background: #C8C5BE;
+}
+.demo-blueprint .score-bar-fill {
+  background: var(--elastic-teal) !important;
+  transition: width 0.4s ease;
+}
+
+/* Station tab overrides */
+.demo-blueprint nav button {
+  background: transparent !important;
+}
+.demo-blueprint nav button:hover {
+  background: rgba(0,0,0,0.04) !important;
+}
+
+/* data-bp-card color variants */
+.demo-blueprint [data-bp-card] {
+  background: #FFFFFF !important;
+}
+.demo-blueprint [data-bp-card="pink"]   { border: 1px solid var(--elastic-pink) !important; }
+.demo-blueprint [data-bp-card="teal"]   { border: 1px solid var(--elastic-teal) !important; }
+.demo-blueprint [data-bp-card="gold"]   { border: 1px solid var(--elastic-gold) !important; }
+.demo-blueprint [data-bp-card="blue"]   { border: 1px solid var(--elastic-blue) !important; }
+.demo-blueprint [data-bp-card="purple"] { border: 1px solid var(--elastic-purple) !important; }
+
+/* data-bp-chip (smaller inline labels) */
+.demo-blueprint [data-bp-chip] {
+  background: transparent !important;
+}
+.demo-blueprint [data-bp-chip="pink"]   { border: 1px solid var(--elastic-pink) !important; color: var(--elastic-pink) !important; }
+.demo-blueprint [data-bp-chip="teal"]   { border: 1px solid var(--elastic-teal) !important; color: var(--elastic-teal) !important; }
+.demo-blueprint [data-bp-chip="gold"]   { border: 1px solid var(--elastic-gold) !important; color: #9A7A00 !important; }
+.demo-blueprint [data-bp-chip="blue"]   { border: 1px solid var(--elastic-blue) !important; color: var(--elastic-blue) !important; }
+.demo-blueprint [data-bp-chip="purple"] { border: 1px solid var(--elastic-purple) !important; color: var(--elastic-purple) !important; }
+
+/* Primary action button */
+.demo-blueprint button[data-bp-primary] {
+  background: #1A1A1B !important;
+  color: #F5F5F3 !important;
+  border: 1px solid #1A1A1B !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+}
+.demo-blueprint button[data-bp-primary]:disabled {
+  opacity: 0.4;
+}
+.demo-blueprint button[data-bp-primary]:hover:not(:disabled) {
+  background: #3A3A3C !important;
+  border-color: #3A3A3C !important;
+}
+
+/* Pipeline nodes (CapstoneStation) */
+.demo-blueprint [data-bp-pipeline-node] {
+  background: #FFFFFF !important;
+  border-top: 1px solid var(--border) !important;
+  border-right: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-left: 3px solid currentColor !important;
+}

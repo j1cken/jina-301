@@ -143,6 +143,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
             }}
           />
           <button
+            data-bp-primary
             onClick={run}
             disabled={loading || clearing || !url.trim()}
             className="px-6 py-3 rounded-xl font-semibold text-base transition-all disabled:opacity-50"
@@ -164,6 +165,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
         <div className="flex gap-2 flex-wrap">
           {DEMO_URLS.map(u => (
             <button
+              data-bp-chip="gold"
               key={u}
               onClick={() => setUrl(u)}
               className="text-sm px-3 py-1 rounded-full transition-colors"
@@ -181,7 +183,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
 
       {/* Clear confirmation */}
       {clearConfirm && (
-        <div className="p-4 rounded-xl" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)' }}>
+        <div data-bp-card="pink" className="p-4 rounded-xl" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)' }}>
           <p className="text-sm font-semibold mb-1" style={{ color: 'var(--elastic-pink)' }}>
             Clear the entire hotel index?
           </p>
@@ -209,7 +211,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
 
       {/* Clear success notice */}
       {clearSuccess && (
-        <div className="p-4 rounded-xl text-sm" style={{ background: 'rgba(0,191,179,0.1)', border: '1px solid rgba(0,191,179,0.3)', color: 'var(--elastic-teal)' }}>
+        <div data-bp-card="teal" className="p-4 rounded-xl text-sm" style={{ background: 'rgba(0,191,179,0.1)', border: '1px solid rgba(0,191,179,0.3)', color: 'var(--elastic-teal)' }}>
           Index cleared. Use Fetch &amp; Ingest above to re-add hotels one at a time, or re-run <code className="text-xs px-1 rounded" style={{ background: 'var(--bg-surface)' }}>make index</code> to restore all 150+.
         </div>
       )}

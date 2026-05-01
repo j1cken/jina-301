@@ -44,7 +44,7 @@ export default function StationNav({ active, onSelect }: StationNavProps) {
             }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-lg">{s.icon}</span>
+              <span data-station-icon className="text-lg">{s.icon}</span>
               <span
                 className="font-semibold text-base"
                 style={{ color: isActive ? s.color : 'var(--text-secondary)' }}

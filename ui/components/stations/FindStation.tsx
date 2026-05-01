@@ -151,11 +151,15 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
       </div>
 
       {/* Info tag */}
-      <div className="p-2 rounded-lg text-xs" style={{
-        background: modeAlpha(col),
-        border: `1px solid ${modeBorder(col)}`,
-        color: modeColor(col),
-      }}>
+      <div
+        data-bp-card={col === 'hybrid' ? 'purple' : col === 'bm25' ? 'pink' : 'blue'}
+        className="p-2 rounded-lg text-xs"
+        style={{
+          background: modeAlpha(col),
+          border: `1px solid ${modeBorder(col)}`,
+          color: modeColor(col),
+        }}
+      >
         {modeTag(col)}
       </div>
 
@@ -174,6 +178,7 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
               />
               <div className="flex justify-end mt-1">
                 <button
+                  data-bp-chip="blue"
                   onClick={() => fetchExplain(hotel, col)}
                   className="px-2 py-0.5 rounded text-xs font-semibold transition-colors"
                   style={{
@@ -290,7 +295,7 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
           ) : (
             <div className="grid grid-cols-2 gap-4">
               {leftMode === rightMode && (
-                <div className="col-span-2 text-center text-xs py-1.5 rounded-lg"
+                <div data-bp-card="gold" className="col-span-2 text-center text-xs py-1.5 rounded-lg"
                   style={{ background: 'rgba(254,197,20,0.1)', color: 'var(--elastic-gold)', border: '1px solid rgba(254,197,20,0.25)' }}>
                   Both columns showing {MODE_LABELS[leftMode]} — switch one column to compare
                 </div>

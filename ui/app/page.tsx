@@ -87,7 +87,7 @@ export default function Home() {
             onToggleDemo={toggleDemo}
           />
         ) : (
-          <>
+          <div className="demo-blueprint flex flex-col flex-1">
             <Header
               demoMode={demoMode}
               onToggleDemo={toggleDemo}
@@ -108,7 +108,7 @@ export default function Home() {
               {station === 'capstone' && <CapstoneStation searchResults={findResults} />}
               {station === 'agent' && <AgentStation />}
             </main>
-          </>
+          </div>
         )}
       </div>
       {showAgentChat && <AgentChat onClose={() => setShowAgentChat(false)} />}

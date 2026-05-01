@@ -31,7 +31,7 @@ export default function AgentStation() {
       <AgentChat embedded />
 
       {demoMode && (
-        <div className="text-xs px-3 py-2 rounded-lg"
+        <div data-bp-card="gold" className="text-xs px-3 py-2 rounded-lg"
           style={{ background: 'rgba(254,197,20,0.08)', color: 'var(--elastic-gold)', border: '1px solid rgba(254,197,20,0.2)' }}>
           Demo mode — showing canned responses. Disable to use the live agent.
         </div>

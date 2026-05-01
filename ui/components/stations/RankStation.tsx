@@ -47,7 +47,7 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       className="rounded-xl overflow-hidden"
-      style={{ background: 'var(--bg-card)', border: `1.5px solid ${showExplanation && hotel.rankDelta > 0 ? 'rgba(0,191,179,0.4)' : hotel.rankDelta < 0 ? 'rgba(240,78,152,0.4)' : 'var(--border)'}` }}
+      style={{ background: 'var(--bg-card)', border: `1.5px solid ${showExplanation && hotel.rankDelta > 0 ? 'var(--elastic-teal)' : hotel.rankDelta < 0 ? 'var(--elastic-pink)' : 'var(--border)'}` }}
     >
       <div className="flex items-center gap-3 p-3">
         <div
@@ -77,6 +77,7 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
 
         {showExplanation && hotel.matchExplanation && (
           <button
+            data-bp-chip="pink"
             onClick={() => setExpanded(!expanded)}
             className="flex-shrink-0 px-2 py-1 rounded text-xs font-semibold transition-colors"
             style={{
@@ -178,7 +179,7 @@ export default function RankStation({ demoMode }: RankStationProps) {
       </div>
 
       {error && !loading && (
-        <div className="flex items-center gap-3 p-4 rounded-xl text-sm"
+        <div data-bp-card="pink" className="flex items-center gap-3 p-4 rounded-xl text-sm"
           style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
           <span className="flex-1">{error}</span>
           <button

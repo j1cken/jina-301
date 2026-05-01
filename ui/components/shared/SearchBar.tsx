@@ -33,6 +33,7 @@ export default function SearchBar({ value, onChange, onSubmit, placeholder, disa
           />
         </div>
         <button
+          data-bp-primary
           onClick={onSubmit}
           disabled={disabled || !value.trim()}
           className="px-6 py-3 rounded-xl font-semibold text-lg transition-all disabled:opacity-50"

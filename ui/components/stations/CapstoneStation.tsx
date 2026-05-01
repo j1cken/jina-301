@@ -40,8 +40,9 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
         {PIPELINE_STEPS.map((step, i) => (
           <div key={step.label} className="flex items-center gap-2 flex-shrink-0">
             <div
+              data-bp-pipeline-node
               className="flex flex-col items-center px-4 py-3 rounded-xl"
-              style={{ background: `${step.color}14`, border: `1.5px solid ${step.color}44`, minWidth: '130px' }}
+              style={{ background: `${step.color}14`, border: `1.5px solid ${step.color}44`, minWidth: '130px', color: step.color }}
             >
               <span className="text-2xl mb-1">{step.icon}</span>
               <p className="text-sm font-bold text-center" style={{ color: step.color }}>{step.label}</p>
@@ -88,7 +89,7 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
                 <p className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{featuredHotel.name}</p>
                 <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>{featuredHotel.location_name}</p>
                 {(featuredHotel as RankedHotel).rankDelta != null && (
-                  <div className="text-sm px-2 py-1 rounded inline-block"
+                  <div data-bp-chip="pink" className="text-sm px-2 py-1 rounded inline-block"
                     style={{ background: 'rgba(240,78,152,0.12)', color: 'var(--elastic-pink)' }}>
                     ↑ {(featuredHotel as RankedHotel).rankDelta} positions after reranking
                   </div>
@@ -156,7 +157,7 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
       </div>
 
       {/* Narration */}
-      <div className="p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--elastic-blue)44' }}>
+      <div data-bp-card="blue" className="p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--elastic-blue)' }}>
         <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           <span style={{ color: 'var(--elastic-gold)' }}>Reader</span> scraped the property data.{' '}
           <span style={{ color: 'var(--elastic-blue)' }}>Embeddings + geo</span> found candidates on the Strip.{' '}

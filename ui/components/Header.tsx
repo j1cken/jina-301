@@ -77,6 +77,7 @@ export default function Header({ demoMode, onToggleDemo, theme, onToggleTheme, v
 
         {/* Demo mode toggle */}
         <button
+          data-bp-chip="gold"
           onClick={onToggleDemo}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all"
           style={{

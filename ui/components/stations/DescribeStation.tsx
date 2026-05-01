@@ -85,7 +85,7 @@ function AnalysisCard({ result, onFindSimilar }: { result: VlmResult; onFindSimi
               <h3 style={{ color: 'var(--text-primary)' }}>{hotel.name}</h3>
               <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{hotel.location_name}</p>
             </div>
-            <span className="text-xs px-2 py-1 rounded-full flex-shrink-0"
+            <span data-bp-chip="purple" className="text-xs px-2 py-1 rounded-full flex-shrink-0"
               style={{ background: 'rgba(168,85,247,0.15)', color: 'var(--elastic-purple)', border: '1px solid rgba(168,85,247,0.3)' }}>
               Jina VLM · jina.ai
             </span>
@@ -220,6 +220,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
             <div className="flex gap-1">
               {PROMPT_PRESETS.map(p => (
                 <button
+                  data-bp-chip="purple"
                   key={p.label}
                   onClick={e => { e.stopPropagation(); setPrompt(p.prompt); setEditDraft(p.prompt); setEditing(false); }}
                   className="px-2 py-0.5 rounded text-xs font-semibold transition-colors"
@@ -293,7 +294,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
       </div>
 
       {coldStart && (
-        <div className="p-4 rounded-xl text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+        <div data-bp-card="pink" className="p-4 rounded-xl text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
           VLM is warming up (cold start). Retrying in ~30s... or try a different hotel while waiting.
         </div>
       )}
