@@ -25,7 +25,7 @@ export default function HotelCard({ hotel, index = 0, onClick, selected, showSco
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.07 }}
       onClick={() => onClick?.(hotel)}
-      className="flex gap-4 rounded-xl overflow-hidden cursor-pointer transition-colors"
+      className={`flex gap-4 rounded-xl overflow-hidden transition-colors${onClick ? ' cursor-pointer' : ''}`}
       style={{
         background: selected ? 'var(--bg-card-hover)' : 'var(--bg-card)',
         border: `1.5px solid ${selected ? 'var(--elastic-blue)' : 'var(--border)'}`,
@@ -67,12 +67,14 @@ export default function HotelCard({ hotel, index = 0, onClick, selected, showSco
           )}
         </div>
 
-        <div className="flex items-center gap-1 mb-2">
-          <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
-          <span className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
-            {hotel.location_name}
-          </span>
-        </div>
+        {hotel.location_name && hotel.location_name.toLowerCase() !== 'unknown' && (
+          <div className="flex items-center gap-1 mb-2">
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+            <span className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
+              {hotel.location_name}
+            </span>
+          </div>
+        )}
 
         {firstDesc && (
           <p className="text-sm leading-snug mb-3 line-clamp-2" style={{ color: 'var(--text-secondary)' }}>

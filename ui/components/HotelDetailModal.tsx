@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Star, MapPin, DollarSign, Search } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
@@ -9,10 +9,13 @@ interface HotelDetailModalProps {
   hotel: Hotel;
   onClose: () => void;
   onFindSimilar?: (hotel: Hotel) => void;
+  onFilterByTag?: (tag: string) => void;
+  onEnableGeo?: () => void;
 }
 
-export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: HotelDetailModalProps) {
+export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilterByTag, onEnableGeo }: HotelDetailModalProps) {
   const primaryImage = resolveImageUrl(hotel.image_paths?.[0]);
+  const [descExpanded, setDescExpanded] = useState(false);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -20,9 +23,12 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: Hote
     return () => document.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
+  const descriptions = hotel.descriptions ?? [];
+  const hasMoreDesc = descriptions.length > 1;
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -67,10 +73,18 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: Hote
 
           {/* Location + price */}
           <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{hotel.location_name}</span>
-            </div>
+            {hotel.location_name && hotel.location_name.toLowerCase() !== 'unknown' && (
+              <button
+                className="flex items-center gap-1 cursor-pointer transition-opacity hover:opacity-70"
+                onClick={() => { onClose(); onEnableGeo?.(); }}
+                title="Enable geo filter for this area"
+              >
+                <MapPin className="w-4 h-4" style={{ color: 'var(--elastic-blue)' }} />
+                <span className="text-sm underline decoration-dotted" style={{ color: 'var(--elastic-blue)' }}>
+                  {hotel.location_name}
+                </span>
+              </button>
+            )}
             {hotel.price_per_night_usd > 0 && (
               <div className="flex items-center gap-1">
                 <DollarSign className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
@@ -82,13 +96,25 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: Hote
           </div>
 
           {/* Descriptions */}
-          {hotel.descriptions?.length > 0 && (
+          {descriptions.length > 0 && (
             <div className="mb-4">
-              {hotel.descriptions.map((desc, i) => (
-                <p key={i} className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
+                {descriptions[0]}
+              </p>
+              {descExpanded && descriptions.slice(1).map((desc, i) => (
+                <p key={i + 1} className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
                   {desc}
                 </p>
               ))}
+              {hasMoreDesc && (
+                <button
+                  onClick={() => setDescExpanded(e => !e)}
+                  className="text-xs font-semibold transition-opacity hover:opacity-70"
+                  style={{ color: 'var(--elastic-blue)' }}
+                >
+                  {descExpanded ? 'Show less' : `Show more (${descriptions.length - 1} more)`}
+                </button>
+              )}
             </div>
           )}
 
@@ -98,13 +124,14 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: Hote
               <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Style</p>
               <div className="flex flex-wrap gap-2">
                 {hotel.style.map(s => (
-                  <span
+                  <button
                     key={s}
-                    className="text-sm px-3 py-1 rounded-full capitalize"
+                    onClick={() => { onClose(); onFilterByTag?.(s); }}
+                    className="text-sm px-3 py-1 rounded-full capitalize cursor-pointer transition-opacity hover:opacity-70"
                     style={{ background: 'rgba(0,119,204,0.08)', color: 'var(--elastic-blue)', border: '1px solid rgba(0,119,204,0.2)' }}
                   >
                     {s}
-                  </span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -116,13 +143,14 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar }: Hote
               <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Amenities</p>
               <div className="flex flex-wrap gap-2">
                 {hotel.amenities.map(a => (
-                  <span
+                  <button
                     key={a}
-                    className="text-sm px-3 py-1 rounded-full capitalize"
+                    onClick={() => { onClose(); onFilterByTag?.(a); }}
+                    className="text-sm px-3 py-1 rounded-full capitalize cursor-pointer transition-opacity hover:opacity-70"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
                   >
                     {a}
-                  </span>
+                  </button>
                 ))}
               </div>
             </div>

@@ -1,13 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { CheckCircle, AlertCircle, Loader2, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CheckCircle, AlertCircle, Loader2, Trash2, Maximize2, Minimize2 } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
 import { apiUrl } from '@/lib/api';
 import HotelCard from '@/components/HotelCard';
-import HotelDetailModal from '@/components/HotelDetailModal';
 import ModelBadge from '@/components/shared/ModelBadge';
 import type { IngestStep, Hotel } from '@/lib/types';
+
+function renderJson(json: string): React.ReactNode[] {
+  const TOKEN_RE = /("(?:\\u[0-9a-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  let i = 0;
+  while ((match = TOKEN_RE.exec(json)) !== null) {
+    if (match.index > last) {
+      nodes.push(<span key={i++} style={{ color: 'var(--text-muted)' }}>{json.slice(last, match.index)}</span>);
+    }
+    const token = match[0];
+    let color: string;
+    if (token.endsWith(':') || (match[2] !== undefined && match[2].trim() === ':')) {
+      color = 'var(--elastic-gold)';
+    } else if (token.startsWith('"')) {
+      color = 'var(--text-primary)';
+    } else if (token === 'true' || token === 'false' || token === 'null') {
+      color = 'var(--elastic-pink)';
+    } else {
+      color = '#6EE7B7';
+    }
+    nodes.push(<span key={i++} style={{ color }}>{token}</span>);
+    last = match.index + token.length;
+  }
+  if (last < json.length) {
+    nodes.push(<span key={i++} style={{ color: 'var(--text-muted)' }}>{json.slice(last)}</span>);
+  }
+  return nodes;
+}
 
 const DEMO_URLS = [
   'https://www.venetianlasvegas.com',
@@ -84,10 +113,17 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
   const [result, setResult] = useState<Hotel | null>(null);
   const [rawMarkdown, setRawMarkdown] = useState<string | null>(null);
   const [transformTab, setTransformTab] = useState<TransformTab>('raw');
-  const [selectedModal, setSelectedModal] = useState<Hotel | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [clearConfirm, setClearConfirm] = useState(false);
   const [clearSuccess, setClearSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setExpanded(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [expanded]);
 
   const run = async () => {
     setSteps([]);
@@ -95,6 +131,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
     setResult(null);
     setRawMarkdown(null);
     setTransformTab('raw');
+    setExpanded(false);
     setLoading(true);
 
     try {
@@ -151,6 +188,7 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
     setClearConfirm(false);
     setClearing(true);
     setClearSuccess(false);
+    setExpanded(false);
     try {
       const res = await fetch(apiUrl('/api/ingest/clear'), { method: 'DELETE' });
       if (res.ok) {
@@ -313,73 +351,93 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
         </div>
       )}
 
-      {/* Result hotel card — clickable */}
+      {/* Result hotel card — static display */}
       {result && (
         <div>
           <h3 className="mb-3" style={{ color: 'var(--text-secondary)' }}>Ingested Hotel</h3>
-          <HotelCard hotel={result} index={0} onClick={setSelectedModal} />
+          <HotelCard hotel={result} index={0} />
         </div>
       )}
 
       {/* Content Transformation panel */}
       {result && (
-        <div className="card-enter rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-          {/* Header */}
-          <div className="px-4 pt-4 pb-0" style={{ background: 'var(--bg-card)' }}>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
-              Content Transformation
-            </p>
-            <div className="flex items-center gap-0">
-              {TAB_LABELS.map((tab, i) => (
-                <div key={tab.id} className="flex items-center">
-                  <button
-                    onClick={() => setTransformTab(tab.id)}
-                    className="px-4 py-2 text-sm font-medium transition-all"
-                    style={{
-                      background: transformTab === tab.id ? 'var(--bg-surface)' : 'transparent',
-                      color: transformTab === tab.id ? 'var(--elastic-gold)' : 'var(--text-muted)',
-                      borderBottom: transformTab === tab.id ? '2px solid var(--elastic-gold)' : '2px solid transparent',
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                  {i < TAB_LABELS.length - 1 && (
-                    <span className="text-xs px-1" style={{ color: 'var(--text-muted)' }}>→</span>
-                  )}
-                </div>
-              ))}
+        <>
+          {/* Backdrop when expanded */}
+          {expanded && (
+            <div
+              className="fixed inset-0 z-40"
+              style={{ background: 'rgba(0,0,0,0.5)' }}
+              onClick={() => setExpanded(false)}
+            />
+          )}
+
+          <div
+            className={`card-enter overflow-hidden${expanded ? '' : ' rounded-xl'}`}
+            style={expanded
+              ? { position: 'fixed', inset: '3vh 2vw', zIndex: 50, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', border: '1px solid var(--border)' }
+              : { border: '1px solid var(--border)' }
+            }
+          >
+            {/* Header */}
+            <div className="px-4 pt-4 pb-0 flex-shrink-0" style={{ background: 'var(--bg-card)' }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  Content Transformation
+                </p>
+                <button
+                  onClick={() => setExpanded(e => !e)}
+                  title={expanded ? 'Collapse' : 'Expand'}
+                  className="p-1 rounded transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
+              </div>
+              <div className="flex items-center gap-0">
+                {TAB_LABELS.map((tab, i) => (
+                  <div key={tab.id} className="flex items-center">
+                    <button
+                      onClick={() => setTransformTab(tab.id)}
+                      className="px-4 py-2 text-sm font-medium transition-all"
+                      style={{
+                        background: transformTab === tab.id ? 'var(--bg-surface)' : 'transparent',
+                        color: transformTab === tab.id ? 'var(--elastic-gold)' : 'var(--text-muted)',
+                        borderBottom: transformTab === tab.id ? '2px solid var(--elastic-gold)' : '2px solid transparent',
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                    {i < TAB_LABELS.length - 1 && (
+                      <span className="text-xs px-1" style={{ color: 'var(--text-muted)' }}>→</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tab content */}
+            <div
+              className="overflow-auto font-mono text-xs leading-relaxed p-4"
+              style={{
+                background: 'var(--bg-surface)',
+                color: 'var(--text-secondary)',
+                ...(expanded ? { flex: '1 1 auto', minHeight: 0 } : { maxHeight: '320px' }),
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {transformTab === 'raw' && RAW_HTML_SAMPLE}
+              {transformTab === 'reader' && (
+                rawMarkdown
+                  ? rawMarkdown.length > 3000
+                    ? rawMarkdown.slice(0, 3000) + '\n\n… (truncated)'
+                    : rawMarkdown
+                  : '— No reader output captured —'
+              )}
+              {transformTab === 'indexed' && renderJson(JSON.stringify(indexedFieldsPreview, null, 2))}
             </div>
           </div>
-
-          {/* Tab content */}
-          <div
-            className="overflow-auto font-mono text-xs leading-relaxed p-4"
-            style={{
-              background: 'var(--bg-surface)',
-              color: transformTab === 'indexed' ? 'var(--elastic-teal)' : 'var(--text-secondary)',
-              maxHeight: '320px',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-            }}
-          >
-            {transformTab === 'raw' && RAW_HTML_SAMPLE}
-            {transformTab === 'reader' && (
-              rawMarkdown
-                ? rawMarkdown.length > 3000
-                  ? rawMarkdown.slice(0, 3000) + '\n\n… (truncated)'
-                  : rawMarkdown
-                : '— No reader output captured —'
-            )}
-            {transformTab === 'indexed' && JSON.stringify(indexedFieldsPreview, null, 2)}
-          </div>
-        </div>
-      )}
-
-      {selectedModal && (
-        <HotelDetailModal
-          hotel={selectedModal}
-          onClose={() => setSelectedModal(null)}
-        />
+        </>
       )}
     </div>
   );

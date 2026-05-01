@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
 import { apiUrl } from '@/lib/api';
 import HotelCard from '@/components/HotelCard';
@@ -22,6 +23,16 @@ const DEMO_QUERIES = [
 const VENETIAN = { lat: 36.1214, lon: -115.1699 };
 
 const MODE_LABELS = { semantic: 'Semantic', bm25: 'BM25', hybrid: 'Hybrid' } as const;
+
+const STOPWORDS = new Set([
+  'the','a','an','in','of','on','at','to','for','is','it','with','and','or','but',
+  'not','by','from','as','this','that','are','was','be','have','has','i','my','we',
+]);
+
+function isStopwordDetail(desc: string): boolean {
+  const m = desc.match(/weight\([^:]+:(\w+)/);
+  return m ? STOPWORDS.has(m[1].toLowerCase()) : false;
+}
 
 interface FindStationProps {
   demoMode: boolean;
@@ -49,23 +60,33 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
   const [rightMode, setRightMode] = useState<SearchMode>('bm25');
   const [explains, setExplains] = useState<Record<string, ExplainResult>>({});
   const [loadingExplain, setLoadingExplain] = useState<string | null>(null);
+  const [visibleExplains, setVisibleExplains] = useState<Set<string>>(new Set());
+  const [mapExpanded, setMapExpanded] = useState(false);
 
   const getList = (mode: SearchMode): Hotel[] =>
     mode === 'bm25' ? (results?.bm25 ?? []) :
     mode === 'hybrid' ? (results?.hybrid ?? []) :
     (results?.semantic ?? []);
 
-  // Keep parent in sync when mode or results change
   useEffect(() => {
     if (results) onResultsChange?.(getList(leftMode));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leftMode, results]);
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMapExpanded(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mapExpanded]);
 
   const search = async (q = query) => {
     if (!q.trim()) return;
     setLoading(true);
     setResults(null);
     setExplains({});
+    setVisibleExplains(new Set());
+    setMapExpanded(false);
 
     const geo: GeoFilter | undefined = useGeo
       ? { ...VENETIAN, radiusMiles: 0.5 }
@@ -87,7 +108,18 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
 
   const fetchExplain = async (hotel: Hotel, mode: SearchMode) => {
     const key = `${hotel.id}-${mode}`;
-    if (explains[key] || loadingExplain === key) return;
+
+    // Toggle visibility if already fetched
+    if (explains[key]) {
+      setVisibleExplains(prev => {
+        const next = new Set(prev);
+        next.has(key) ? next.delete(key) : next.add(key);
+        return next;
+      });
+      return;
+    }
+
+    if (loadingExplain === key) return;
     setLoadingExplain(key);
     try {
       const res = await fetch(apiUrl('/api/explain'), {
@@ -98,6 +130,7 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
       if (res.ok) {
         const data = await res.json();
         setExplains(prev => ({ ...prev, [key]: { hotelId: hotel.id, ...data } }));
+        setVisibleExplains(prev => new Set([...Array.from(prev), key]));
       }
     } finally {
       setLoadingExplain(null);
@@ -129,6 +162,17 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
     mode === 'semantic' ? '🧠 Semantic' :
     mode === 'hybrid' ? '🔀 Hybrid' :
     '🔤 BM25';
+
+  const handleFilterByTag = (tag: string) => {
+    setSelectedModal(null);
+    setQuery(tag);
+    search(tag);
+  };
+
+  const handleEnableGeo = () => {
+    setSelectedModal(null);
+    setUseGeo(true);
+  };
 
   const renderColumn = (col: SearchMode, setCol: (m: SearchMode) => void) => (
     <div className="space-y-2">
@@ -168,6 +212,8 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
         {getList(col).slice(0, 5).map((hotel, i) => {
           const key = `${hotel.id}-${col}`;
           const exp = explains[key];
+          const expVisible = visibleExplains.has(key);
+          const meaningfulDetails = exp?.details.filter(d => !isStopwordDetail(d.description)) ?? [];
           return (
             <div key={hotel.id}>
               <HotelCard
@@ -187,10 +233,10 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
                     color: 'var(--elastic-blue)',
                   }}
                 >
-                  {loadingExplain === key ? '…' : 'Why?'}
+                  {loadingExplain === key ? '…' : (exp && expVisible) ? '▲ Hide' : 'Why?'}
                 </button>
               </div>
-              {exp && (
+              {exp && expVisible && (
                 <div className="mt-1 p-2 rounded-lg text-xs" style={{
                   background: 'var(--bg-surface)',
                   border: '1px solid var(--border)',
@@ -202,7 +248,7 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
                     </p>
                   )}
                   <p>{exp.description}</p>
-                  {exp.details.slice(0, 3).map((d, di) => (
+                  {meaningfulDetails.slice(0, 3).map((d, di) => (
                     <p key={di} className="mt-0.5" style={{ color: 'var(--text-muted)' }}>
                       · {d.description} ({d.value.toFixed(4)})
                     </p>
@@ -221,18 +267,18 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
       <div>
         <div className="flex items-center gap-3 mb-2">
           <h2 style={{ color: 'var(--text-primary)' }}>Find</h2>
-          <ModelBadge model="Embeddings v5" api="eis" />
+          <ModelBadge model="Embeddings v5 · text-small" api="eis" />
         </div>
         <p style={{ color: 'var(--text-secondary)' }}>
-          Semantic search understands intent — not just keywords. Compare with BM25 or Hybrid to see the difference.
+          Semantic search understands intent — not just keywords. Compare with BM25 or Hybrid.
         </p>
       </div>
 
       <JinaCallout
         model="Embeddings v5"
         loading={loading}
-        loadingMessage="Jina Embeddings v5 is converting your query to a 1024-dim vector and searching across all hotel descriptions..."
-        doneMessage="Embeddings understood your intent — not just your keywords. Switch to Side by Side to compare with BM25 or Hybrid."
+        loadingMessage="Jina Embeddings v5 text-small is converting your query to a vector and searching all hotel descriptions..."
+        doneMessage="Embeddings understood your intent, not just your keywords. Try Side by Side to compare with BM25 or Hybrid."
       />
 
       <div className="space-y-3">
@@ -285,11 +331,38 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
           </div>
 
           {view === 'map' ? (
-            <MapPanel
-              hotels={results.semantic}
-              onSelect={setSelectedModal}
-              selected={selectedModal}
-            />
+            <>
+              {mapExpanded && (
+                <div
+                  className="fixed inset-0 z-40"
+                  style={{ background: 'rgba(0,0,0,0.5)' }}
+                  onClick={() => setMapExpanded(false)}
+                />
+              )}
+              <div
+                style={mapExpanded
+                  ? { position: 'fixed', inset: '3vh 2vw', zIndex: 50, borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }
+                  : { position: 'relative' }
+                }
+              >
+                {/* Expand button */}
+                <button
+                  onClick={() => setMapExpanded(e => !e)}
+                  title={mapExpanded ? 'Collapse map' : 'Expand map'}
+                  className="absolute top-3 right-3 z-10 p-1.5 rounded-lg transition-colors"
+                  style={{ background: 'rgba(0,0,0,0.5)', color: '#fff' }}
+                >
+                  {mapExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
+                <MapPanel
+                  key={mapExpanded ? 'expanded' : 'collapsed'}
+                  hotels={results.semantic}
+                  onSelect={setSelectedModal}
+                  selected={selectedModal}
+                  style={mapExpanded ? { height: '100%', borderRadius: 0 } : undefined}
+                />
+              </div>
+            </>
           ) : view === 'single' ? (
             renderColumn(leftMode, setLeftMode)
           ) : (
@@ -311,6 +384,8 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
         <HotelDetailModal
           hotel={selectedModal}
           onClose={() => setSelectedModal(null)}
+          onFilterByTag={handleFilterByTag}
+          onEnableGeo={handleEnableGeo}
         />
       )}
     </div>

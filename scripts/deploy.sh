@@ -55,9 +55,10 @@ done
 printf '%s' "$ELASTICSEARCH_URL"    | gcloud secrets versions add elasticsearch-url    --data-file=- --project="$PROJECT"
 printf '%s' "$ELASTICSEARCH_API_KEY"| gcloud secrets versions add elasticsearch-api-key --data-file=- --project="$PROJECT"
 printf '%s' "$JINA_API_KEY"         | gcloud secrets versions add jina-api-key          --data-file=- --project="$PROJECT"
-[[ -n "$KIBANA_URL" ]]     && printf '%s' "$KIBANA_URL"     | gcloud secrets versions add kibana-url      --data-file=- --project="$PROJECT"
-[[ -n "$KIBANA_API_KEY" ]] && printf '%s' "$KIBANA_API_KEY" | gcloud secrets versions add kibana-api-key  --data-file=- --project="$PROJECT"
-[[ -n "$AGENT_ID" ]]       && printf '%s' "$AGENT_ID"       | gcloud secrets versions add agent-id        --data-file=- --project="$PROJECT"
+# Optional secrets: write a placeholder if unset so the secret has at least one version
+printf '%s' "${KIBANA_URL:-placeholder}"     | gcloud secrets versions add kibana-url      --data-file=- --project="$PROJECT"
+printf '%s' "${KIBANA_API_KEY:-placeholder}" | gcloud secrets versions add kibana-api-key  --data-file=- --project="$PROJECT"
+printf '%s' "${AGENT_ID:-placeholder}"       | gcloud secrets versions add agent-id        --data-file=- --project="$PROJECT"
 
 echo "=== 4. Deploy Cloud Run service ==="
 gcloud run deploy "$SERVICE" \

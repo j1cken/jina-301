@@ -8,9 +8,10 @@ interface MapPanelProps {
   onSelect?: (hotel: Hotel) => void;
   selected?: Hotel | null;
   center?: [number, number];
+  style?: React.CSSProperties;
 }
 
-export default function MapPanel({ hotels, onSelect, selected, center }: MapPanelProps) {
+export default function MapPanel({ hotels, onSelect, selected, center, style }: MapPanelProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
   const markersRef = useRef<unknown[]>([]);
@@ -104,7 +105,7 @@ export default function MapPanel({ hotels, onSelect, selected, center }: MapPane
     <div
       ref={mapRef}
       className="w-full rounded-xl overflow-hidden"
-      style={{ height: '360px', background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+      style={{ height: '360px', background: 'var(--bg-card)', border: '1px solid var(--border)', ...style }}
     />
   );
 }
