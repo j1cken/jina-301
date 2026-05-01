@@ -27,7 +27,7 @@ make images     # Generate hotel images via nano-banana
 | Ingest | Reader | `r.jina.ai` (direct) |
 | Find | Embeddings v5 | EIS: `.jina-embeddings-v5-text-small` |
 | Rank | Reranker v3 | EIS: `.jina-reranker-v3` |
-| Look | CLIP v2 | `api.jina.ai/v1/embeddings` (direct) |
+| Look | CLIP v2 | EIS: `.jina-clip-v2` |
 | Describe | VLM | `api-beta-vlm.jina.ai` (direct) |
 
 ## Environment Variables

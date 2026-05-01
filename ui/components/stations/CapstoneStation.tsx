@@ -13,14 +13,6 @@ interface CapstoneStationProps {
   analyzedHotel?: Hotel;
 }
 
-const PIPELINE_STEPS = [
-  { label: 'Reader', icon: '🌐', color: '#FEC514', desc: 'Scraped hotel pages → clean structured data' },
-  { label: 'Embeddings v5', icon: '🔍', color: '#0077CC', desc: 'Semantic + geo search found candidates' },
-  { label: 'Reranker v3', icon: '⚡', color: '#F04E98', desc: 'Read full context → surfaced the right one' },
-  { label: 'CLIP v2', icon: '📷', color: '#00BFB3', desc: 'Matched visual aesthetic via image vectors' },
-  { label: 'VLM', icon: '👁', color: '#A855F7', desc: 'Understood what the room actually offers' },
-];
-
 export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis, analyzedHotel }: CapstoneStationProps) {
   const mapHotels = searchResults ?? [];
   const featuredHotel = topRanked ?? analyzedHotel;
@@ -35,24 +27,13 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
         </p>
       </div>
 
-      {/* Pipeline visualization */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {PIPELINE_STEPS.map((step, i) => (
-          <div key={step.label} className="flex items-center gap-2 flex-shrink-0">
-            <div
-              data-bp-pipeline-node
-              className="flex flex-col items-center px-4 py-3 rounded-xl"
-              style={{ background: `${step.color}14`, border: `1.5px solid ${step.color}44`, minWidth: '130px', color: step.color }}
-            >
-              <span className="text-2xl mb-1">{step.icon}</span>
-              <p className="text-sm font-bold text-center" style={{ color: step.color }}>{step.label}</p>
-              <p className="text-xs text-center mt-1 leading-snug" style={{ color: 'var(--text-muted)' }}>{step.desc}</p>
-            </div>
-            {i < PIPELINE_STEPS.length - 1 && (
-              <div className="text-xl flex-shrink-0" style={{ color: 'var(--text-muted)' }}>→</div>
-            )}
-          </div>
-        ))}
+      {/* Architecture diagram */}
+      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+        <img
+          src={resolveImageUrl('/images/arch-diagram-v2_1.png')}
+          alt="Architecture diagram showing Jina AI and Elastic integration"
+          className="w-full h-auto"
+        />
       </div>
 
       {/* Three-panel layout */}
