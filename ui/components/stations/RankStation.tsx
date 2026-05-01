@@ -19,6 +19,7 @@ const DEMO_QUERIES = [
 
 interface RankStationProps {
   demoMode: boolean;
+  onTopRanked?: (hotel: RankedHotel) => void;
 }
 
 function RankDelta({ delta }: { delta: number }) {
@@ -111,7 +112,7 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
   );
 }
 
-export default function RankStation({ demoMode }: RankStationProps) {
+export default function RankStation({ demoMode, onTopRanked }: RankStationProps) {
   const [query, setQuery] = useState(DEMO_QUERIES[0]);
   const [results, setResults] = useState<RerankResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -133,6 +134,7 @@ export default function RankStation({ demoMode }: RankStationProps) {
       if (!res.ok) throw new Error(`Server error ${res.status}`);
       const data = await res.json();
       setResults(data);
+      if (onTopRanked && data.reranked?.[0]) onTopRanked(data.reranked[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load results. Check your connection.');
     } finally {

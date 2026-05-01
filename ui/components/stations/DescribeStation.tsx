@@ -68,6 +68,7 @@ interface DescribeStationProps {
   hotels?: Hotel[];
   onSelectStation?: (station: string) => void;
   onFindWithQuery?: (query: string) => void;
+  onVlmResult?: (hotel: Hotel, analysis: VlmAnalysis) => void;
 }
 
 interface VlmResult {
@@ -78,7 +79,8 @@ interface VlmResult {
 
 function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWithQuery?: (q: string) => void }) {
   const { hotel, analysis, overrideImageSrc } = result;
-  const imgSrc = overrideImageSrc ?? (hotel.image_paths?.[0] ? resolveImageUrl(hotel.image_paths[0]) : undefined);
+  const roomImg = hotel.image_paths?.[1] ?? hotel.image_paths?.[0];
+  const imgSrc = overrideImageSrc ?? (roomImg ? resolveImageUrl(roomImg) : undefined);
   const extraKeys = Object.keys(analysis).filter(k => !STANDARD_KEYS.has(k));
 
   return (
@@ -176,7 +178,7 @@ const SAMPLE_HOTELS: Hotel[] = [
   },
 ];
 
-export default function DescribeStation({ demoMode, hotels, onSelectStation, onFindWithQuery }: DescribeStationProps) {
+export default function DescribeStation({ demoMode, hotels, onSelectStation, onFindWithQuery, onVlmResult }: DescribeStationProps) {
   const [results, setResults] = useState<VlmResult[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
   const [coldStart, setColdStart] = useState(false);
@@ -192,7 +194,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
   const analyze = async (hotel: Hotel) => {
     if (loading) return;
-    const imageUrl = resolveImageUrl(hotel.image_paths?.[0]);
+    const imageUrl = resolveImageUrl(hotel.image_paths?.[1] ?? hotel.image_paths?.[0]);
     if (!imageUrl) return;
 
     setLoading(hotel.id);
@@ -224,6 +226,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
       }
 
       setResults(prev => [{ hotel, analysis: data.analysis }, ...prev.filter(r => r.hotel.id !== hotel.id)]);
+      onVlmResult?.(hotel, data.analysis);
     } finally {
       setLoading(null);
     }
@@ -454,7 +457,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
               style={{ border: '1.5px solid var(--border)' }}
             >
               {hotel.image_paths?.[0] ? (
-                <img src={resolveImageUrl(hotel.image_paths[0])} alt={hotel.name} className="w-full h-28 object-cover" />
+                <img src={resolveImageUrl(hotel.image_paths[1] ?? hotel.image_paths[0])} alt={hotel.name} className="w-full h-28 object-cover" />
               ) : (
                 <div className="w-full h-28 flex items-center justify-center text-3xl" style={{ background: 'var(--bg-surface)' }}>🏨</div>
               )}

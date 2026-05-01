@@ -14,7 +14,7 @@ import AgentStation from '@/components/stations/AgentStation';
 import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
 import { DemoModeContext } from '@/lib/demoMode';
-import type { Station, Hotel } from '@/lib/types';
+import type { Station, Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
 import { apiUrl } from '@/lib/api';
 
 type ViewMode = 'travel' | 'demo';
@@ -26,6 +26,9 @@ export default function Home() {
   const [station, setStation] = useState<Station>('ingest');
   const [demoMode, setDemoMode] = useState(false);
   const [findResults, setFindResults] = useState<Hotel[]>([]);
+  const [topRanked, setTopRanked] = useState<RankedHotel | undefined>(undefined);
+  const [vlmAnalysis, setVlmAnalysis] = useState<VlmAnalysis | undefined>(undefined);
+  const [analyzedHotel, setAnalyzedHotel] = useState<Hotel | undefined>(undefined);
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
 
@@ -108,7 +111,7 @@ export default function Home() {
                   onPendingQueryConsumed={() => setPendingFindQuery(null)}
                 />
               )}
-              {station === 'rank' && <RankStation demoMode={demoMode} />}
+              {station === 'rank' && <RankStation demoMode={demoMode} onTopRanked={setTopRanked} />}
               {station === 'look' && <LookStation demoMode={demoMode} onVlmPrewarm={prewarmVlm} onSelectStation={s => setStation(s as Station)} />}
               {station === 'describe' && (
                 <DescribeStation
@@ -116,9 +119,10 @@ export default function Home() {
                   hotels={findResults}
                   onSelectStation={s => setStation(s as Station)}
                   onFindWithQuery={q => { setPendingFindQuery(q); setStation('find'); }}
+                  onVlmResult={(hotel, analysis) => { setAnalyzedHotel(hotel); setVlmAnalysis(analysis); }}
                 />
               )}
-              {station === 'capstone' && <CapstoneStation searchResults={findResults} />}
+              {station === 'capstone' && <CapstoneStation searchResults={findResults} topRanked={topRanked} vlmAnalysis={vlmAnalysis} analyzedHotel={analyzedHotel} />}
               {station === 'agent' && <AgentStation />}
             </main>
           </div>

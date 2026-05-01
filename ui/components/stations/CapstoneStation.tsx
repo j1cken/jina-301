@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import type { Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
+import ArchitectureDiagram from '@/components/ArchitectureDiagram';
 
 const MapPanel = dynamic(() => import('@/components/MapPanel'), { ssr: false });
 
@@ -27,13 +28,7 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
         </p>
       </div>
 
-      {/* Architecture diagram — placeholder until new diagram is generated */}
-      <div className="rounded-xl flex items-center justify-center py-16"
-        style={{ border: '2px dashed var(--border)', background: 'var(--bg-card)' }}>
-        <p className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>
-          Architecture diagram — coming soon
-        </p>
-      </div>
+      <ArchitectureDiagram />
 
       {/* Three-panel layout */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -139,11 +134,11 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
       {/* Narration */}
       <div data-bp-card="blue" className="p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--elastic-blue)' }}>
         <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          <span style={{ color: 'var(--elastic-gold)' }}>Reader</span> scraped the property data.{' '}
-          <span style={{ color: 'var(--elastic-blue)' }}>Embeddings + geo</span> found candidates on the Strip.{' '}
-          <span style={{ color: 'var(--elastic-pink)' }}>Reranker</span> surfaced the right one.{' '}
-          <span style={{ color: 'var(--elastic-teal)' }}>CLIP</span> matched the aesthetic.{' '}
-          <span style={{ color: 'var(--elastic-purple)' }}>VLM</span> told us exactly what the room offers.{' '}
+          <span style={{ color: 'var(--elastic-gold)', fontWeight: 700 }}>Reader</span> scraped the property data.{' '}
+          <span style={{ color: 'var(--elastic-blue)', fontWeight: 700 }}>Embeddings + geo</span> found candidates on the Strip.{' '}
+          <span style={{ color: 'var(--elastic-pink)', fontWeight: 700 }}>Reranker</span> surfaced the right one.{' '}
+          <span style={{ color: 'var(--elastic-teal)', fontWeight: 700 }}>CLIP</span> matched the aesthetic.{' '}
+          <span style={{ color: 'var(--elastic-purple)', fontWeight: 700 }}>VLM</span> told us exactly what the room offers.{' '}
           <strong style={{ color: 'var(--text-primary)' }}>Five models. One search experience.</strong>
         </p>
       </div>
