@@ -176,14 +176,18 @@ mark {
   --bg-base:        #F5F5F3;
   --bg-card:        #FFFFFF;
   --bg-card-hover:  #F0F0EE;
-  --bg-surface:     #EFEFED;
+  --bg-surface:     #F5F5F3;
   --text-primary:   #1A1A1B;
-  --text-secondary: #3A3A3C;
+  --text-secondary: #1A1A1B;
   --text-muted:     #6B6B6E;
   --border:         #1A1A1B;
   --border-active:  #1A1A1B;
   background: var(--bg-base);
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  /* Subtle graph-paper grid */
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* Kill rounding, shadows, blur globally inside blueprint */
@@ -196,20 +200,35 @@ mark {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Headings */
-.demo-blueprint h1,
-.demo-blueprint h2,
-.demo-blueprint h3,
-.demo-blueprint h4 {
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: -0.02em;
+/* Force IBM Plex Mono on everything */
+.demo-blueprint,
+.demo-blueprint * {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace !important;
 }
 
-/* Inputs */
-.demo-blueprint input,
-.demo-blueprint textarea,
-.demo-blueprint select {
-  font-family: 'IBM Plex Mono', monospace;
+/* Heading sizes — larger and heavier */
+.demo-blueprint h1,
+.demo-blueprint h2 {
+  font-size: clamp(2rem, 4vw, 3rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  color: #1A1A1B !important;
+}
+.demo-blueprint h3,
+.demo-blueprint h4 {
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  color: #1A1A1B !important;
+}
+
+/* Force all text to ink black — override inline color styles */
+.demo-blueprint p,
+.demo-blueprint span,
+.demo-blueprint label,
+.demo-blueprint div {
+  color: inherit;
 }
 
 /* Hide station emoji icons */
@@ -217,18 +236,56 @@ mark {
   display: none;
 }
 
+/* ---- STATION NAV: grid-cell tabs ---- */
+.demo-blueprint nav {
+  background: #F5F5F3 !important;
+  border-top: 2px solid #1A1A1B !important;
+  border-bottom: 2px solid #1A1A1B !important;
+  overflow-x: auto;
+}
+.demo-blueprint nav button,
+.demo-blueprint .station-tab {
+  background: #F5F5F3 !important;
+  border-right: 1px solid #1A1A1B !important;
+  border-bottom: none !important;
+  transition: none !important;
+  padding: 10px 20px !important;
+}
+.demo-blueprint nav button:first-child,
+.demo-blueprint .station-tab:first-child {
+  border-left: none !important;
+}
+.demo-blueprint nav button:hover,
+.demo-blueprint .station-tab:hover {
+  background: rgba(0,0,0,0.06) !important;
+}
+/* Active tab: white fill to "lift" it off the grid */
+.demo-blueprint nav button.station-tab:has(span[style*="color: #"]),
+.demo-blueprint .station-tab {
+  background: #F5F5F3 !important;
+}
+/* Force all tab text to ink black — override inline color */
+.demo-blueprint .station-tab span,
+.demo-blueprint nav button span {
+  color: #1A1A1B !important;
+}
+/* Active tab label: bold + bottom accent line */
+.demo-blueprint nav button[style*="2.5px solid"] {
+  background: #FFFFFF !important;
+  border-bottom: 3px solid #1A1A1B !important;
+}
+
 /* ModelBadge — [LABEL] bracket style */
 .demo-blueprint [data-model-badge] {
   background: transparent !important;
-  border: 1px solid currentColor !important;
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  border: 1px solid #1A1A1B !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
   padding: 2px 6px !important;
-  font-size: 0.7rem !important;
+  font-size: 0.65rem !important;
+  color: #1A1A1B !important;
 }
-.demo-blueprint [data-model-badge] > span[class*="rounded-full"],
-.demo-blueprint [data-model-badge] > span[class*="w-1"] {
+.demo-blueprint [data-model-badge] > span {
   display: none !important;
 }
 .demo-blueprint [data-model-badge]::before { content: '['; }
@@ -236,74 +293,95 @@ mark {
 
 /* JinaCallout override */
 .demo-blueprint .jina-callout {
-  border-left: 2px solid var(--elastic-teal) !important;
+  border-left: 3px solid #1A1A1B !important;
   border-right: none !important;
   border-top: none !important;
   border-bottom: none !important;
   background: #FFFFFF !important;
+  color: #1A1A1B !important;
+}
+.demo-blueprint .jina-callout * {
+  color: #1A1A1B !important;
+}
+/* Keep the pulsing dot in a station accent color — allow color via inline style */
+.demo-blueprint .pulse-dot {
+  background: #1A1A1B !important;
 }
 
 /* Score bar override */
 .demo-blueprint .score-bar {
-  height: 3px;
-  background: #C8C5BE;
+  height: 3px !important;
+  background: #C8C5BE !important;
 }
 .demo-blueprint .score-bar-fill {
-  background: var(--elastic-teal) !important;
+  background: #1A1A1B !important;
   transition: width 0.4s ease;
 }
 
-/* Station tab overrides */
-.demo-blueprint nav button {
-  background: transparent !important;
-}
-.demo-blueprint nav button:hover {
-  background: rgba(0,0,0,0.04) !important;
-}
-
-/* data-bp-card color variants */
+/* data-bp-card color variants — white card + colored 1px border */
 .demo-blueprint [data-bp-card] {
   background: #FFFFFF !important;
+  color: #1A1A1B !important;
 }
 .demo-blueprint [data-bp-card="pink"]   { border: 1px solid var(--elastic-pink) !important; }
 .demo-blueprint [data-bp-card="teal"]   { border: 1px solid var(--elastic-teal) !important; }
-.demo-blueprint [data-bp-card="gold"]   { border: 1px solid var(--elastic-gold) !important; }
+.demo-blueprint [data-bp-card="gold"]   { border: 1px solid #9A7A00 !important; }
 .demo-blueprint [data-bp-card="blue"]   { border: 1px solid var(--elastic-blue) !important; }
 .demo-blueprint [data-bp-card="purple"] { border: 1px solid var(--elastic-purple) !important; }
 
-/* data-bp-chip (smaller inline labels) */
+/* data-bp-chip — outlined label, no fill */
 .demo-blueprint [data-bp-chip] {
   background: transparent !important;
+  color: #1A1A1B !important;
+  border: 1px solid #1A1A1B !important;
 }
-.demo-blueprint [data-bp-chip="pink"]   { border: 1px solid var(--elastic-pink) !important; color: var(--elastic-pink) !important; }
-.demo-blueprint [data-bp-chip="teal"]   { border: 1px solid var(--elastic-teal) !important; color: var(--elastic-teal) !important; }
-.demo-blueprint [data-bp-chip="gold"]   { border: 1px solid var(--elastic-gold) !important; color: #9A7A00 !important; }
-.demo-blueprint [data-bp-chip="blue"]   { border: 1px solid var(--elastic-blue) !important; color: var(--elastic-blue) !important; }
-.demo-blueprint [data-bp-chip="purple"] { border: 1px solid var(--elastic-purple) !important; color: var(--elastic-purple) !important; }
 
-/* Primary action button */
+/* Primary action button — solid black */
 .demo-blueprint button[data-bp-primary] {
   background: #1A1A1B !important;
   color: #F5F5F3 !important;
-  border: 1px solid #1A1A1B !important;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
+  border: 2px solid #1A1A1B !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 700 !important;
+  padding: 10px 24px !important;
 }
 .demo-blueprint button[data-bp-primary]:disabled {
-  opacity: 0.4;
+  opacity: 0.35 !important;
 }
 .demo-blueprint button[data-bp-primary]:hover:not(:disabled) {
   background: #3A3A3C !important;
   border-color: #3A3A3C !important;
 }
 
+/* All other buttons — outlined style */
+.demo-blueprint button:not([data-bp-primary]) {
+  border-color: #1A1A1B !important;
+  color: #1A1A1B !important;
+}
+
+/* Inputs — hairline border, no fill */
+.demo-blueprint input,
+.demo-blueprint textarea {
+  background: #FFFFFF !important;
+  border: 1px solid #1A1A1B !important;
+  color: #1A1A1B !important;
+}
+.demo-blueprint input::placeholder,
+.demo-blueprint textarea::placeholder {
+  color: #9A9A9A !important;
+}
+
 /* Pipeline nodes (CapstoneStation) */
 .demo-blueprint [data-bp-pipeline-node] {
   background: #FFFFFF !important;
-  border-top: 1px solid var(--border) !important;
-  border-right: 1px solid var(--border) !important;
-  border-bottom: 1px solid var(--border) !important;
-  border-left: 3px solid currentColor !important;
+  border-top: 1px solid #1A1A1B !important;
+  border-right: 1px solid #1A1A1B !important;
+  border-bottom: 1px solid #1A1A1B !important;
+  border-left: 4px solid currentColor !important;
 }
+
+/* Rank indicators — keep color for up/down signal */
+.demo-blueprint .rank-up   { color: var(--elastic-teal) !important; }
+.demo-blueprint .rank-down { color: var(--elastic-pink) !important; }
+.demo-blueprint .rank-same { color: #6B6B6E !important; }
