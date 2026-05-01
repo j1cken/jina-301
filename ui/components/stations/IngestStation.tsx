@@ -21,7 +21,7 @@ function renderJson(json: string): React.ReactNode[] {
     const token = match[0];
     let color: string;
     if (token.endsWith(':') || (match[2] !== undefined && match[2].trim() === ':')) {
-      color = 'var(--elastic-gold)';
+      color = 'var(--elastic-purple)';
     } else if (token.startsWith('"')) {
       color = 'var(--text-primary)';
     } else if (token === 'true' || token === 'false' || token === 'null') {

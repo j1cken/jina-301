@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
   const kibanaUrl = process.env.KIBANA_URL;
   const apiKey = process.env.KIBANA_API_KEY;
 
-  if (!agentId || !kibanaUrl || !apiKey) {
-    const err = `event: error\ndata: ${JSON.stringify({ message: 'Agent not configured — set AGENT_ID, KIBANA_URL, KIBANA_API_KEY' })}\n\n`;
+  if (!agentId || agentId === 'placeholder' || !kibanaUrl || !apiKey) {
+    const err = `event: error\ndata: ${JSON.stringify({ message: 'Agent not configured — set AGENT_ID, KIBANA_URL, KIBANA_API_KEY in environment' })}\n\ndata: [DONE]\n\n`;
     return new NextResponse(err, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' } });
   }
   if (!input?.trim()) {

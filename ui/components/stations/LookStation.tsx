@@ -9,10 +9,10 @@ import { resolveImageUrl } from '@/lib/images';
 import { apiUrl } from '@/lib/api';
 
 const EXAMPLE_IMAGES = [
-  { src: 'images/hotels/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
-  { src: 'images/hotels/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
-  { src: 'images/hotels/alpenruh-mountain-lodge-grindelwald_1.png', label: 'Mountain Lodge' },
-  { src: 'images/hotels/durban-beachfront-hotel_1.png', label: 'Beachfront' },
+  { src: '/images/hotels/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
+  { src: '/images/hotels/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
+  { src: '/images/hotels/alpenruh-mountain-lodge-grindelwald_1.png', label: 'Mountain Lodge' },
+  { src: '/images/hotels/durban-beachfront-hotel_1.png', label: 'Beachfront' },
 ];
 
 interface LookStationProps {
@@ -59,17 +59,17 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
 
   const handleFile = (file: File) => {
     if (inFlightRef.current) return;
-    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowed.includes(file.type)) {
-      setLogs(['[err] Unsupported file type — use JPEG, PNG, or WebP']);
+    if (!file.type.startsWith('image/')) {
+      setLogs([`[err] Not an image file (got: ${file.type || 'unknown'})`]);
       return;
     }
+    const sizeLine = `[ok] Image selected: ${file.name} (${Math.round(file.size / 1024)}KB, ${file.type})`;
     if (file.size > 5_000_000) {
-      setLogs(['[err] Image too large — max 5MB']);
+      setLogs([sizeLine, `[err] Image too large — max 5MB (got ${Math.round(file.size / 1024)}KB)`]);
       return;
     }
     inFlightRef.current = true;
-    setLogs(['[ok] Image selected: ' + file.name]);
+    setLogs([sizeLine]);
     setLoading(true);
     setVectorPreview(null);
 

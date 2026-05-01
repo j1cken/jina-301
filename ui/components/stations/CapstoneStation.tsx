@@ -27,13 +27,12 @@ export default function CapstoneStation({ searchResults, topRanked, vlmAnalysis,
         </p>
       </div>
 
-      {/* Architecture diagram */}
-      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-        <img
-          src={resolveImageUrl('/images/arch-diagram-v2_1.png')}
-          alt="Architecture diagram showing Jina AI and Elastic integration"
-          className="w-full h-auto"
-        />
+      {/* Architecture diagram — placeholder until new diagram is generated */}
+      <div className="rounded-xl flex items-center justify-center py-16"
+        style={{ border: '2px dashed var(--border)', background: 'var(--bg-card)' }}>
+        <p className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>
+          Architecture diagram — coming soon
+        </p>
       </div>
 
       {/* Three-panel layout */}

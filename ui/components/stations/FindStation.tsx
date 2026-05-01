@@ -64,6 +64,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   const [loadingExplain, setLoadingExplain] = useState<string | null>(null);
   const [visibleExplains, setVisibleExplains] = useState<Set<string>>(new Set());
   const [mapExpanded, setMapExpanded] = useState(false);
+  const [geoResetNotice, setGeoResetNotice] = useState(false);
 
   const getList = (mode: SearchMode): Hotel[] =>
     mode === 'bm25' ? (results?.bm25 ?? []) :
@@ -177,6 +178,11 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
 
   const handleFilterByTag = (tag: string) => {
     setSelectedModal(null);
+    if (useGeo) {
+      setUseGeo(false);
+      setGeoResetNotice(true);
+      setTimeout(() => setGeoResetNotice(false), 3000);
+    }
     setQuery(tag);
     search(tag);
   };
@@ -314,6 +320,11 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
             Filter: within 0.5 miles of The Venetian (demo geo filter)
           </span>
         </label>
+        {geoResetNotice && (
+          <p className="text-xs" style={{ color: 'var(--elastic-teal)' }}>
+            Geo filter cleared — tag search covers all hotels
+          </p>
+        )}
       </div>
 
       {results && (

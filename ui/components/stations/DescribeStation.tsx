@@ -180,6 +180,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
   const [results, setResults] = useState<VlmResult[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
   const [coldStart, setColdStart] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
   const [promptOpen, setPromptOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -196,6 +197,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
     setLoading(hotel.id);
     setColdStart(false);
+    setError(null);
 
     try {
       const fullUrl = imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`;
@@ -211,9 +213,17 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
         return;
       }
 
-      if (data.analysis) {
-        setResults(prev => [{ hotel, analysis: data.analysis }, ...prev.filter(r => r.hotel.id !== hotel.id)]);
+      if (!res.ok) {
+        setError(`VLM API error ${res.status}: ${data.error ?? 'Unknown error'}`);
+        return;
       }
+
+      if (!data.analysis) {
+        setError('VLM returned no analysis. Try a different hotel or check API key.');
+        return;
+      }
+
+      setResults(prev => [{ hotel, analysis: data.analysis }, ...prev.filter(r => r.hotel.id !== hotel.id)]);
     } finally {
       setLoading(null);
     }
@@ -230,6 +240,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
     setLoading('__upload');
     setColdStart(false);
+    setError(null);
 
     try {
       const res = await fetch(apiUrl('/api/vision'), {
@@ -244,12 +255,20 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
         return;
       }
 
-      if (data.analysis) {
-        setResults(prev => [
-          { hotel: fakeHotel, analysis: data.analysis, overrideImageSrc: dataUrl },
-          ...prev.filter(r => r.hotel.id !== '__upload'),
-        ]);
+      if (!res.ok) {
+        setError(`VLM API error ${res.status}: ${data.error ?? 'Unknown error'}`);
+        return;
       }
+
+      if (!data.analysis) {
+        setError('VLM returned no analysis. Try a different image or check API key.');
+        return;
+      }
+
+      setResults(prev => [
+        { hotel: fakeHotel, analysis: data.analysis, overrideImageSrc: dataUrl },
+        ...prev.filter(r => r.hotel.id !== '__upload'),
+      ]);
     } finally {
       setLoading(null);
     }
@@ -296,6 +315,12 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
         loadingMessage="Jina VLM is analyzing the hotel image — reading architectural style, visible amenities, and guest experience..."
         doneMessage="VLM returned structured analysis from a single image. No metadata needed — the model sees it."
       />
+
+      {error && (
+        <div className="p-3 rounded-lg text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+          {error}
+        </div>
+      )}
 
       {/* VLM Prompt panel */}
       <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
