@@ -1,6 +1,6 @@
 PYTHON := .venv/bin/python
 
-.PHONY: dev dev-hot index fallbacks images hotels install setup sample-data deploy
+.PHONY: dev dev-hot index fallbacks images hotels install setup sample-data deploy agent agent-delete
 
 dev:
 	cd ui && npm run dev
@@ -31,6 +31,13 @@ fallbacks:
 
 deploy:
 	bash scripts/deploy.sh
+
+agent:
+	$(PYTHON) scripts/create_agent.py --write-env
+
+agent-delete:
+	@test -n "$(ID)" || (echo "Usage: make agent-delete ID=<agent_id>"; exit 1)
+	$(PYTHON) scripts/create_agent.py --delete $(ID)
 
 install:
 	cd ui && npm install

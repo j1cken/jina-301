@@ -25,6 +25,11 @@ KIBANA_URL="${KIBANA_URL:-}"
 KIBANA_API_KEY="${KIBANA_API_KEY:-}"
 AGENT_ID="${AGENT_ID:-}"
 
+if [[ -z "$AGENT_ID" ]]; then
+  echo "WARNING: AGENT_ID is not set. The /agent station will be disabled."
+  echo "         Run: make agent  (then add AGENT_ID=… to ui/.env.local)"
+fi
+
 echo "=== 1. Ensure Artifact Registry repo exists ==="
 gcloud artifacts repositories describe demos \
   --location="$REGION" --project="$PROJECT" &>/dev/null || \
