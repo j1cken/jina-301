@@ -10,7 +10,7 @@ const VlmSchema = z.object({
   mood: z.string(),
   guestProfile: z.string(),
   standout: z.string().optional(),
-});
+}).passthrough();
 
 const PROMPT = `Analyze this hotel image and return ONLY a JSON object with these exact fields:
 {
@@ -32,11 +32,11 @@ function stripFences(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { imageUrl, hotelId, demoMode, prompt: customPrompt } = await req.json();
+  const { imageUrl, imageBase64, mimeType, hotelId, demoMode, prompt: customPrompt } = await req.json();
   const activePrompt = customPrompt?.trim() || PROMPT;
 
-  if (!imageUrl && !hotelId) {
-    return NextResponse.json({ error: 'imageUrl or hotelId required' }, { status: 400 });
+  if (!imageUrl && !hotelId && !imageBase64) {
+    return NextResponse.json({ error: 'imageUrl, imageBase64, or hotelId required' }, { status: 400 });
   }
 
   if (demoMode) {
@@ -51,20 +51,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JINA_API_KEY not configured' }, { status: 503 });
   }
 
-  // Fetch and base64-encode the image server-side
+  // Use provided base64 directly, or fetch and encode from URL
   let base64: string;
   let mime = 'image/jpeg';
-  try {
-    const imgRes = await fetch(imageUrl);
-    if (!imgRes.ok) throw new Error(`Image fetch failed: ${imgRes.status}`);
-    mime = imgRes.headers.get('content-type') ?? 'image/jpeg';
-    const buf = await imgRes.arrayBuffer();
-    base64 = Buffer.from(buf).toString('base64');
-    if (base64.length > 5_000_000) {
-      throw new Error('Image too large (> 4MB base64)');
+  if (imageBase64) {
+    base64 = imageBase64;
+    mime = mimeType ?? 'image/jpeg';
+  } else {
+    try {
+      const imgRes = await fetch(imageUrl);
+      if (!imgRes.ok) throw new Error(`Image fetch failed: ${imgRes.status}`);
+      mime = imgRes.headers.get('content-type') ?? 'image/jpeg';
+      const buf = await imgRes.arrayBuffer();
+      base64 = Buffer.from(buf).toString('base64');
+      if (base64.length > 5_000_000) {
+        throw new Error('Image too large (> 4MB base64)');
+      }
+    } catch (err) {
+      return NextResponse.json({ error: `Could not fetch image: ${(err as Error).message}` }, { status: 400 });
     }
-  } catch (err) {
-    return NextResponse.json({ error: `Could not fetch image: ${(err as Error).message}` }, { status: 400 });
   }
 
   const payload = {

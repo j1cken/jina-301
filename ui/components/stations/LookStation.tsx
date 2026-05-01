@@ -2,18 +2,17 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { Upload } from 'lucide-react';
-import JinaCallout from '@/components/JinaCallout';
 import ModelBadge from '@/components/shared/ModelBadge';
 import HotelDetailModal from '@/components/HotelDetailModal';
 import type { Hotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
-import { apiUrl, BASE_PATH } from '@/lib/api';
+import { apiUrl } from '@/lib/api';
 
 const EXAMPLE_IMAGES = [
-  { src: `${BASE_PATH}/images/hotels/bellagio-las-vegas_1.png`, label: 'Luxury Casino' },
-  { src: `${BASE_PATH}/images/hotels/eco-camp-patagonia_1.png`, label: 'Eco Lodge' },
-  { src: `${BASE_PATH}/images/hotels/alpenruh-mountain-lodge-grindelwald_1.png`, label: 'Mountain Lodge' },
-  { src: `${BASE_PATH}/images/hotels/durban-beachfront-hotel_1.png`, label: 'Beachfront' },
+  { src: 'images/hotels/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
+  { src: 'images/hotels/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
+  { src: 'images/hotels/alpenruh-mountain-lodge-grindelwald_1.png', label: 'Mountain Lodge' },
+  { src: 'images/hotels/durban-beachfront-hotel_1.png', label: 'Beachfront' },
 ];
 
 interface LookStationProps {
@@ -28,12 +27,17 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
   const [preview, setPreview] = useState<string | null>(null);
   const [vectorPreview, setVectorPreview] = useState<number[] | null>(null);
   const [selectedModal, setSelectedModal] = useState<Hotel | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const inFlightRef = useRef(false);
 
-  const search = useCallback(async (base64: string, mime: string) => {
+  const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
+
+  const search = useCallback(async (base64: string, mime: string, logFn?: (msg: string) => void) => {
     setLoading(true);
     setResults([]);
     onVlmPrewarm?.();
+    logFn?.('[ok] Calling Jina CLIP v2 for embedding...');
 
     try {
       const res = await fetch(apiUrl('/api/clip'), {
@@ -42,20 +46,40 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
         body: JSON.stringify({ imageBase64: base64, mimeType: mime, demoMode }),
       });
       const data = await res.json();
-      setResults(data.results ?? []);
+      logFn?.('[ok] Embedding + kNN complete');
+      const hotels = data.results ?? [];
+      setResults(hotels);
       setVectorPreview(data.query_vector_preview ?? null);
+      logFn?.(`[ok] ${hotels.length} hotels found`);
     } finally {
       setLoading(false);
+      inFlightRef.current = false;
     }
   }, [demoMode, onVlmPrewarm]);
 
   const handleFile = (file: File) => {
+    if (inFlightRef.current) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      setLogs(['[err] Unsupported file type — use JPEG, PNG, or WebP']);
+      return;
+    }
+    if (file.size > 5_000_000) {
+      setLogs(['[err] Image too large — max 5MB']);
+      return;
+    }
+    inFlightRef.current = true;
+    setLogs(['[ok] Image selected: ' + file.name]);
+    setLoading(true);
+    setVectorPreview(null);
+
     const reader = new FileReader();
     reader.onload = e => {
       const dataUrl = e.target?.result as string;
       setPreview(dataUrl);
+      addLog('[ok] Converting to base64...');
       const base64 = dataUrl.split(',')[1];
-      search(base64, file.type);
+      search(base64, file.type, addLog);
     };
     reader.readAsDataURL(file);
   };
@@ -67,17 +91,38 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  const handleExampleClick = async (src: string) => {
-    setPreview(src);
-    const res = await fetch(src);
-    if (!res.ok || !res.headers.get('content-type')?.startsWith('image/')) return;
-    const buf = await res.arrayBuffer();
-    const bytes = new Uint8Array(buf);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-    const base64 = btoa(binary);
-    const mime = res.headers.get('content-type') ?? 'image/png';
-    search(base64, mime);
+  const handleExampleClick = async (src: string, label: string) => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
+    setLoading(true);
+    setLogs([`[ok] Image selected: ${label}`]);
+    setVectorPreview(null);
+    setPreview(resolveImageUrl(src) ?? src);
+
+    const resolvedUrl = resolveImageUrl(src) ?? src;
+    addLog('[ok] Fetching image bytes...');
+    try {
+      const res = await fetch(resolvedUrl);
+      if (!res.ok || !res.headers.get('content-type')?.startsWith('image/')) {
+        addLog('[err] Failed to load image — check path');
+        setLoading(false);
+        inFlightRef.current = false;
+        return;
+      }
+      const buf = await res.arrayBuffer();
+      const kb = Math.round(buf.byteLength / 1024);
+      addLog(`[ok] Converting to base64 (${kb}KB)...`);
+      const bytes = new Uint8Array(buf);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      const base64 = btoa(binary);
+      const mime = res.headers.get('content-type') ?? 'image/png';
+      await search(base64, mime, addLog);
+    } catch {
+      addLog('[err] Failed to fetch image');
+      setLoading(false);
+      inFlightRef.current = false;
+    }
   };
 
   return (
@@ -92,12 +137,18 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
         </p>
       </div>
 
-      <JinaCallout
-        model="CLIP v2"
-        loading={loading}
-        loadingMessage="Jina CLIP v2 is embedding your image into a 1024-dim vector — the same space as all hotel images..."
-        doneMessage="Image embedded. kNN search found hotels with the most similar visual aesthetic. Text and images — same space."
-      />
+      {/* Log panel */}
+      {logs.length > 0 && (
+        <div className="text-xs p-3 rounded-lg font-mono space-y-0.5"
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+          {logs.map((l, i) => (
+            <p key={i} style={{ color: l.startsWith('[err]') ? 'var(--elastic-pink)' : 'var(--elastic-teal)' }}>{l}</p>
+          ))}
+          {loading && (
+            <p style={{ color: 'var(--text-muted)' }}>...</p>
+          )}
+        </div>
+      )}
 
       {/* Upload zone */}
       <div
@@ -110,7 +161,7 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           className="hidden"
           onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
         />
@@ -129,21 +180,25 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
       <div>
         <p className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Or use an example:</p>
         <div className="flex gap-3">
-          {EXAMPLE_IMAGES.map(ex => (
-            <button
-              key={ex.src}
-              onClick={() => handleExampleClick(ex.src)}
-              className="flex flex-col items-center gap-1 group"
-            >
-              <div className="w-24 h-16 rounded-lg overflow-hidden border-2 transition-all group-hover:scale-105"
-                style={{ borderColor: preview === ex.src ? 'var(--elastic-teal)' : 'var(--border)' }}>
-                <img src={ex.src} alt={ex.label} className="w-full h-full object-cover" />
-              </div>
-              <span className="text-xs" style={{ color: preview === ex.src ? 'var(--elastic-teal)' : 'var(--text-muted)' }}>
-                {ex.label}
-              </span>
-            </button>
-          ))}
+          {EXAMPLE_IMAGES.map(ex => {
+            const resolved = resolveImageUrl(ex.src) ?? ex.src;
+            return (
+              <button
+                key={ex.src}
+                onClick={() => handleExampleClick(ex.src, ex.label)}
+                disabled={loading}
+                className="flex flex-col items-center gap-1 group disabled:opacity-50"
+              >
+                <div className="w-24 h-16 rounded-lg overflow-hidden border-2 transition-all group-hover:scale-105"
+                  style={{ borderColor: preview === resolved ? 'var(--elastic-teal)' : 'var(--border)' }}>
+                  <img src={resolved} alt={ex.label} className="w-full h-full object-cover" />
+                </div>
+                <span className="text-xs" style={{ color: preview === resolved ? 'var(--elastic-teal)' : 'var(--text-muted)' }}>
+                  {ex.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

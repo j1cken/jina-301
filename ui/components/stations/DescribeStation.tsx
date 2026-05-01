@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ChevronDown, ChevronUp, Edit2, Check } from 'lucide-react';
+import { Loader2, ChevronDown, ChevronUp, Edit2, Check, Upload } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
 import ModelBadge from '@/components/shared/ModelBadge';
 import type { Hotel, VlmAnalysis } from '@/lib/types';
@@ -55,19 +55,32 @@ const PROMPT_PRESETS = [
   },
 ];
 
+const STANDARD_KEYS = new Set(['style', 'visibleAmenities', 'mood', 'guestProfile', 'standout', 'rawDescription']);
+
+function buildFindQuery(analysis: VlmAnalysis): string {
+  const parts = [analysis.style, analysis.mood, analysis.standout, analysis.guestProfile]
+    .filter((v): v is string => typeof v === 'string' && v.length > 0);
+  return parts.join(', ');
+}
+
 interface DescribeStationProps {
   demoMode: boolean;
   hotels?: Hotel[];
   onSelectStation?: (station: string) => void;
+  onFindWithQuery?: (query: string) => void;
 }
 
 interface VlmResult {
   hotel: Hotel;
-  analysis: VlmAnalysis & { standout?: string };
+  analysis: VlmAnalysis;
+  overrideImageSrc?: string;
 }
 
-function AnalysisCard({ result, onFindSimilar }: { result: VlmResult; onFindSimilar?: () => void }) {
-  const { hotel, analysis } = result;
+function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWithQuery?: (q: string) => void }) {
+  const { hotel, analysis, overrideImageSrc } = result;
+  const imgSrc = overrideImageSrc ?? (hotel.image_paths?.[0] ? resolveImageUrl(hotel.image_paths[0]) : undefined);
+  const extraKeys = Object.keys(analysis).filter(k => !STANDARD_KEYS.has(k));
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.97 }}
@@ -76,14 +89,19 @@ function AnalysisCard({ result, onFindSimilar }: { result: VlmResult; onFindSimi
       style={{ background: 'var(--bg-card)', border: '1.5px solid var(--elastic-purple)' }}
     >
       <div className="flex gap-0">
-        {hotel.image_paths?.[0] && (
-          <img src={resolveImageUrl(hotel.image_paths[0])} alt={hotel.name} className="w-48 flex-shrink-0 object-cover" />
+        {imgSrc ? (
+          <img src={imgSrc} alt={hotel.name} className="w-48 flex-shrink-0 object-cover" />
+        ) : (
+          <div className="w-48 flex-shrink-0 flex items-center justify-center text-4xl"
+            style={{ background: 'var(--bg-surface)' }}>🏨</div>
         )}
         <div className="p-4 flex-1">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 style={{ color: 'var(--text-primary)' }}>{hotel.name}</h3>
-              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{hotel.location_name}</p>
+              {hotel.location_name && (
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{hotel.location_name}</p>
+              )}
             </div>
             <span data-bp-chip="purple" className="text-xs px-2 py-1 rounded-full flex-shrink-0"
               style={{ background: 'rgba(168,85,247,0.15)', color: 'var(--elastic-purple)', border: '1px solid rgba(168,85,247,0.3)' }}>
@@ -121,11 +139,21 @@ function AnalysisCard({ result, onFindSimilar }: { result: VlmResult; onFindSimi
                 <p style={{ color: 'var(--elastic-purple)' }}>{analysis.standout}</p>
               </div>
             )}
+            {extraKeys.map(k => (
+              <div key={k} className="col-span-2">
+                <p className="font-semibold mb-1" style={{ color: 'var(--text-muted)' }}>
+                  {k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                </p>
+                <p style={{ color: 'var(--text-primary)' }}>
+                  {typeof analysis[k] === 'string' ? analysis[k] as string : JSON.stringify(analysis[k])}
+                </p>
+              </div>
+            ))}
           </div>
 
-          {onFindSimilar && (
+          {onFindWithQuery && (
             <button
-              onClick={onFindSimilar}
+              onClick={() => onFindWithQuery(buildFindQuery(analysis))}
               className="mt-3 text-sm px-3 py-1.5 rounded-lg font-semibold transition-all"
               style={{ background: 'var(--elastic-purple)', color: '#fff' }}
             >
@@ -148,7 +176,7 @@ const SAMPLE_HOTELS: Hotel[] = [
   },
 ];
 
-export default function DescribeStation({ demoMode, hotels, onSelectStation }: DescribeStationProps) {
+export default function DescribeStation({ demoMode, hotels, onSelectStation, onFindWithQuery }: DescribeStationProps) {
   const [results, setResults] = useState<VlmResult[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
   const [coldStart, setColdStart] = useState(false);
@@ -156,6 +184,8 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
   const [promptOpen, setPromptOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editDraft, setEditDraft] = useState(DEFAULT_PROMPT);
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const displayHotels = hotels?.length ? hotels : SAMPLE_HOTELS;
 
@@ -188,6 +218,65 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
       setLoading(null);
     }
   };
+
+  const analyzeUpload = async (base64: string, mime: string, dataUrl: string) => {
+    const fakeHotel: Hotel = {
+      id: '__upload', name: 'Uploaded Image', descriptions: [],
+      location: { lat: 0, lon: 0 }, location_name: '',
+      country: '', region: '', amenities: [], style: [],
+      price_tier: 'budget', price_per_night_usd: 0,
+      image_paths: [], rating: 0, nearby_landmarks: [],
+    };
+
+    setLoading('__upload');
+    setColdStart(false);
+
+    try {
+      const res = await fetch(apiUrl('/api/vision'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType: mime, hotelId: '__upload', demoMode, prompt }),
+      });
+      const data = await res.json();
+
+      if (res.status === 502 && data.coldStart) {
+        setColdStart(true);
+        return;
+      }
+
+      if (data.analysis) {
+        setResults(prev => [
+          { hotel: fakeHotel, analysis: data.analysis, overrideImageSrc: dataUrl },
+          ...prev.filter(r => r.hotel.id !== '__upload'),
+        ]);
+      }
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleFile = (file: File) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) return;
+    if (file.size > 5_000_000) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target?.result as string;
+      setUploadPreview(dataUrl);
+      const base64 = dataUrl.split(',')[1];
+      analyzeUpload(base64, file.type, dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file?.type.startsWith('image/')) handleFile(file);
+  };
+
+  const handleFindWithQuery = onFindWithQuery ?? (onSelectStation ? () => onSelectStation('find') : undefined);
 
   return (
     <div className="space-y-6">
@@ -299,9 +388,37 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
         </div>
       )}
 
+      {/* Upload zone */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={e => e.preventDefault()}
+        onClick={() => fileRef.current?.click()}
+        className="border-2 border-dashed rounded-xl p-6 cursor-pointer transition-colors text-center"
+        style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}
+      >
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+        />
+        {uploadPreview ? (
+          <div className="flex items-center gap-4">
+            <img src={uploadPreview} alt="upload" className="h-20 rounded-lg object-contain" />
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Click or drop to replace</p>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-3">
+            <Upload className="w-6 h-6 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Upload your own image to analyze</p>
+          </div>
+        )}
+      </div>
+
       {/* Hotel selection grid */}
       <div>
-        <p className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Click any hotel to analyze with Jina VLM:</p>
+        <p className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Or click any hotel to analyze with Jina VLM:</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {displayHotels.slice(0, 8).map(hotel => (
             <button
@@ -335,7 +452,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation }: D
           <AnalysisCard
             key={result.hotel.id}
             result={result}
-            onFindSimilar={onSelectStation ? () => onSelectStation('find') : undefined}
+            onFindWithQuery={handleFindWithQuery}
           />
         ))}
       </AnimatePresence>

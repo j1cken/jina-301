@@ -55,7 +55,9 @@ export interface VlmAnalysis {
   visibleAmenities: string[];
   mood: string;
   guestProfile: string;
+  standout?: string;
   rawDescription?: string;
+  [key: string]: unknown;
 }
 
 export interface VisionResponse {

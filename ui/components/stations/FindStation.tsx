@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
@@ -37,6 +37,8 @@ function isStopwordDetail(desc: string): boolean {
 interface FindStationProps {
   demoMode: boolean;
   onResultsChange?: (hotels: Hotel[]) => void;
+  pendingQuery?: string | null;
+  onPendingQueryConsumed?: () => void;
 }
 
 interface ExplainResult {
@@ -49,7 +51,7 @@ interface ExplainResult {
 type SearchMode = 'semantic' | 'bm25' | 'hybrid';
 type ViewMode = 'single' | 'sidebyside' | 'map';
 
-export default function FindStation({ demoMode, onResultsChange }: FindStationProps) {
+export default function FindStation({ demoMode, onResultsChange, pendingQuery, onPendingQueryConsumed }: FindStationProps) {
   const [query, setQuery] = useState('');
   const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<SearchResponse | null>(null);
@@ -79,6 +81,16 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [mapExpanded]);
+
+  const consumedQueryRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!pendingQuery || consumedQueryRef.current === pendingQuery) return;
+    consumedQueryRef.current = pendingQuery;
+    setQuery(pendingQuery);
+    search(pendingQuery);
+    onPendingQueryConsumed?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingQuery]);
 
   const search = async (q = query) => {
     if (!q.trim()) return;
@@ -113,7 +125,7 @@ export default function FindStation({ demoMode, onResultsChange }: FindStationPr
     if (explains[key]) {
       setVisibleExplains(prev => {
         const next = new Set(prev);
-        next.has(key) ? next.delete(key) : next.add(key);
+        if (next.has(key)) { next.delete(key); } else { next.add(key); }
         return next;
       });
       return;

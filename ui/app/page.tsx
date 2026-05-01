@@ -26,6 +26,7 @@ export default function Home() {
   const [station, setStation] = useState<Station>('ingest');
   const [demoMode, setDemoMode] = useState(false);
   const [findResults, setFindResults] = useState<Hotel[]>([]);
+  const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
 
   // Read ?mode=demo hatch and persisted preferences on mount
@@ -100,11 +101,23 @@ export default function Home() {
             <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
               {station === 'ingest' && <IngestStation demoMode={demoMode} />}
               {station === 'find' && (
-                <FindStation demoMode={demoMode} onResultsChange={hotels => setFindResults(hotels)} />
+                <FindStation
+                  demoMode={demoMode}
+                  onResultsChange={hotels => setFindResults(hotels)}
+                  pendingQuery={pendingFindQuery}
+                  onPendingQueryConsumed={() => setPendingFindQuery(null)}
+                />
               )}
               {station === 'rank' && <RankStation demoMode={demoMode} />}
               {station === 'look' && <LookStation demoMode={demoMode} onVlmPrewarm={prewarmVlm} onSelectStation={s => setStation(s as Station)} />}
-              {station === 'describe' && <DescribeStation demoMode={demoMode} hotels={findResults} onSelectStation={s => setStation(s as Station)} />}
+              {station === 'describe' && (
+                <DescribeStation
+                  demoMode={demoMode}
+                  hotels={findResults}
+                  onSelectStation={s => setStation(s as Station)}
+                  onFindWithQuery={q => { setPendingFindQuery(q); setStation('find'); }}
+                />
+              )}
               {station === 'capstone' && <CapstoneStation searchResults={findResults} />}
               {station === 'agent' && <AgentStation />}
             </main>
