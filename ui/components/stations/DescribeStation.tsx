@@ -55,7 +55,7 @@ const PROMPT_PRESETS = [
   },
 ];
 
-const STANDARD_KEYS = new Set(['style', 'visibleAmenities', 'mood', 'guestProfile', 'standout', 'rawDescription']);
+const STANDARD_KEYS = new Set(['style', 'visibleAmenities', 'mood', 'guestProfile', 'standout']);
 
 function buildFindQuery(analysis: VlmAnalysis): string {
   const parts = [analysis.style, analysis.mood, analysis.standout, analysis.guestProfile]
@@ -75,10 +75,13 @@ interface VlmResult {
   hotel: Hotel;
   analysis: VlmAnalysis;
   overrideImageSrc?: string;
+  rawJson?: string;
 }
 
 function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWithQuery?: (q: string) => void }) {
-  const { hotel, analysis, overrideImageSrc } = result;
+  const { hotel, analysis, overrideImageSrc, rawJson } = result;
+  const parseFailed = !!(analysis as VlmAnalysis & { rawDescription?: string }).rawDescription;
+  const [showRaw, setShowRaw] = useState(parseFailed);
   const roomImg = hotel.image_paths?.[1] ?? hotel.image_paths?.[0];
   const imgSrc = overrideImageSrc ?? (roomImg ? resolveImageUrl(roomImg) : undefined);
   const extraKeys = Object.keys(analysis).filter(k => !STANDARD_KEYS.has(k));
@@ -111,6 +114,11 @@ function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWi
             </span>
           </div>
 
+          {parseFailed && (
+            <p className="text-xs mb-2 px-2 py-1 rounded" style={{ background: 'rgba(240,78,152,0.1)', color: 'var(--elastic-pink)', border: '1px solid rgba(240,78,152,0.25)' }}>
+              VLM returned plain text — JSON parse failed. Raw response shown below.
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="font-semibold mb-1" style={{ color: 'var(--text-muted)' }}>Style</p>
@@ -153,14 +161,31 @@ function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWi
             ))}
           </div>
 
-          {onFindWithQuery && (
-            <button
-              onClick={() => onFindWithQuery(buildFindQuery(analysis))}
-              className="mt-3 text-sm px-3 py-1.5 rounded-lg font-semibold transition-all"
-              style={{ background: 'var(--elastic-purple)', color: '#fff' }}
-            >
-              Find hotels like this →
-            </button>
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            {onFindWithQuery && (
+              <button
+                onClick={() => onFindWithQuery(buildFindQuery(analysis))}
+                className="text-sm px-3 py-1.5 rounded-lg font-semibold transition-all"
+                style={{ background: 'var(--elastic-purple)', color: '#fff' }}
+              >
+                Find hotels like this →
+              </button>
+            )}
+            {rawJson && (
+              <button
+                onClick={() => setShowRaw(p => !p)}
+                className="text-sm px-3 py-1.5 rounded-lg font-semibold transition-all"
+                style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+              >
+                {showRaw ? 'Hide' : 'Show'} raw JSON
+              </button>
+            )}
+          </div>
+          {showRaw && rawJson && (
+            <pre className="mt-3 text-xs font-mono p-3 rounded-lg overflow-auto max-h-48 leading-relaxed"
+              style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+              {rawJson}
+            </pre>
           )}
         </div>
       </div>
@@ -170,11 +195,46 @@ function AnalysisCard({ result, onFindWithQuery }: { result: VlmResult; onFindWi
 
 const SAMPLE_HOTELS: Hotel[] = [
   {
-    id: 'demo-1', name: 'The Venetian Resort', descriptions: [],
-    location: { lat: 36.1214, lon: -115.1699 }, location_name: 'Las Vegas, NV',
+    id: 'demo-venetian', name: 'The Venetian Resort Las Vegas', descriptions: [],
+    location: { lat: 36.121, lon: -115.17 }, location_name: 'Las Vegas, NV',
     country: 'USA', region: 'Nevada', amenities: [], style: ['luxury'],
     price_tier: 'luxury', price_per_night_usd: 450,
-    image_paths: ['/images/hotels/venetian-las-vegas_1.png'], rating: 4.7, nearby_landmarks: [],
+    image_paths: ['/images/hotels/the-venetian-resort-las-vegas_1.png', '/images/hotels/the-venetian-resort-las-vegas_2.png'], rating: 4.6, nearby_landmarks: [],
+  },
+  {
+    id: 'demo-bellagio', name: 'Bellagio', descriptions: [],
+    location: { lat: 36.1126, lon: -115.1767 }, location_name: 'Las Vegas, NV',
+    country: 'USA', region: 'Nevada', amenities: [], style: ['luxury'],
+    price_tier: 'luxury', price_per_night_usd: 350,
+    image_paths: ['/images/hotels/bellagio-las-vegas_1.png', '/images/hotels/bellagio-las-vegas_2.png'], rating: 4.7, nearby_landmarks: [],
+  },
+  {
+    id: 'demo-wynn', name: 'Wynn Las Vegas', descriptions: [],
+    location: { lat: 36.1254, lon: -115.1699 }, location_name: 'Las Vegas, NV',
+    country: 'USA', region: 'Nevada', amenities: [], style: ['luxury'],
+    price_tier: 'luxury', price_per_night_usd: 380,
+    image_paths: ['/images/hotels/wynn-las-vegas_1.png', '/images/hotels/wynn-las-vegas_2.png'], rating: 4.8, nearby_landmarks: [],
+  },
+  {
+    id: 'demo-cromwell', name: 'The Cromwell Las Vegas', descriptions: [],
+    location: { lat: 36.1167, lon: -115.172 }, location_name: 'Las Vegas, NV',
+    country: 'USA', region: 'Nevada', amenities: [], style: ['boutique'],
+    price_tier: 'luxury', price_per_night_usd: 200,
+    image_paths: ['/images/hotels/the-cromwell-las-vegas_1.png', '/images/hotels/the-cromwell-las-vegas_2.png'], rating: 4.3, nearby_landmarks: [],
+  },
+  {
+    id: 'demo-flamingo', name: 'Flamingo Las Vegas', descriptions: [],
+    location: { lat: 36.1162, lon: -115.1699 }, location_name: 'Las Vegas, NV',
+    country: 'USA', region: 'Nevada', amenities: [], style: ['classic'],
+    price_tier: 'mid', price_per_night_usd: 120,
+    image_paths: ['/images/hotels/flamingo-las-vegas_1.png', '/images/hotels/flamingo-las-vegas_2.png'], rating: 4.1, nearby_landmarks: [],
+  },
+  {
+    id: 'demo-circus', name: 'Circus Circus Las Vegas', descriptions: [],
+    location: { lat: 36.1369, lon: -115.1654 }, location_name: 'Las Vegas, NV',
+    country: 'USA', region: 'Nevada', amenities: [], style: ['family'],
+    price_tier: 'budget', price_per_night_usd: 60,
+    image_paths: ['/images/hotels/circus-circus-las-vegas_1.png', '/images/hotels/circus-circus-las-vegas_2.png'], rating: 3.9, nearby_landmarks: [],
   },
 ];
 
@@ -190,7 +250,13 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const displayHotels = hotels?.length ? hotels : SAMPLE_HOTELS;
+  const rawHotels = hotels?.length ? hotels : SAMPLE_HOTELS;
+  const seen = new Set<string>();
+  const displayHotels = rawHotels.filter(h => {
+    if (seen.has(h.name)) return false;
+    seen.add(h.name);
+    return true;
+  });
 
   const analyze = async (hotel: Hotel) => {
     if (loading) return;
@@ -225,7 +291,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
         return;
       }
 
-      setResults(prev => [{ hotel, analysis: data.analysis }, ...prev.filter(r => r.hotel.id !== hotel.id)]);
+      setResults(prev => [{ hotel, analysis: data.analysis, rawJson: data.rawJson }, ...prev.filter(r => r.hotel.id !== hotel.id)]);
       onVlmResult?.(hotel, data.analysis);
     } finally {
       setLoading(null);
@@ -269,7 +335,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
       }
 
       setResults(prev => [
-        { hotel: fakeHotel, analysis: data.analysis, overrideImageSrc: dataUrl },
+        { hotel: fakeHotel, analysis: data.analysis, overrideImageSrc: dataUrl, rawJson: data.rawJson },
         ...prev.filter(r => r.hotel.id !== '__upload'),
       ]);
     } finally {

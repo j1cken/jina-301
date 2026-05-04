@@ -8,8 +8,8 @@ dev:
 dev-prod:
 	cd ui && npm run build && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && set -a && . .env.local && set +a && PORT=3000 node .next/standalone/server.js
 
-# Run in order: hotels → images → index → fallbacks
-all-data: hotels images index
+# Run in order: hotels → images → describe → index → fallbacks
+all-data: hotels images describe index
 
 # Quick smoke test: 2 hotels per region, 2 images each
 sample-data:
@@ -22,6 +22,9 @@ hotels:
 
 images:
 	$(PYTHON) scripts/generate_images.py
+
+describe:
+	$(PYTHON) scripts/describe_hotels.py
 
 index:
 	$(PYTHON) scripts/index_hotels.py

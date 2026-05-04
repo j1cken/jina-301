@@ -131,7 +131,10 @@ def create_index(force: bool = False):
 
 
 def build_doc(hotel: dict) -> dict:
-    descriptions = hotel.get("descriptions", [])
+    descriptions = list(hotel.get("descriptions", []))
+    room_desc = hotel.get("room_description")
+    if room_desc:
+        descriptions = descriptions + [room_desc]
     doc = {
         "id": hotel["id"],
         "name": hotel["name"],

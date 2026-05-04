@@ -114,20 +114,49 @@ export async function POST(req: NextRequest) {
     const data = await vlmRes.json();
     const raw = data?.choices?.[0]?.message?.content ?? '';
 
-    const parsed = VlmSchema.safeParse(JSON.parse(stripFences(raw)));
+    let parsedJson: Record<string, unknown> | null = null;
+    try {
+      const j = JSON.parse(stripFences(raw));
+      if (j && typeof j === 'object' && !Array.isArray(j)) parsedJson = j as Record<string, unknown>;
+    } catch { /* fall through */ }
+
+    const parsed = parsedJson ? VlmSchema.safeParse(parsedJson) : { success: false as const };
     if (parsed.success) {
-      return NextResponse.json({ analysis: parsed.data });
+      return NextResponse.json({ analysis: parsed.data, rawJson: raw });
     }
 
-    // Fallback: return raw as description
+    // Partial fallback: JSON parsed but failed schema — salvage whatever fields are present
+    // rather than dumping raw JSON into the mood field.
+    if (parsedJson) {
+      const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+      const arr = (v: unknown) => (Array.isArray(v) ? (v as unknown[]).filter(x => typeof x === 'string') as string[] : []);
+      return NextResponse.json({
+        analysis: {
+          style: str(parsedJson.style) ?? 'Hotel',
+          visibleAmenities: arr(parsedJson.visibleAmenities),
+          mood: str(parsedJson.mood) ?? '',
+          guestProfile: str(parsedJson.guestProfile) ?? '',
+          standout: str(parsedJson.standout),
+          ...Object.fromEntries(
+            Object.entries(parsedJson).filter(([k]) =>
+              !['style','visibleAmenities','mood','guestProfile','standout'].includes(k)
+            )
+          ),
+        },
+        rawJson: raw,
+      });
+    }
+
+    // Full fallback: VLM returned non-JSON — surface it in rawDescription only
     return NextResponse.json({
       analysis: {
         style: 'Hotel',
         visibleAmenities: [],
-        mood: raw.slice(0, 200),
+        mood: '',
         guestProfile: '',
         rawDescription: raw,
       },
+      rawJson: raw,
     });
   }
 

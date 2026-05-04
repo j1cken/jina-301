@@ -22,8 +22,11 @@ export async function POST(req: NextRequest) {
 
   const geo: GeoFilter | undefined = geoFilter;
   const naiveStart = Date.now();
-  const { naive, reranked } = await searchWithReranker(query, geo);
-  const rerankTook = Date.now() - naiveStart;
-
-  return NextResponse.json({ naive, reranked, naiveTook: rerankTook, rerankTook });
+  try {
+    const { naive, reranked } = await searchWithReranker(query, geo);
+    const rerankTook = Date.now() - naiveStart;
+    return NextResponse.json({ naive, reranked, naiveTook: rerankTook, rerankTook });
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

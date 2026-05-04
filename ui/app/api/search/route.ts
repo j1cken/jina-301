@@ -41,10 +41,13 @@ export async function POST(req: NextRequest) {
   const geo: GeoFilter | undefined = geoFilter;
   const start = Date.now();
 
-  const [semantic, bm25] = await Promise.all([
-    searchSemantic(query, geo),
-    searchBm25(query, geo),
-  ]);
-
-  return NextResponse.json({ semantic, bm25, hybrid: rrf(semantic, bm25), took: Date.now() - start });
+  try {
+    const [semantic, bm25] = await Promise.all([
+      searchSemantic(query, geo),
+      searchBm25(query, geo),
+    ]);
+    return NextResponse.json({ semantic, bm25, hybrid: rrf(semantic, bm25), took: Date.now() - start });
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

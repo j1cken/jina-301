@@ -14,8 +14,8 @@ interface HotelDetailModalProps {
 }
 
 export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilterByTag, onEnableGeo }: HotelDetailModalProps) {
-  const primaryImage = resolveImageUrl(hotel.image_paths?.[0]);
   const [descExpanded, setDescExpanded] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -47,15 +47,50 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
 
         {/* Hero image */}
         <div className="relative" style={{ height: '280px', background: 'var(--bg-surface)' }}>
-          {primaryImage ? (
-            <img src={primaryImage} alt={hotel.name} className="w-full h-full object-cover" />
+          {hotel.image_paths?.[activeIdx] ? (
+            <img src={resolveImageUrl(hotel.image_paths[activeIdx])} alt={hotel.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-6xl">🏨</div>
           )}
         </div>
 
+        {(hotel.image_paths?.length ?? 0) > 1 && (
+          <div className="flex gap-2 px-4 py-2" style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
+            {hotel.image_paths!.map((src, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveIdx(i)}
+                className="relative flex-shrink-0 rounded-lg overflow-hidden transition-all"
+                style={{
+                  width: 72, height: 52,
+                  border: `2px solid ${activeIdx === i ? 'var(--elastic-blue)' : 'var(--border)'}`,
+                  opacity: activeIdx === i ? 1 : 0.6,
+                }}
+              >
+                <img src={resolveImageUrl(src)} alt={i === 0 ? 'Exterior' : 'Room'} className="w-full h-full object-cover" />
+                <span
+                  className="absolute bottom-0 left-0 right-0 text-center"
+                  style={{ fontSize: '9px', background: 'rgba(0,0,0,0.55)', color: '#fff', padding: '1px 0' }}
+                >
+                  {i === 0 ? 'Exterior' : 'Room'}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Content */}
         <div className="p-6">
+          {activeIdx > 0 && hotel.room_description && (
+            <div className="mb-4 p-3 rounded-xl" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--elastic-purple)' }}>
+                Room · VLM Analysis
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {hotel.room_description}
+              </p>
+            </div>
+          )}
           {/* Title row */}
           <div className="flex items-start justify-between gap-4 mb-3">
             <h2 className="font-bold" style={{ color: 'var(--text-primary)', fontSize: '1.5rem', lineHeight: '1.2' }}>

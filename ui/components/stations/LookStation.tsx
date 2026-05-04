@@ -45,12 +45,16 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64, mimeType: mime, demoMode }),
       });
+      if (!res.ok) throw new Error(`CLIP API error ${res.status}`);
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       logFn?.('[ok] Embedding + kNN complete');
       const hotels = data.results ?? [];
       setResults(hotels);
       setVectorPreview(data.query_vector_preview ?? null);
       logFn?.(`[ok] ${hotels.length} hotels found`);
+    } catch (err) {
+      logFn?.(`[err] ${(err as Error).message}`);
     } finally {
       setLoading(false);
       inFlightRef.current = false;
@@ -99,10 +103,12 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
     setVectorPreview(null);
     setPreview(resolveImageUrl(src) ?? src);
 
-    const resolvedUrl = resolveImageUrl(src) ?? src;
+    // Use same-origin URL for fetch() to avoid CORS with GCS bucket.
+    // resolveImageUrl is kept for <img> display only.
+    const fetchUrl = apiUrl(src);
     addLog('[ok] Fetching image bytes...');
     try {
-      const res = await fetch(resolvedUrl);
+      const res = await fetch(fetchUrl);
       if (!res.ok || !res.headers.get('content-type')?.startsWith('image/')) {
         addLog('[err] Failed to load image — check path');
         setLoading(false);

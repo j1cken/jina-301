@@ -21,6 +21,7 @@ export interface Hotel {
   image_embedding?: number[];
   rating: number;
   nearby_landmarks: string[];
+  room_description?: string;
   score?: number;
 }
 

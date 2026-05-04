@@ -15,6 +15,9 @@ const DEMO_QUERIES = [
   'romantic beachfront with private pool villa and spa',
   'boutique heritage hotel with authentic local architecture',
   'eco-lodge for wildlife photography safaris',
+  'gemütliches Boutique-Hotel mit historischem Charme',  // German: cozy boutique hotel with historic charm
+  'resort balnéaire élégant avec accès direct à la plage', // French: elegant seaside resort with direct beach access
+  'プールと山の景色を望む高級リゾート',                              // Japanese: luxury resort with pool and mountain views
 ];
 
 interface RankStationProps {

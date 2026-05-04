@@ -49,11 +49,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JINA_API_KEY not configured' }, { status: 503 });
   }
 
-  const vector = await getClipEmbedding(imageBase64, mimeType ?? 'image/jpeg', apiKey);
-  const results = await searchByClipVector(vector);
-
-  return NextResponse.json({
-    results,
-    query_vector_preview: vector.slice(0, 8),
-  });
+  try {
+    const vector = await getClipEmbedding(imageBase64, mimeType ?? 'image/jpeg', apiKey);
+    const results = await searchByClipVector(vector);
+    return NextResponse.json({ results, query_vector_preview: vector.slice(0, 8) });
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

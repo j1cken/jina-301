@@ -18,6 +18,9 @@ const DEMO_QUERIES = [
   'romantic beachfront with ocean view',
   'luxury spa resort with mountain views',
   'boutique city hotel near historic district',
+  'ruhiges Hotel mit Bergblick und Wellnessbereich',      // German: quiet hotel with mountain view and wellness
+  'hôtel de luxe avec piscine privée et vue sur mer',    // French: luxury hotel with private pool and sea view
+  '静かな温泉旅館、伝統的な日本建築',                              // Japanese: quiet hot spring inn, traditional architecture
 ];
 
 const VENETIAN = { lat: 36.1214, lon: -115.1699 };
@@ -56,6 +59,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedModal, setSelectedModal] = useState<Hotel | null>(null);
   const [view, setView] = useState<ViewMode>('single');
   const [leftMode, setLeftMode] = useState<SearchMode>('semantic');
@@ -100,6 +104,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
     setExplains({});
     setVisibleExplains(new Set());
     setMapExpanded(false);
+    setSearchError(null);
 
     const geo: GeoFilter | undefined = useGeo
       ? { ...VENETIAN, radiusMiles: 0.5 }
@@ -111,9 +116,15 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: q, geoFilter: geo, demoMode }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? `Search failed (${res.status})`);
+      }
       const data = await res.json();
       setResults(data);
       onResultsChange?.(data[leftMode] ?? data.semantic ?? []);
+    } catch (err) {
+      setSearchError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -145,6 +156,8 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
         setExplains(prev => ({ ...prev, [key]: { hotelId: hotel.id, ...data } }));
         setVisibleExplains(prev => new Set([...Array.from(prev), key]));
       }
+    } catch {
+      // explain is non-critical; silently swallow — user can retry by clicking "Why?" again
     } finally {
       setLoadingExplain(null);
     }
@@ -167,7 +180,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
 
   const modeTag = (mode: SearchMode) => ({
     semantic: 'Semantic understands meaning — not just keywords',
-    bm25: 'BM25 matches keywords — not meaning',
+    bm25: 'BM25 matches keywords — no meaning, no location awareness',
     hybrid: 'Hybrid blends semantic + BM25 results via RRF',
   }[mode]);
 
@@ -227,6 +240,14 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
 
       {/* Results */}
       <div className="space-y-2">
+        {results && getList(col).length === 0 && !loading && (
+          <div className="p-3 rounded-lg text-xs" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+            {col === 'bm25'
+              ? <>No keyword matches{useGeo ? ' within 0.5mi of The Venetian' : ''}. BM25 requires exact words — it can&apos;t match slang or inferred meaning. <span style={{ color: 'var(--elastic-blue)' }}>Try Semantic or Hybrid.</span></>
+              : <>No results{useGeo ? ' within 0.5mi of The Venetian' : ''}.</>
+            }
+          </div>
+        )}
         {getList(col).slice(0, 5).map((hotel, i) => {
           const key = `${hotel.id}-${col}`;
           const exp = explains[key];
@@ -298,6 +319,12 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
         loadingMessage="Jina Embeddings v5 text-small is converting your query to a vector and searching all hotel descriptions..."
         doneMessage="Embeddings understood your intent, not just your keywords. Try Side by Side to compare with BM25 or Hybrid."
       />
+
+      {searchError && (
+        <div className="p-3 rounded-lg text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+          Search error: {searchError}
+        </div>
+      )}
 
       <div className="space-y-3">
         <SearchBar
