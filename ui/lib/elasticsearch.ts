@@ -145,16 +145,7 @@ export async function searchWithReranker(
       naiveRank,
       rerankedRank,
       rankDelta: naiveRank - rerankedRank,
-      matchExplanation: (() => {
-        const lookup = getExplanation(query, hotel.name);
-        if (lookup) return lookup;
-        const rankDelta = naiveRank - rerankedRank;
-        if (rankDelta === 0) return undefined;
-        const querySnippet = query.split(' ').slice(0, 4).join(' ');
-        return rankDelta > 0
-          ? `Reranker v3 read every candidate's full description against "${querySnippet}..." with cross-attention. This hotel's semantics aligned more deeply — moved up ${rankDelta} position${rankDelta !== 1 ? 's' : ''}.`
-          : `Reranker v3 found lower contextual alignment with "${querySnippet}..." when reading the full description. Dropped ${Math.abs(rankDelta)} position${Math.abs(rankDelta) !== 1 ? 's' : ''}.`;
-      })(),
+      matchExplanation: getExplanation(query, hotel.name) ?? undefined,
     };
   });
 

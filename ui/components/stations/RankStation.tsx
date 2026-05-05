@@ -10,6 +10,8 @@ import type { RerankResponse, RankedHotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
 import { apiUrl } from '@/lib/api';
 
+const VENETIAN = { lat: 36.1214, lon: -115.1699 };
+
 const DEMO_QUERIES = [
   'quiet hotel for focused remote work, no casino noise',
   'romantic beachfront with private pool villa and spa',
@@ -41,8 +43,38 @@ function RankDelta({ delta }: { delta: number }) {
   return <div className="flex items-center gap-1 rank-same text-sm"><Minus className="w-4 h-4" /></div>;
 }
 
-function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank: number; showExplanation?: boolean }) {
+function RankedCard({ hotel, rank, showExplanation, query }: { hotel: RankedHotel; rank: number; showExplanation?: boolean; query?: string }) {
   const [expanded, setExpanded] = useState(false);
+  const [loadingLlm, setLoadingLlm] = useState(false);
+  const [llmExplanation, setLlmExplanation] = useState<string | null>(null);
+
+  const canOnDemand = showExplanation && !hotel.matchExplanation && hotel.rankDelta !== 0 && !!query;
+  const activeExplanation = hotel.matchExplanation ?? llmExplanation;
+
+  const handleWhyClick = async () => {
+    if (activeExplanation) {
+      setExpanded(e => !e);
+      return;
+    }
+    if (loadingLlm || !canOnDemand) return;
+    setLoadingLlm(true);
+    setExpanded(true);
+    try {
+      const res = await fetch(apiUrl('/api/explain-rank'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, hotelId: hotel.id, delta: hotel.rankDelta }),
+      });
+      const data = await res.json();
+      setLlmExplanation(data.explanation ?? null);
+    } catch {
+      setLlmExplanation(`Moved ${hotel.rankDelta > 0 ? 'up' : 'down'} ${Math.abs(hotel.rankDelta)} positions after reranking.`);
+    } finally {
+      setLoadingLlm(false);
+    }
+  };
+
+  const showWhyButton = showExplanation && (hotel.matchExplanation || canOnDemand);
 
   return (
     <motion.div
@@ -79,10 +111,10 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
           </div>
         )}
 
-        {showExplanation && hotel.matchExplanation && (
+        {showWhyButton && (
           <button
             data-bp-chip="pink"
-            onClick={() => setExpanded(!expanded)}
+            onClick={handleWhyClick}
             className="flex-shrink-0 px-2 py-1 rounded text-xs font-semibold transition-colors"
             style={{
               background: 'rgba(240,78,152,0.12)',
@@ -90,13 +122,13 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
               color: 'var(--elastic-pink)',
             }}
           >
-            Why?
+            {loadingLlm ? '…' : (activeExplanation && expanded) ? '▲ Hide' : 'Why?'}
           </button>
         )}
       </div>
 
       <AnimatePresence>
-        {expanded && hotel.matchExplanation && (
+        {expanded && (activeExplanation || loadingLlm) && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -104,9 +136,13 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
             className="overflow-hidden"
           >
             <div className="px-4 pb-3 jina-callout mx-3 mb-3">
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {hotel.matchExplanation}
-              </p>
+              {loadingLlm && !activeExplanation ? (
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Asking Gemini to explain this result…</p>
+              ) : (
+                <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-secondary)' }}>
+                  {activeExplanation}
+                </p>
+              )}
             </div>
           </motion.div>
         )}
@@ -117,6 +153,7 @@ function RankedCard({ hotel, rank, showExplanation }: { hotel: RankedHotel; rank
 
 export default function RankStation({ demoMode, onTopRanked }: RankStationProps) {
   const [query, setQuery] = useState(DEMO_QUERIES[0]);
+  const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<RerankResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -128,11 +165,13 @@ export default function RankStation({ demoMode, onTopRanked }: RankStationProps)
     setResults(null);
     setError(null);
 
+    const geo = useGeo ? { ...VENETIAN, radiusMiles: 0.5 } : undefined;
+
     try {
       const res = await fetch(apiUrl('/api/rerank'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q, demoMode }),
+        body: JSON.stringify({ query: q, geoFilter: geo, demoMode }),
       });
       if (!res.ok) throw new Error(`Server error ${res.status}`);
       const data = await res.json();
@@ -181,6 +220,18 @@ export default function RankStation({ demoMode, onTopRanked }: RankStationProps)
           disabled={loading}
           suggestions={DEMO_QUERIES}
         />
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={useGeo}
+            onChange={e => setUseGeo(e.target.checked)}
+            className="w-4 h-4 accent-blue-500"
+          />
+          <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Filter: within 0.5 miles of The Venetian (demo geo filter)
+          </span>
+        </label>
       </div>
 
       {error && !loading && (
@@ -227,7 +278,7 @@ export default function RankStation({ demoMode, onTopRanked }: RankStationProps)
               </div>
               <div className="space-y-2">
                 {(results.reranked as RankedHotel[] ?? []).slice(0, 8).map((hotel, i) => (
-                  <RankedCard key={hotel.id} hotel={hotel} rank={i + 1} showExplanation />
+                  <RankedCard key={hotel.id} hotel={hotel} rank={i + 1} showExplanation query={query} />
                 ))}
               </div>
             </div>
