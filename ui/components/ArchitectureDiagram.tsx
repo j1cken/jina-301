@@ -1,64 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { STATION_META } from '@/lib/stationMeta';
+import type { FlowNode } from '@/lib/stationMeta';
 
-const FLOWS = [
-  {
-    station: 'INGEST',
-    model: 'Reader',
-    nodes: [
-      { label: 'Hotel URL', sub: 'input', variant: 'neutral' },
-      { label: 'Jina Reader API', sub: 'r.jina.ai', variant: 'jina' },
-      { label: 'Markdown Content', sub: 'parsed', variant: 'neutral' },
-      { label: 'Elasticsearch', sub: 'index write', variant: 'elastic' },
-      { label: 'Indexed Document', sub: 'stored', variant: 'neutral' },
-    ],
-  },
-  {
-    station: 'FIND',
-    model: 'Embeddings v5',
-    nodes: [
-      { label: 'Text Query', sub: 'input', variant: 'neutral' },
-      { label: 'Jina Embeddings v5', sub: 'via EIS', variant: 'jina' },
-      { label: 'Query Vector', sub: '384 dims', variant: 'neutral' },
-      { label: 'Elasticsearch kNN', sub: 'semantic_text', variant: 'elastic' },
-      { label: 'Hotel Results', sub: 'ranked by score', variant: 'neutral' },
-    ],
-  },
-  {
-    station: 'RANK',
-    model: 'Reranker v3',
-    nodes: [
-      { label: 'Query + Candidates', sub: 'from Find', variant: 'neutral' },
-      { label: 'Jina Reranker v3', sub: 'via EIS', variant: 'jina' },
-      { label: 'Relevance Scores', sub: 'cross-attention', variant: 'neutral' },
-      { label: 'Reranked Hotels', sub: 'final order', variant: 'neutral' },
-    ],
-  },
-  {
-    station: 'LOOK',
-    model: 'CLIP v2',
-    nodes: [
-      { label: 'Image Upload', sub: 'input', variant: 'neutral' },
-      { label: 'Jina CLIP v2', sub: 'via EIS', variant: 'jina' },
-      { label: 'Image Vector', sub: '512 dims', variant: 'neutral' },
-      { label: 'Elasticsearch kNN', sub: 'dense_vector', variant: 'elastic' },
-      { label: 'Visual Matches', sub: 'similar hotels', variant: 'neutral' },
-    ],
-  },
-  {
-    station: 'DESCRIBE',
-    model: 'VLM',
-    nodes: [
-      { label: 'Hotel Image', sub: 'input', variant: 'neutral' },
-      { label: 'Jina VLM', sub: 'api-beta-vlm.jina.ai', variant: 'jina' },
-      { label: 'JSON Analysis', sub: 'structured', variant: 'neutral' },
-      { label: 'Style · Mood · Amenities', sub: 'rendered card', variant: 'neutral' },
-    ],
-  },
-];
+// Stations shown in the architecture diagram (excludes capstone + agent which have no flow)
+const DIAGRAM_STATIONS = STATION_META.filter(s => s.flow.length > 0 && s.id !== 'capstone' && s.id !== 'agent');
 
-function FlowNode({ label, sub, variant }: { label: string; sub: string; variant: string }) {
+export function FlowNodeComponent({ label, sub, variant }: FlowNode) {
   const isJina = variant === 'jina';
   const isElastic = variant === 'elastic';
 
@@ -204,15 +153,15 @@ export default function ArchitectureDiagram() {
       </div>
 
       {/* Flow rows */}
-      {FLOWS.map((flow, i) => (
+      {DIAGRAM_STATIONS.map((station, i) => (
         <div
-          key={flow.station}
+          key={station.id}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0',
             padding: '10px 16px',
-            borderBottom: i < FLOWS.length - 1 ? '1px solid var(--border)' : 'none',
+            borderBottom: i < DIAGRAM_STATIONS.length - 1 ? '1px solid var(--border)' : 'none',
           }}
         >
           {/* Station label */}
@@ -226,7 +175,7 @@ export default function ArchitectureDiagram() {
               textTransform: 'uppercase',
               margin: 0,
             }}>
-              {flow.station}
+              {station.label.toUpperCase()}
             </p>
             <p style={{
               fontFamily: 'IBM Plex Mono, monospace',
@@ -236,16 +185,16 @@ export default function ArchitectureDiagram() {
               margin: '2px 0 0',
               opacity: 0.7,
             }}>
-              {flow.model}
+              {station.model}
             </p>
           </div>
 
           {/* Node chain */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'nowrap', overflowX: 'auto' }}>
-            {flow.nodes.map((node, ni) => (
+            {station.flow.map((node, ni) => (
               <span key={ni} style={{ display: 'contents' }}>
-                <FlowNode {...node} />
-                {ni < flow.nodes.length - 1 && <Arrow />}
+                <FlowNodeComponent {...node} />
+                {ni < station.flow.length - 1 && <Arrow />}
               </span>
             ))}
           </div>

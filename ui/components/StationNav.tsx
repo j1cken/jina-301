@@ -1,24 +1,7 @@
 'use client';
 
 import type { Station } from '@/lib/types';
-
-interface StationConfig {
-  id: Station;
-  label: string;
-  model: string;
-  icon: string;
-  color: string;
-}
-
-const STATIONS: StationConfig[] = [
-  { id: 'ingest', label: 'Ingest', model: 'Reader', icon: '🌐', color: '#FEC514' },
-  { id: 'find', label: 'Find', model: 'Embeddings v5', icon: '🔍', color: '#0077CC' },
-  { id: 'rank', label: 'Rank', model: 'Reranker v3', icon: '⚡', color: '#F04E98' },
-  { id: 'look', label: 'Look', model: 'CLIP v2', icon: '📷', color: '#00BFB3' },
-  { id: 'describe', label: 'Describe', model: 'VLM', icon: '👁', color: '#A855F7' },
-  { id: 'capstone', label: 'Data Flow', model: '5 Models', icon: '🔀', color: '#0077CC' },
-  { id: 'agent', label: 'Agent', model: 'Agent Builder', icon: '✨', color: '#00BFB3' },
-];
+import { STATION_META } from '@/lib/stationMeta';
 
 interface StationNavProps {
   active: Station;
@@ -31,7 +14,7 @@ export default function StationNav({ active, onSelect }: StationNavProps) {
       className="flex border-b overflow-x-auto"
       style={{ borderColor: 'var(--border)', background: 'var(--bg-surface)' }}
     >
-      {STATIONS.map(s => {
+      {STATION_META.map(s => {
         const isActive = s.id === active;
         return (
           <button

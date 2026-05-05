@@ -13,6 +13,8 @@ import CapstoneStation from '@/components/stations/CapstoneStation';
 import AgentStation from '@/components/stations/AgentStation';
 import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
+import StationInfoBand from '@/components/StationInfoBand';
+import StationDetailDrawer from '@/components/StationDetailDrawer';
 import { DemoModeContext } from '@/lib/demoMode';
 import type { Station, Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
 import { apiUrl } from '@/lib/api';
@@ -31,6 +33,7 @@ export default function Home() {
   const [analyzedHotel, setAnalyzedHotel] = useState<Hotel | undefined>(undefined);
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Read ?mode=demo hatch and persisted preferences on mount
   useEffect(() => {
@@ -67,6 +70,9 @@ export default function Home() {
     localStorage.setItem('horizonDemoMode', 'false');
   }, []);
 
+  // Auto-close drawer when switching stations
+  useEffect(() => { setDrawerOpen(false); }, [station]);
+
   const prewarmVlm = useCallback(() => {
     fetch(apiUrl('/api/vision'), {
       method: 'POST',
@@ -101,6 +107,8 @@ export default function Home() {
               onToggleView={() => setViewMode(v => v === 'travel' ? 'demo' : 'travel')}
             />
             <StationNav active={station} onSelect={setStation} />
+            <StationInfoBand station={station} onOpenDrawer={() => setDrawerOpen(true)} />
+            <StationDetailDrawer station={station} isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
             <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
               {station === 'ingest' && <IngestStation demoMode={demoMode} />}
               {station === 'find' && (
