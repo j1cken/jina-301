@@ -10,7 +10,8 @@ interface ChatHotelCardProps {
 
 export default function ChatHotelCard({ hotel, onOpen }: ChatHotelCardProps) {
   const image = resolveImageUrl(hotel.image_paths?.[0]);
-  const desc = hotel.description?.slice(0, 90) + (hotel.description?.length > 90 ? '…' : '');
+  const raw = hotel.descriptions?.[0] ?? hotel.description ?? '';
+  const desc = raw ? raw.slice(0, 90) + (raw.length > 90 ? '…' : '') : '';
 
   return (
     <button

@@ -6,9 +6,22 @@ import { apiUrl, BASE_PATH } from '@/lib/api';
 export interface ChatHotel {
   id: string;
   name: string;
-  description: string;
+  // Tier 1 hotels (8 hand-crafted) use singular; Tier 2 (129 generated) use array
+  description?: string;
+  descriptions?: string[];
   image_paths: string[];
   room_description?: string;
+  // Rich fields present on Tier 2 hotels — passed through to the detail modal
+  rating?: number;
+  price_per_night_usd?: number;
+  price_tier?: string;
+  amenities?: string[];
+  style?: string[];
+  location?: { lat: number; lon: number };
+  location_name?: string;
+  country?: string;
+  region?: string;
+  nearby_landmarks?: string[];
 }
 
 export interface ToolCall {
