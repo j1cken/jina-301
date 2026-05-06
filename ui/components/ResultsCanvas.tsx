@@ -3,6 +3,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Search, Sparkles } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
+import type { ChatHotel } from '@/hooks/useAgentChat';
+import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 import { apiUrl } from '@/lib/api';
 import { useDemoMode } from '@/lib/demoMode';
 import TravelHotelCard from '@/components/TravelHotelCard';
@@ -11,7 +13,7 @@ import TripCart from '@/components/TripCart';
 interface ResultsCanvasProps {
   onContextChange: (context: string) => void;
   onOpenHotel: (hotel: Hotel) => void;
-  agentPickIds?: string[];
+  agentHotels?: ChatHotel[];
 }
 
 function SkeletonCard() {
@@ -27,7 +29,7 @@ function SkeletonCard() {
   );
 }
 
-export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickIds = [] }: ResultsCanvasProps) {
+export default function ResultsCanvas({ onContextChange, onOpenHotel, agentHotels = [] }: ResultsCanvasProps) {
   const demoMode = useDemoMode();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Hotel[]>([]);
@@ -55,17 +57,22 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickI
     }
   }, [demoMode]);
 
+  // Convert agent's ChatHotel[] → Hotel[] for display
+  const agentHotelsFull = useMemo(
+    () => agentHotels.map(chatHotelToHotel),
+    [agentHotels]
+  );
+
+  // Manual search results split into agent-recommended vs rest
   const { picks, rest } = useMemo(() => {
-    if (!agentPickIds.length) return { picks: [], rest: results };
-    const pickSet = new Set(agentPickIds.map(id => id.toLowerCase()));
-    const picks = results.filter(h =>
-      pickSet.has(h.id.toLowerCase()) || pickSet.has(h.name.toLowerCase())
-    );
-    const rest = results.filter(h =>
-      !pickSet.has(h.id.toLowerCase()) && !pickSet.has(h.name.toLowerCase())
-    );
+    if (!agentHotels.length || !results.length) return { picks: [], rest: results };
+    const pickSet = new Set(agentHotels.map(h => h.name.toLowerCase()));
+    const picks = results.filter(h => pickSet.has(h.name.toLowerCase()));
+    const rest = results.filter(h => !pickSet.has(h.name.toLowerCase()));
     return { picks, rest };
-  }, [results, agentPickIds]);
+  }, [results, agentHotels]);
+
+  const hasContent = agentHotelsFull.length > 0 || searched;
 
   return (
     <div className="flex flex-col h-full">
@@ -113,7 +120,7 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickI
 
       {/* Results area */}
       <div className="flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: 0 }}>
-        {!searched && (
+        {!hasContent && (
           <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center"
@@ -145,19 +152,44 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickI
           </div>
         )}
 
+        {/* Agent-recommended hotels — shown whenever concierge responds */}
+        {!loading && agentHotelsFull.length > 0 && (
+          <div className="mb-5">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--elastic-teal)' }} />
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--elastic-teal)' }}>
+                AI Picks
+              </span>
+            </div>
+            <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+              {agentHotelsFull.map(h => (
+                <div key={h.id} className="relative">
+                  <div
+                    className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1"
+                    style={{ background: 'rgba(0,191,179,0.9)', color: '#fff', backdropFilter: 'blur(4px)' }}
+                  >
+                    <Sparkles className="w-3 h-3" /> AI Pick
+                  </div>
+                  <TravelHotelCard hotel={h} onClick={() => onOpenHotel(h)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Manual search results */}
         {!loading && searched && (
           <>
             {picks.length > 0 && (
               <div className="mb-5">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--elastic-teal)' }} />
-                  <span
-                    className="text-xs font-bold uppercase tracking-wider"
-                    style={{ color: 'var(--elastic-teal)' }}
-                  >
-                    AI Picks
-                  </span>
-                </div>
+                {agentHotelsFull.length === 0 && (
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--elastic-teal)' }} />
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--elastic-teal)' }}>
+                      AI Picks
+                    </span>
+                  </div>
+                )}
                 <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
                   {picks.map(h => (
                     <div key={h.id} className="relative">
@@ -176,7 +208,7 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickI
 
             {rest.length > 0 && (
               <div>
-                {picks.length > 0 && (
+                {(picks.length > 0 || agentHotelsFull.length > 0) && (
                   <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>All Results</p>
                 )}
                 <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
@@ -187,7 +219,7 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentPickI
               </div>
             )}
 
-            {results.length === 0 && !error && (
+            {results.length === 0 && !error && agentHotelsFull.length === 0 && (
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🔍</div>
                 <p className="text-sm" style={{ color: 'var(--text-muted)' }}>

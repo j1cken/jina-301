@@ -300,8 +300,12 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
                   onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')} />
               </div>
               <button onClick={() => runSearch(query)} disabled={loading || !query.trim()}
-                style={{ padding: '13px 28px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px', justifyContent: 'center', background: query.trim() ? 'var(--elastic-blue)' : 'var(--border)', color: query.trim() ? '#fff' : 'var(--text-muted)', border: 'none', cursor: query.trim() ? 'pointer' : 'not-allowed', transition: 'background 0.2s' }}>
+                style={{ padding: '13px 24px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', background: query.trim() ? 'var(--elastic-blue)' : 'var(--border)', color: query.trim() ? '#fff' : 'var(--text-muted)', border: 'none', cursor: query.trim() ? 'pointer' : 'not-allowed', transition: 'background 0.2s' }}>
                 {loading ? <><span className="animate-spin inline-block">⟳</span> Searching</> : 'Search'}
+              </button>
+              <button onClick={() => onOpenAgent(query || undefined)}
+                style={{ padding: '13px 20px', fontSize: '0.95rem', fontWeight: 700, borderRadius: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center', background: 'rgba(0,191,179,0.12)', color: 'var(--elastic-teal)', border: '1.5px solid rgba(0,191,179,0.35)', cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
+                <Sparkles className="w-4 h-4" /> Ask AI
               </button>
             </div>
             {/* Row 2: Cosmetic detail chips */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { X, Zap } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import type { ChatHotel } from '@/hooks/useAgentChat';
@@ -16,14 +16,29 @@ interface TravelSplitViewProps {
 
 export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }: TravelSplitViewProps) {
   const [tripContext, setTripContext] = useState('');
-  const [agentPickIds, setAgentPickIds] = useState<string[]>([]);
+  const [agentHotels, setAgentHotels] = useState<ChatHotel[]>([]);
+  const [visible, setVisible] = useState(false);
+
+  // Fade-in on mount
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const handleOpenHotelFromChat = useCallback((chatHotel: ChatHotel) => {
     onOpenHotel(chatHotelToHotel(chatHotel));
   }, [onOpenHotel]);
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col" style={{ background: 'var(--bg-base)' }}>
+    <div
+      className="fixed inset-0 z-40 flex flex-col"
+      style={{
+        background: 'var(--bg-base)',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(8px)',
+        transition: 'opacity 0.18s ease-out, transform 0.18s ease-out',
+      }}
+    >
       {/* Slim top bar */}
       <div
         className="flex items-center justify-between px-5 flex-shrink-0"
@@ -70,7 +85,7 @@ export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }
           <ResultsCanvas
             onContextChange={setTripContext}
             onOpenHotel={onOpenHotel}
-            agentPickIds={agentPickIds}
+            agentHotels={agentHotels}
           />
         </div>
 
@@ -83,7 +98,7 @@ export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }
             panel
             initialMessage={initialMessage}
             tripContext={tripContext}
-            onAgentHotels={setAgentPickIds}
+            onAgentHotels={setAgentHotels}
             onOpenHotel={handleOpenHotelFromChat}
           />
         </div>

@@ -245,7 +245,7 @@ interface AgentChatProps {
   panel?: boolean;
   initialMessage?: string;
   tripContext?: string;
-  onAgentHotels?: (names: string[]) => void;
+  onAgentHotels?: (hotels: ChatHotel[]) => void;
   onOpenHotel?: (hotel: ChatHotel) => void;
 }
 
@@ -283,7 +283,7 @@ export default function AgentChat({
     if (!onAgentHotels) return;
     const last = messages[messages.length - 1];
     if (last?.role === 'assistant' && last.isComplete && last.hotels.length > 0) {
-      onAgentHotels(last.hotels.map(h => h.name));
+      onAgentHotels(last.hotels);
     }
   }, [messages, onAgentHotels]);
 
