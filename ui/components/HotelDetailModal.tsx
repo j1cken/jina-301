@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Star, MapPin, DollarSign, Search, CheckCircle, Calendar } from 'lucide-react';
+import { X, Star, MapPin, DollarSign, Search, CheckCircle, Calendar, ShoppingBag } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
+import { BookingConfirmation, generatePNR } from '@/components/BookingConfirmation';
 
 interface HotelDetailModalProps {
   hotel: Hotel;
@@ -11,66 +12,17 @@ interface HotelDetailModalProps {
   onFindSimilar?: (hotel: Hotel) => void;
   onFilterByTag?: (tag: string) => void;
   onEnableGeo?: () => void;
+  onAddToTrip?: (hotel: Hotel) => void;
+  inTrip?: boolean;
 }
 
-const VENETIAN_ID = 'the-venetian-resort-las-vegas';
-
-function BookingConfirmation({ hotel, onClose }: { hotel: Hotel; onClose: () => void }) {
-  const isVenetian = hotel.id === VENETIAN_ID;
-  const pnr = `HRZ-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-
-  return (
-    <div className="p-8 flex flex-col items-center text-center gap-4">
-      <div className="w-16 h-16 rounded-full flex items-center justify-center"
-        style={{ background: 'rgba(0,191,179,0.12)', border: '2px solid var(--elastic-teal)' }}>
-        <CheckCircle className="w-8 h-8" style={{ color: 'var(--elastic-teal)' }} />
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
-          Booking Confirmed!
-        </h3>
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          {hotel.name}
-        </p>
-      </div>
-
-      {isVenetian && (
-        <div className="rounded-xl px-4 py-3 w-full"
-          style={{ background: 'rgba(254,197,20,0.08)', border: '1px solid rgba(254,197,20,0.25)' }}>
-          <p className="text-sm font-semibold" style={{ color: 'var(--elastic-gold)' }}>
-            ✨ See you at the Venetian on May 13!
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-            We&apos;re literally there right now — enjoy SKO!
-          </p>
-        </div>
-      )}
-
-      <div className="rounded-xl px-4 py-3 w-full" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
-        <p className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--text-muted)' }}>Confirmation Code</p>
-        <p className="text-xl font-mono font-bold" style={{ color: 'var(--elastic-blue)', letterSpacing: '0.1em' }}>{pnr}</p>
-      </div>
-
-      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-        A confirmation has been sent to your email.{' '}
-        <span style={{ color: 'var(--elastic-blue)' }}>View itinerary →</span>
-      </p>
-
-      <button
-        onClick={onClose}
-        className="w-full py-2.5 rounded-xl text-sm font-semibold mt-2 transition-all hover:opacity-90"
-        style={{ background: 'var(--elastic-blue)', color: '#fff' }}>
-        Done
-      </button>
-    </div>
-  );
-}
-
-export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilterByTag, onEnableGeo }: HotelDetailModalProps) {
+export default function HotelDetailModal({
+  hotel, onClose, onFindSimilar, onFilterByTag, onEnableGeo, onAddToTrip, inTrip,
+}: HotelDetailModalProps) {
   const [descExpanded, setDescExpanded] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const [showBooking, setShowBooking] = useState(false);
+  const [pnr] = useState(() => generatePNR());
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -91,7 +43,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
         className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl"
         style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
       >
-        {/* Close */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full transition-all"
@@ -101,7 +52,7 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
         </button>
 
         {showBooking ? (
-          <BookingConfirmation hotel={hotel} onClose={onClose} />
+          <BookingConfirmation hotel={hotel} pnr={pnr} onClose={onClose} />
         ) : (
           <>
             {/* Hero image */}
@@ -138,7 +89,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
               </div>
             )}
 
-            {/* Content */}
             <div className="p-6">
               {activeIdx > 0 && hotel.room_description && (
                 <div className="mb-4 p-3 rounded-xl" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
@@ -151,7 +101,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
                 </div>
               )}
 
-              {/* Title row */}
               <div className="flex items-start justify-between gap-4 mb-3">
                 <h2 className="font-bold" style={{ color: 'var(--text-primary)', fontSize: '1.5rem', lineHeight: '1.2' }}>
                   {hotel.name}
@@ -166,7 +115,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
                 )}
               </div>
 
-              {/* Location + price */}
               <div className="flex items-center gap-4 mb-4">
                 {hotel.location_name && hotel.location_name.toLowerCase() !== 'unknown' && (
                   <button
@@ -190,7 +138,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
                 )}
               </div>
 
-              {/* Descriptions */}
               {descriptions.length > 0 && (
                 <div className="mb-4">
                   <p className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
@@ -213,7 +160,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
                 </div>
               )}
 
-              {/* Style tags */}
               {hotel.style?.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Style</p>
@@ -232,7 +178,6 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
                 </div>
               )}
 
-              {/* Amenities */}
               {hotel.amenities?.length > 0 && (
                 <div className="mb-6">
                   <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Amenities</p>
@@ -253,10 +198,32 @@ export default function HotelDetailModal({ hotel, onClose, onFindSimilar, onFilt
 
               {/* Actions */}
               <div className="flex gap-3 flex-wrap">
+                {/* Primary: Add to Trip */}
+                {onAddToTrip && (
+                  inTrip ? (
+                    <div
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+                      style={{ background: 'rgba(0,191,179,0.1)', color: 'var(--elastic-teal)', border: '1px solid rgba(0,191,179,0.3)' }}
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      In Trip
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { onAddToTrip(hotel); onClose(); }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+                      style={{ background: 'var(--elastic-blue)', color: '#fff' }}
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      Add to Trip
+                    </button>
+                  )
+                )}
+                {/* Secondary: Book Now (single-hotel flow) */}
                 <button
                   onClick={() => setShowBooking(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
-                  style={{ background: 'var(--elastic-blue)', color: '#fff' }}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                  style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
                 >
                   <Calendar className="w-4 h-4" />
                   Book Now

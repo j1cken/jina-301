@@ -8,10 +8,8 @@ import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 import { apiUrl } from '@/lib/api';
 import { useDemoMode } from '@/lib/demoMode';
 import TravelHotelCard from '@/components/TravelHotelCard';
-import TripCart from '@/components/TripCart';
 
 interface ResultsCanvasProps {
-  onContextChange: (context: string) => void;
   onOpenHotel: (hotel: Hotel) => void;
   agentHotels?: ChatHotel[];
 }
@@ -29,7 +27,7 @@ function SkeletonCard() {
   );
 }
 
-export default function ResultsCanvas({ onContextChange, onOpenHotel, agentHotels = [] }: ResultsCanvasProps) {
+export default function ResultsCanvas({ onOpenHotel, agentHotels = [] }: ResultsCanvasProps) {
   const demoMode = useDemoMode();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Hotel[]>([]);
@@ -76,8 +74,6 @@ export default function ResultsCanvas({ onContextChange, onOpenHotel, agentHotel
 
   return (
     <div className="flex flex-col h-full">
-      <TripCart onContextChange={onContextChange} />
-
       {/* Search bar */}
       <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="flex gap-2">

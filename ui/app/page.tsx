@@ -147,12 +147,11 @@ export default function Home() {
         )}
       </div>
 
-      {/* Split-view concierge — full-screen 65/35 layout */}
+      {/* Split-view concierge — full-screen 65/35 layout; owns its own hotel modal + cart */}
       {viewMode === 'split' && (
         <TravelSplitView
           initialMessage={splitInitialMessage}
           onClose={() => setViewMode('travel')}
-          onOpenHotel={setSelectedHotel}
         />
       )}
 

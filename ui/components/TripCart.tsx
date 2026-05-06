@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
-import { CalendarDays, Users, Minus, Plus, Copy, ChevronDown } from 'lucide-react';
+import { CalendarDays, Users, Minus, Plus, X, ShoppingBag, ChevronDown } from 'lucide-react';
+import type { Hotel } from '@/lib/types';
+import { BookingConfirmation, generatePNR } from '@/components/BookingConfirmation';
 
 export interface TripCartState {
   checkIn?: Date;
@@ -13,7 +15,13 @@ export interface TripCartState {
 }
 
 interface TripCartProps {
-  onContextChange: (context: string) => void;
+  cart: TripCartState;
+  setCart: (s: TripCartState) => void;
+  hotels: Hotel[];
+  onRemove: (id: string) => void;
+  onBook: () => void;
+  bookingPNR: string | null;
+  onContextChange?: (ctx: string) => void;
 }
 
 function fmt(d?: Date) {
@@ -21,142 +29,247 @@ function fmt(d?: Date) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function buildContext(s: TripCartState): string {
+function nightsBetween(a?: Date, b?: Date): number {
+  if (!a || !b) return 0;
+  const diff = b.getTime() - a.getTime();
+  return Math.max(0, Math.round(diff / 86400000));
+}
+
+function buildContext(cart: TripCartState): string {
   const parts: string[] = [];
-  if (s.tripName) parts.push(`Trip: "${s.tripName}"`);
-  if (s.checkIn && s.checkOut) {
-    parts.push(`Dates: ${fmt(s.checkIn)} – ${fmt(s.checkOut)}`);
-  } else if (s.checkIn) {
-    parts.push(`Check-in: ${fmt(s.checkIn)}`);
+  if (cart.tripName) parts.push(`Trip: "${cart.tripName}"`);
+  if (cart.checkIn && cart.checkOut) {
+    parts.push(`Dates: ${fmt(cart.checkIn)} – ${fmt(cart.checkOut)}`);
+  } else if (cart.checkIn) {
+    parts.push(`Check-in: ${fmt(cart.checkIn)}`);
   }
-  parts.push(`Guests: ${s.guests}`);
+  parts.push(`Guests: ${cart.guests}`);
   return parts.join(' · ');
 }
 
-export default function TripCart({ onContextChange }: TripCartProps) {
-  const [checkIn, setCheckIn] = useState<Date | undefined>();
-  const [checkOut, setCheckOut] = useState<Date | undefined>();
-  const [guests, setGuests] = useState(2);
-  const [tripName, setTripName] = useState('');
+export default function TripCart({ cart, setCart, hotels, onRemove, onBook, bookingPNR, onContextChange }: TripCartProps) {
   const [showIn, setShowIn] = useState(false);
   const [showOut, setShowOut] = useState(false);
-  const [copied, setCopied] = useState(false);
+  // Stable PNR — only used when bookingPNR is set externally (for trip booking flow)
+  const [singlePNR] = useState(() => generatePNR());
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleCopy = useCallback(() => {
-    const ctx = buildContext({ checkIn, checkOut, guests, tripName });
-    onContextChange(ctx);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  }, [checkIn, checkOut, guests, tripName, onContextChange]);
+  // Debounced context sync
+  useEffect(() => {
+    if (!onContextChange) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onContextChange(buildContext(cart));
+    }, 400);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [cart, onContextChange]);
+
+  const nights = nightsBetween(cart.checkIn, cart.checkOut);
+  const totalPrice = hotels.reduce((sum, h) => sum + (h.price_per_night_usd || 0), 0);
+
+  // Dummy hotel for trip-level booking confirmation (first hotel or fallback)
+  const primaryHotel = hotels[0];
+
+  const closePickers = useCallback(() => { setShowIn(false); setShowOut(false); }, []);
+
+  // Close pickers on outside click
+  useEffect(() => {
+    if (!showIn && !showOut) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-picker]')) closePickers();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showIn, showOut, closePickers]);
+
+  if (bookingPNR && primaryHotel) {
+    return (
+      <div className="h-full overflow-y-auto">
+        <BookingConfirmation
+          hotel={primaryHotel}
+          pnr={bookingPNR}
+          onClose={() => {/* parent controls bookingPNR */}}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="flex flex-wrap items-center gap-2 px-4 py-2.5 flex-shrink-0 relative z-20"
-      style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
-    >
-      {/* Trip name */}
-      <input
-        value={tripName}
-        onChange={e => setTripName(e.target.value)}
-        placeholder="Name this trip…"
-        className="text-sm bg-transparent outline-none"
-        style={{ color: 'var(--text-primary)', minWidth: '110px', maxWidth: '150px' }}
-      />
-      <span style={{ color: 'var(--border)' }}>|</span>
+    <div className="flex flex-col h-full" style={{ background: 'var(--bg-surface)' }}>
+      {/* Header */}
+      <div className="px-4 pt-3 pb-2 flex-shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="flex items-center gap-1.5 mb-2">
+          <ShoppingBag className="w-3.5 h-3.5" style={{ color: 'var(--elastic-blue)' }} />
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--elastic-blue)' }}>Trip</span>
+        </div>
 
-      {/* Check-in */}
-      <div className="relative">
-        <button
-          onClick={() => { setShowIn(s => !s); setShowOut(false); }}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm"
-          style={{
-            background: 'var(--bg-card)', border: '1px solid var(--border)',
-            color: checkIn ? 'var(--text-primary)' : 'var(--text-muted)',
-          }}
-        >
-          <CalendarDays className="w-3.5 h-3.5" />
-          {fmt(checkIn) ?? 'Check-in'}
-          <ChevronDown className="w-3 h-3 opacity-50" />
-        </button>
-        {showIn && (
-          <div
-            className="absolute top-full left-0 mt-1 z-50 rounded-xl shadow-xl"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            <DayPicker
-              mode="single"
-              selected={checkIn}
-              onSelect={d => { setCheckIn(d); setShowIn(false); }}
-              disabled={{ before: new Date() }}
-              style={{ margin: '8px' }}
-            />
+        {/* Trip name */}
+        <input
+          value={cart.tripName}
+          onChange={e => setCart({ ...cart, tripName: e.target.value })}
+          placeholder="Name this trip…"
+          className="text-sm bg-transparent outline-none w-full mb-2"
+          style={{ color: 'var(--text-primary)' }}
+        />
+
+        {/* Date + Guest row */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Check-in */}
+          <div className="relative" data-picker>
+            <button
+              onClick={() => { setShowIn(s => !s); setShowOut(false); }}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs"
+              style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border)',
+                color: cart.checkIn ? 'var(--text-primary)' : 'var(--text-muted)',
+              }}
+            >
+              <CalendarDays className="w-3 h-3" />
+              {fmt(cart.checkIn) ?? 'Check-in'}
+              <ChevronDown className="w-2.5 h-2.5 opacity-50" />
+            </button>
+            {showIn && (
+              <div
+                className="fixed z-[200] rounded-xl shadow-2xl"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', top: 'auto', left: 'auto' }}
+                data-picker
+              >
+                <DayPicker
+                  mode="single"
+                  selected={cart.checkIn}
+                  onSelect={d => { setCart({ ...cart, checkIn: d }); setShowIn(false); }}
+                  disabled={{ before: new Date() }}
+                  style={{ margin: '8px' }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Check-out */}
+          <div className="relative" data-picker>
+            <button
+              onClick={() => { setShowOut(s => !s); setShowIn(false); }}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs"
+              style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border)',
+                color: cart.checkOut ? 'var(--text-primary)' : 'var(--text-muted)',
+              }}
+            >
+              <CalendarDays className="w-3 h-3" />
+              {fmt(cart.checkOut) ?? 'Check-out'}
+              <ChevronDown className="w-2.5 h-2.5 opacity-50" />
+            </button>
+            {showOut && (
+              <div
+                className="fixed z-[200] rounded-xl shadow-2xl"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+                data-picker
+              >
+                <DayPicker
+                  mode="single"
+                  selected={cart.checkOut}
+                  onSelect={d => { setCart({ ...cart, checkOut: d }); setShowOut(false); }}
+                  disabled={{ before: cart.checkIn ?? new Date() }}
+                  style={{ margin: '8px' }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Guests */}
+          <div className="flex items-center gap-1 ml-auto">
+            <Users className="w-3 h-3" style={{ color: 'var(--text-muted)' }} />
+            <button
+              onClick={() => setCart({ ...cart, guests: Math.max(1, cart.guests - 1) })}
+              className="w-4 h-4 flex items-center justify-center rounded text-xs"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+            >
+              <Minus className="w-2.5 h-2.5" />
+            </button>
+            <span className="w-5 text-center text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>{cart.guests}</span>
+            <button
+              onClick={() => setCart({ ...cart, guests: Math.min(8, cart.guests + 1) })}
+              className="w-4 h-4 flex items-center justify-center rounded text-xs"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+            >
+              <Plus className="w-2.5 h-2.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Hotel list */}
+      <div className="flex-1 overflow-y-auto px-4 py-2" style={{ minHeight: 0 }}>
+        {hotels.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-center py-4">
+            <ShoppingBag className="w-6 h-6 opacity-20" style={{ color: 'var(--text-muted)' }} />
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              Click a hotel card, then &ldquo;Add to Trip&rdquo;
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {hotels.map(h => (
+              <div
+                key={h.id}
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+              >
+                {h.image_paths?.[0] && (
+                  <img
+                    src={h.image_paths[0].startsWith('/') ? h.image_paths[0] : `/${h.image_paths[0]}`}
+                    alt={h.name}
+                    className="rounded flex-shrink-0 object-cover"
+                    style={{ width: 32, height: 32 }}
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{h.name}</p>
+                  {h.price_per_night_usd > 0 && (
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>${h.price_per_night_usd}/night</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => onRemove(h.id)}
+                  className="flex-shrink-0 p-0.5 rounded hover:opacity-70"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Check-out */}
-      <div className="relative">
-        <button
-          onClick={() => { setShowOut(s => !s); setShowIn(false); }}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm"
-          style={{
-            background: 'var(--bg-card)', border: '1px solid var(--border)',
-            color: checkOut ? 'var(--text-primary)' : 'var(--text-muted)',
-          }}
-        >
-          <CalendarDays className="w-3.5 h-3.5" />
-          {fmt(checkOut) ?? 'Check-out'}
-          <ChevronDown className="w-3 h-3 opacity-50" />
-        </button>
-        {showOut && (
-          <div
-            className="absolute top-full left-0 mt-1 z-50 rounded-xl shadow-xl"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            <DayPicker
-              mode="single"
-              selected={checkOut}
-              onSelect={d => { setCheckOut(d); setShowOut(false); }}
-              disabled={{ before: checkIn ?? new Date() }}
-              style={{ margin: '8px' }}
-            />
+      {/* Footer: total + book */}
+      <div className="px-4 pb-3 pt-2 flex-shrink-0" style={{ borderTop: '1px solid var(--border)' }}>
+        {hotels.length > 0 && (
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              {nights > 0 ? `${nights} night${nights !== 1 ? 's' : ''}` : 'Select dates'}
+            </span>
+            {nights > 0 && totalPrice > 0 && (
+              <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>
+                ${(nights * totalPrice).toLocaleString()} est.
+              </span>
+            )}
           </div>
         )}
-      </div>
-
-      {/* Guest count */}
-      <div className="flex items-center gap-1">
-        <Users className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
         <button
-          onClick={() => setGuests(g => Math.max(1, g - 1))}
-          className="w-5 h-5 flex items-center justify-center rounded"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+          onClick={onBook}
+          disabled={hotels.length === 0}
+          className="w-full py-2 rounded-xl text-sm font-bold transition-all"
+          style={{
+            background: hotels.length > 0 ? 'var(--elastic-blue)' : 'var(--border)',
+            color: hotels.length > 0 ? '#fff' : 'var(--text-muted)',
+            cursor: hotels.length > 0 ? 'pointer' : 'not-allowed',
+          }}
         >
-          <Minus className="w-3 h-3" />
-        </button>
-        <span className="w-5 text-center text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{guests}</span>
-        <button
-          onClick={() => setGuests(g => Math.min(8, g + 1))}
-          className="w-5 h-5 flex items-center justify-center rounded"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
-        >
-          <Plus className="w-3 h-3" />
+          Book Trip
         </button>
       </div>
-
-      {/* Add to chat */}
-      <button
-        onClick={handleCopy}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ml-auto"
-        style={{
-          background: copied ? 'rgba(0,191,179,0.1)' : 'rgba(0,119,204,0.08)',
-          border: `1px solid ${copied ? 'rgba(0,191,179,0.3)' : 'rgba(0,119,204,0.2)'}`,
-          color: copied ? 'var(--elastic-teal)' : 'var(--elastic-blue)',
-        }}
-      >
-        <Copy className="w-3 h-3" />
-        {copied ? 'Added!' : 'Add to chat'}
-      </button>
     </div>
   );
 }

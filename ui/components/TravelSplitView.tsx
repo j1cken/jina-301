@@ -4,20 +4,27 @@ import { useState, useCallback, useEffect } from 'react';
 import { X, Zap } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import type { ChatHotel } from '@/hooks/useAgentChat';
-import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 import ResultsCanvas from '@/components/ResultsCanvas';
 import AgentChat from '@/components/AgentChat';
+import TripCart, { type TripCartState } from '@/components/TripCart';
+import HotelDetailModal from '@/components/HotelDetailModal';
+import { generatePNR } from '@/components/BookingConfirmation';
 
 interface TravelSplitViewProps {
   initialMessage?: string;
   onClose: () => void;
-  onOpenHotel: (hotel: Hotel) => void;
 }
 
-export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }: TravelSplitViewProps) {
+export default function TravelSplitView({ initialMessage, onClose }: TravelSplitViewProps) {
   const [tripContext, setTripContext] = useState('');
   const [agentHotels, setAgentHotels] = useState<ChatHotel[]>([]);
   const [visible, setVisible] = useState(false);
+
+  // Cart state
+  const [cart, setCart] = useState<TripCartState>({ guests: 2, tripName: '' });
+  const [tripHotels, setTripHotels] = useState<Hotel[]>([]);
+  const [bookingPNR, setBookingPNR] = useState<string | null>(null);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>();
 
   // Fade-in on mount
   useEffect(() => {
@@ -25,9 +32,27 @@ export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const handleOpenHotelFromChat = useCallback((chatHotel: ChatHotel) => {
-    onOpenHotel(chatHotelToHotel(chatHotel));
-  }, [onOpenHotel]);
+  const addHotelToTrip = useCallback((hotel: Hotel) => {
+    setTripHotels(prev => prev.some(h => h.id === hotel.id) ? prev : [...prev, hotel]);
+  }, []);
+
+  const removeHotelFromTrip = useCallback((id: string) => {
+    setTripHotels(prev => prev.filter(h => h.id !== id));
+  }, []);
+
+  const bookTrip = useCallback(() => {
+    if (tripHotels.length === 0) return;
+    setBookingPNR(generatePNR());
+  }, [tripHotels]);
+
+  const handleOpenHotel = useCallback((hotel: Hotel) => {
+    setSelectedHotel(hotel);
+  }, []);
+
+  // AgentChat opens hotel modal via ChatHotel — not used for display anymore, but keep wiring
+  const handleOpenHotelFromChat = useCallback((_: ChatHotel) => {
+    // Hotel cards removed from chat; this is a no-op fallback
+  }, []);
 
   return (
     <div
@@ -42,32 +67,19 @@ export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }
       {/* Slim top bar */}
       <div
         className="flex items-center justify-between px-5 flex-shrink-0"
-        style={{
-          height: '48px',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--bg-surface)',
-        }}
+        style={{ height: '48px', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
       >
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4" style={{ color: 'var(--elastic-blue)' }} />
           <span className="font-bold text-sm tracking-tight" style={{ color: 'var(--text-primary)' }}>Horizon</span>
           <span
             className="text-xs px-2 py-0.5 rounded-full font-medium"
-            style={{
-              background: 'rgba(0,119,204,0.08)',
-              border: '1px solid rgba(0,119,204,0.18)',
-              color: 'var(--elastic-blue)',
-            }}
+            style={{ background: 'rgba(0,119,204,0.08)', border: '1px solid rgba(0,119,204,0.18)', color: 'var(--elastic-blue)' }}
           >
             AI Concierge
           </span>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg hover:opacity-70 transition-opacity"
-          style={{ color: 'var(--text-muted)' }}
-          title="Back to search"
-        >
+        <button onClick={onClose} className="p-1.5 rounded-lg hover:opacity-70 transition-opacity" style={{ color: 'var(--text-muted)' }}>
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -77,32 +89,59 @@ export default function TravelSplitView({ initialMessage, onClose, onOpenHotel }
         {/* Left: Results canvas */}
         <div
           className="flex flex-col overflow-hidden border-r"
-          style={{
-            width: 'calc(100% - clamp(400px, 32%, 540px))',
-            borderColor: 'var(--border)',
-          }}
+          style={{ width: 'calc(100% - clamp(400px, 32%, 540px))', borderColor: 'var(--border)' }}
         >
           <ResultsCanvas
-            onContextChange={setTripContext}
-            onOpenHotel={onOpenHotel}
+            onOpenHotel={handleOpenHotel}
             agentHotels={agentHotels}
           />
         </div>
 
-        {/* Right: Agent chat */}
-        <div
-          className="flex flex-col"
-          style={{ width: 'clamp(400px, 32%, 540px)' }}
-        >
-          <AgentChat
-            panel
-            initialMessage={initialMessage}
-            tripContext={tripContext}
-            onAgentHotels={setAgentHotels}
-            onOpenHotel={handleOpenHotelFromChat}
-          />
+        {/* Right: Trip Cart (top 42%) + AgentChat (bottom 58%) */}
+        <div className="flex flex-col" style={{ width: 'clamp(400px, 32%, 540px)' }}>
+          {/* Trip Cart */}
+          <div
+            style={{
+              flex: '0 0 42%',
+              minHeight: 0,
+              overflow: 'visible',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            <TripCart
+              cart={cart}
+              setCart={setCart}
+              hotels={tripHotels}
+              onRemove={removeHotelFromTrip}
+              onBook={bookTrip}
+              bookingPNR={bookingPNR}
+              onContextChange={setTripContext}
+            />
+          </div>
+
+          {/* AgentChat */}
+          <div style={{ flex: '1 1 58%', minHeight: 0, overflow: 'hidden' }}>
+            <AgentChat
+              panel
+              initialMessage={initialMessage}
+              tripContext={tripContext}
+              onAgentHotels={setAgentHotels}
+              onOpenHotel={handleOpenHotelFromChat}
+            />
+          </div>
         </div>
       </div>
+
+      {/* Hotel detail modal — owns Add to Trip */}
+      {selectedHotel && (
+        <HotelDetailModal
+          hotel={selectedHotel}
+          onClose={() => setSelectedHotel(undefined)}
+          onAddToTrip={addHotelToTrip}
+          inTrip={tripHotels.some(h => h.id === selectedHotel.id)}
+          onFindSimilar={() => setSelectedHotel(undefined)}
+        />
+      )}
     </div>
   );
 }

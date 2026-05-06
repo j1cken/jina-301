@@ -293,7 +293,7 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
               <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-muted)' }} />
                 <input type="text" value={query} onChange={e => setQuery(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && runSearch(query)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); onOpenAgent(query || undefined); } }}
                   placeholder="Describe your ideal stay..."
                   style={{ width: '100%', padding: '13px 16px 13px 44px', fontSize: '0.975rem', background: 'var(--bg-surface)', border: '1.5px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', outline: 'none', transition: 'border-color 0.2s' }}
                   onFocus={e => (e.currentTarget.style.borderColor = 'var(--elastic-blue)')}

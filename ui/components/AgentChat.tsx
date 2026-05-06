@@ -6,8 +6,6 @@ import remarkGfm from 'remark-gfm';
 import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare } from 'lucide-react';
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
-import TravelHotelCard from '@/components/TravelHotelCard';
-import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 
 const SUGGESTIONS = [
   'Quiet hotel for focused remote work, no casino noise',
@@ -190,8 +188,8 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
       <div style={{ maxWidth: '90%', width: isUser ? undefined : '100%' }}>
         {!isUser && <ProcessSection msg={msg} />}
 
-        {/* Text bubble: always show while streaming; hide when complete with hotel cards */}
-        {(msg.content || (!msg.isComplete && !isUser)) && (isUser || !msg.isComplete || msg.hotels.length === 0) && (
+        {/* Text bubble — always show text; hotel results live in the left canvas */}
+        {(msg.content || (!msg.isComplete && !isUser)) && (
           <div
             className="rounded-2xl px-4 py-3 text-sm"
             style={isUser ? {
@@ -218,19 +216,6 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
                 )}
               </>
             )}
-          </div>
-        )}
-
-        {/* Hotel cards — replace text bubble once response completes */}
-        {!isUser && msg.isComplete && msg.hotels.length > 0 && (
-          <div className="space-y-3">
-            {msg.hotels.map(h => (
-              <TravelHotelCard
-                key={h.id}
-                hotel={chatHotelToHotel(h)}
-                onClick={() => onOpenHotel(h)}
-              />
-            ))}
           </div>
         )}
       </div>
