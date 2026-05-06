@@ -13,14 +13,37 @@ import CapstoneStation from '@/components/stations/CapstoneStation';
 import AgentStation from '@/components/stations/AgentStation';
 import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
+import HotelDetailModal from '@/components/HotelDetailModal';
 import StationInfoBand from '@/components/StationInfoBand';
 import StationDetailDrawer from '@/components/StationDetailDrawer';
 import { DemoModeContext } from '@/lib/demoMode';
 import type { Station, Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
+import type { ChatHotel } from '@/hooks/useAgentChat';
 import { apiUrl } from '@/lib/api';
 
 type ViewMode = 'travel' | 'demo';
 type Theme = 'light' | 'dark';
+
+// Convert a ChatHotel (partial data from hotels.json) to a Hotel for the detail modal
+function chatHotelToHotel(ch: ChatHotel): Hotel {
+  return {
+    id: ch.id,
+    name: ch.name,
+    descriptions: [ch.description],
+    location: { lat: 0, lon: 0 },
+    location_name: '',
+    country: '',
+    region: '',
+    amenities: [],
+    style: [],
+    price_tier: 'mid',
+    price_per_night_usd: 0,
+    image_paths: ch.image_paths,
+    rating: 0,
+    nearby_landmarks: [],
+    room_description: ch.room_description,
+  };
+}
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('travel');
@@ -34,6 +57,7 @@ export default function Home() {
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>(undefined);
 
   // Read ?mode=demo hatch and persisted preferences on mount
   useEffect(() => {
@@ -79,6 +103,10 @@ export default function Home() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageUrl: '', hotelId: '__prewarm', demoMode: false }),
     }).catch(() => { /* silent */ });
+  }, []);
+
+  const openHotelFromChat = useCallback((chatHotel: ChatHotel) => {
+    setSelectedHotel(chatHotelToHotel(chatHotel));
   }, []);
 
   return (
@@ -136,7 +164,35 @@ export default function Home() {
           </div>
         )}
       </div>
-      {showAgentChat && <AgentChat onClose={() => setShowAgentChat(false)} />}
+
+      {/* AI Concierge — sidebar in travel view, modal overlay in demo view */}
+      {showAgentChat && viewMode === 'travel' && (
+        <AgentChat
+          sidebar
+          onClose={() => setShowAgentChat(false)}
+          onOpenHotel={openHotelFromChat}
+        />
+      )}
+      {showAgentChat && viewMode !== 'travel' && (
+        <AgentChat
+          onClose={() => setShowAgentChat(false)}
+          onOpenHotel={openHotelFromChat}
+        />
+      )}
+
+      {/* Hotel detail modal — shared between chat and search results */}
+      {selectedHotel && (
+        <HotelDetailModal
+          hotel={selectedHotel}
+          onClose={() => setSelectedHotel(undefined)}
+          onFindSimilar={(hotel) => {
+            setSelectedHotel(undefined);
+            setPendingFindQuery(hotel.name);
+            setViewMode('demo');
+            setStation('find');
+          }}
+        />
+      )}
     </DemoModeContext.Provider>
   );
 }

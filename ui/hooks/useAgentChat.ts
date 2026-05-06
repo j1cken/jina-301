@@ -1,12 +1,22 @@
 'use client';
 
 import { useState, useCallback, useRef, Dispatch, SetStateAction } from 'react';
-import { apiUrl } from '@/lib/api';
+import { apiUrl, BASE_PATH } from '@/lib/api';
+
+export interface ChatHotel {
+  id: string;
+  name: string;
+  description: string;
+  image_paths: string[];
+  room_description?: string;
+}
 
 export interface ToolCall {
   id: string;
   name: string;
   status: 'pending' | 'complete';
+  input?: Record<string, unknown>;
+  output?: string;
 }
 
 export interface Message {
@@ -16,6 +26,36 @@ export interface Message {
   reasoning?: string;
   toolCalls: ToolCall[];
   isComplete: boolean;
+  hotels: ChatHotel[];
+  thinkingStartTime?: number;
+  thinkingDuration?: number;
+}
+
+// ── Hotel index: eager-fetch on client mount, longest-name-first for greedy matching ──
+let hotelsCache: ChatHotel[] | null = null;
+if (typeof window !== 'undefined') {
+  fetch(`${BASE_PATH}/hotels.json`)
+    .then(r => r.json())
+    .then((data: ChatHotel[]) => {
+      hotelsCache = data.sort((a, b) => b.name.length - a.name.length);
+    })
+    .catch(() => {});
+}
+
+function extractHotelsFromText(text: string): ChatHotel[] {
+  if (!hotelsCache) return [];
+  const cleaned = text.replace(/\*{1,2}/g, '').toLowerCase();
+  const found: ChatHotel[] = [];
+  const seen = new Set<string>();
+  for (const hotel of hotelsCache) {
+    if (seen.has(hotel.id)) continue;
+    if (cleaned.includes(hotel.name.toLowerCase())) {
+      found.push(hotel);
+      seen.add(hotel.id);
+      if (found.length >= 5) break;
+    }
+  }
+  return found;
 }
 
 function normalizeType(explicit: string | null, payload: Record<string, unknown>): string {
@@ -40,15 +80,30 @@ function applyEvent(
       if (raw.conversation_id) setConvId(raw.conversation_id as string);
       return msg;
     case 'reasoning':
-      return { ...msg, reasoning: (msg.reasoning ?? '') + (raw.reasoning as string ?? '') };
+      return {
+        ...msg,
+        reasoning: (msg.reasoning ?? '') + ((raw.reasoning as string) ?? ''),
+        thinkingStartTime: msg.thinkingStartTime ?? Date.now(),
+      };
     case 'thinking_complete':
       return msg;
     case 'message_chunk':
-      return { ...msg, content: msg.content + ((raw.text_chunk ?? raw.text ?? '') as string) };
-    case 'message_complete':
-      return { ...msg, content: (raw.message_content as string) ?? msg.content, isComplete: true };
-    case 'round_complete':
-      return { ...msg, isComplete: true };
+      return { ...msg, content: msg.content + (((raw.text_chunk ?? raw.text ?? '') as string)) };
+    case 'message_complete': {
+      const content = (raw.message_content as string) ?? msg.content;
+      const hotels = extractHotelsFromText(content);
+      const thinkingDuration = msg.thinkingStartTime
+        ? Math.round((Date.now() - msg.thinkingStartTime) / 1000)
+        : undefined;
+      return { ...msg, content, isComplete: true, hotels, thinkingDuration };
+    }
+    case 'round_complete': {
+      const hotels = extractHotelsFromText(msg.content);
+      const thinkingDuration = msg.thinkingStartTime
+        ? Math.round((Date.now() - msg.thinkingStartTime) / 1000)
+        : undefined;
+      return { ...msg, isComplete: true, hotels, thinkingDuration };
+    }
     case 'tool_call':
       return {
         ...msg,
@@ -56,13 +111,16 @@ function applyEvent(
           id: (raw.tool_id as string) ?? String(Date.now()),
           name: (raw.tool_name as string) ?? 'tool',
           status: 'pending',
+          input: raw.tool_input as Record<string, unknown> | undefined,
         }],
       };
     case 'tool_result':
       return {
         ...msg,
         toolCalls: msg.toolCalls.map(tc =>
-          tc.id === (raw.tool_id as string) ? { ...tc, status: 'complete' } : tc
+          tc.id === (raw.tool_id as string)
+            ? { ...tc, status: 'complete', output: raw.tool_result as string | undefined }
+            : tc
         ),
       };
     case 'error':
@@ -72,15 +130,18 @@ function applyEvent(
   }
 }
 
-// Fallback: canned stream for demo mode
+// Fallback: canned stream for demo mode — uses exact hotel names from hotels.json
 const FALLBACK: Array<{ delay: number; type: string; data: Record<string, unknown> }> = [
-  { delay: 200,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index for matching properties...' } },
-  { delay: 1000, type: 'thinking_complete',  data: {} },
-  { delay: 1200, type: 'message_chunk',      data: { text_chunk: "I found some great matches! Here are my top picks:\n\n" } },
-  { delay: 1500, type: 'message_chunk',      data: { text_chunk: "**Bellagio Las Vegas** — Iconic luxury on the Strip with fountain views and world-class spa. $359/night ⭐ 4.8\n\n" } },
-  { delay: 2000, type: 'message_chunk',      data: { text_chunk: "**Park MGM Las Vegas** — Boutique-style retreat with rooftop pool and city views. $219/night ⭐ 4.6\n\n" } },
-  { delay: 2500, type: 'message_chunk',      data: { text_chunk: "Would you like to refine this further or explore a different destination?" } },
-  { delay: 2700, type: 'message_complete',   data: { message_content: '' } },
+  { delay: 200,  type: 'reasoning',        data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
+  { delay: 600,  type: 'tool_call',        data: { tool_id: 'tc-1', tool_name: 'semantic_search', tool_input: { query: 'baller room vegas strip view' } } },
+  { delay: 1400, type: 'tool_result',      data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
+  { delay: 1600, type: 'thinking_complete', data: {} },
+  { delay: 1800, type: 'message_chunk',    data: { text_chunk: "Here are my top picks for a luxurious Las Vegas stay with Strip views:\n\n" } },
+  { delay: 2100, type: 'message_chunk',    data: { text_chunk: "**Bellagio** — Iconic luxury on the Strip with world-famous fountain views, premier spa, and celebrity chef restaurants. $359/night ⭐ 4.9\n\n" } },
+  { delay: 2500, type: 'message_chunk',    data: { text_chunk: "**The Venetian Resort Las Vegas** — Grand Italian-inspired suites, indoor gondolas, and sweeping Strip panoramas from every room. $289/night ⭐ 4.8\n\n" } },
+  { delay: 2900, type: 'message_chunk',    data: { text_chunk: "**Wynn Las Vegas** — Sophisticated elegance with private pool villas, signature dining, and one of the best spas in Nevada. $429/night ⭐ 4.9\n\n" } },
+  { delay: 3200, type: 'message_chunk',    data: { text_chunk: "Would you like more details on any of these, or shall I filter by price range or specific amenities?" } },
+  { delay: 3400, type: 'message_complete', data: { message_content: '' } },
 ];
 
 async function replayFallback(assistantId: string, set: Dispatch<SetStateAction<Message[]>>) {
@@ -107,10 +168,11 @@ export function useAgentChat(demoMode: boolean) {
     if (!content.trim() || isLoading) return;
 
     const assistantId = `asst-${Date.now()}`;
+    const emptyMsg: Message = { id: assistantId, role: 'assistant', content: '', toolCalls: [], isComplete: false, hotels: [] };
     setMessages(prev => [
       ...prev,
-      { id: `user-${Date.now()}`, role: 'user', content, toolCalls: [], isComplete: true },
-      { id: assistantId, role: 'assistant', content: '', toolCalls: [], isComplete: false },
+      { id: `user-${Date.now()}`, role: 'user', content, toolCalls: [], isComplete: true, hotels: [] },
+      emptyMsg,
     ]);
     setIsLoading(true);
 
