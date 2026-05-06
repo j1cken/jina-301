@@ -242,26 +242,58 @@ interface AgentChatProps {
   onClose?: () => void;
   embedded?: boolean;
   sidebar?: boolean;
+  panel?: boolean;
+  initialMessage?: string;
+  tripContext?: string;
+  onAgentHotels?: (names: string[]) => void;
   onOpenHotel?: (hotel: ChatHotel) => void;
 }
 
-export default function AgentChat({ onClose, embedded = false, sidebar = false, onOpenHotel }: AgentChatProps) {
+export default function AgentChat({
+  onClose,
+  embedded = false,
+  sidebar = false,
+  panel = false,
+  initialMessage,
+  tripContext,
+  onAgentHotels,
+  onOpenHotel,
+}: AgentChatProps) {
   const demoMode = useDemoMode();
   const { messages, isLoading, sendMessage, reset } = useAgentChat(demoMode);
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const hasSentInitial = useRef(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Auto-send initialMessage once on mount
+  useEffect(() => {
+    if (initialMessage && !hasSentInitial.current) {
+      hasSentInitial.current = true;
+      sendMessage(initialMessage);
+    }
+  }, [initialMessage, sendMessage]);
+
+  // Notify parent when agent response completes with hotels
+  useEffect(() => {
+    if (!onAgentHotels) return;
+    const last = messages[messages.length - 1];
+    if (last?.role === 'assistant' && last.isComplete && last.hotels.length > 0) {
+      onAgentHotels(last.hotels.map(h => h.name));
+    }
+  }, [messages, onAgentHotels]);
+
   const submit = useCallback(() => {
     const val = input.trim();
     if (!val || isLoading) return;
     setInput('');
-    sendMessage(val);
-  }, [input, isLoading, sendMessage]);
+    const msg = tripContext ? `[Trip context: ${tripContext}]\n\n${val}` : val;
+    sendMessage(msg);
+  }, [input, isLoading, sendMessage, tripContext]);
 
   const handleKey = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -386,6 +418,15 @@ export default function AgentChat({ onClose, embedded = false, sidebar = false, 
       </div>
     </div>
   );
+
+  // Panel mode — fills parent container in TravelSplitView right column
+  if (panel) {
+    return (
+      <div className="flex flex-col h-full" style={{ background: 'var(--bg-base)' }}>
+        {chatContent}
+      </div>
+    );
+  }
 
   // Embedded mode (AgentStation)
   if (embedded) {
