@@ -6,7 +6,8 @@ import remarkGfm from 'remark-gfm';
 import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare } from 'lucide-react';
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
-import ChatHotelCard from '@/components/ChatHotelCard';
+import TravelHotelCard from '@/components/TravelHotelCard';
+import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 
 const SUGGESTIONS = [
   'Quiet hotel for focused remote work, no casino noise',
@@ -189,7 +190,8 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
       <div style={{ maxWidth: '90%', width: isUser ? undefined : '100%' }}>
         {!isUser && <ProcessSection msg={msg} />}
 
-        {(msg.content || (!msg.isComplete && !isUser)) && (
+        {/* Text bubble: always show while streaming; hide when complete with hotel cards */}
+        {(msg.content || (!msg.isComplete && !isUser)) && (isUser || !msg.isComplete || msg.hotels.length === 0) && (
           <div
             className="rounded-2xl px-4 py-3 text-sm"
             style={isUser ? {
@@ -219,15 +221,16 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
           </div>
         )}
 
-        {/* Hotel cards — shown after response completes */}
+        {/* Hotel cards — replace text bubble once response completes */}
         {!isUser && msg.isComplete && msg.hotels.length > 0 && (
-          <div className="mt-2 space-y-1.5">
+          <div className="space-y-3">
             {msg.hotels.map(h => (
-              <ChatHotelCard key={h.id} hotel={h} onOpen={onOpenHotel} />
+              <TravelHotelCard
+                key={h.id}
+                hotel={chatHotelToHotel(h)}
+                onClick={() => onOpenHotel(h)}
+              />
             ))}
-            <p className="text-xs mt-1 px-1" style={{ color: 'var(--text-muted)' }}>
-              Tap a hotel to view details &amp; book
-            </p>
           </div>
         )}
       </div>
@@ -403,7 +406,7 @@ export default function AgentChat({ onClose, embedded = false, sidebar = false, 
       <div
         className="fixed top-0 right-0 h-full z-40 flex flex-col"
         style={{
-          width: '400px',
+          width: '520px',
           background: 'var(--bg-base)',
           borderLeft: '1px solid var(--border)',
           boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
