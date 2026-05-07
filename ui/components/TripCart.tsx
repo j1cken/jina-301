@@ -5,6 +5,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import { CalendarDays, Users, Minus, Plus, X, ShoppingBag, ChevronDown } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
+import { resolveImageUrl } from '@/lib/images';
 import { BookingConfirmation, generatePNR } from '@/components/BookingConfirmation';
 
 export interface TripCartState {
@@ -209,36 +210,66 @@ export default function TripCart({ cart, setCart, hotels, onRemove, onBook, book
             </p>
           </div>
         ) : (
-          <div className="space-y-1.5">
-            {hotels.map(h => (
-              <div
-                key={h.id}
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5"
-                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-              >
-                {h.image_paths?.[0] && (
-                  <img
-                    src={h.image_paths[0].startsWith('/') ? h.image_paths[0] : `/${h.image_paths[0]}`}
-                    alt={h.name}
-                    className="rounded flex-shrink-0 object-cover"
-                    style={{ width: 32, height: 32 }}
-                  />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{h.name}</p>
-                  {h.price_per_night_usd > 0 && (
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>${h.price_per_night_usd}/night</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => onRemove(h.id)}
-                  className="flex-shrink-0 p-0.5 rounded hover:opacity-70"
-                  style={{ color: 'var(--text-muted)' }}
+          <div className="space-y-2">
+            {hotels.map(h => {
+              const hotelTotal = nights > 0 && h.price_per_night_usd > 0 ? nights * h.price_per_night_usd : null;
+              return (
+                <div
+                  key={h.id}
+                  className="rounded-xl overflow-hidden"
+                  style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
                 >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
+                  {/* Image */}
+                  {h.image_paths?.[0] && (
+                    <img
+                      src={resolveImageUrl(h.image_paths[0])}
+                      alt={h.name}
+                      className="w-full object-cover"
+                      style={{ height: 90 }}
+                    />
+                  )}
+                  {/* Info */}
+                  <div className="px-3 py-2">
+                    <div className="flex items-start justify-between gap-1">
+                      <p className="text-sm font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>{h.name}</p>
+                      <button
+                        onClick={() => onRemove(h.id)}
+                        className="flex-shrink-0 p-0.5 rounded hover:opacity-70 mt-0.5"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    {h.location_name && (
+                      <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>{h.location_name}</p>
+                    )}
+                    <div className="flex items-center justify-between mt-1.5">
+                      <div>
+                        {h.price_per_night_usd > 0 && (
+                          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            ${h.price_per_night_usd.toLocaleString()}<span className="opacity-60">/night</span>
+                          </span>
+                        )}
+                      </div>
+                      {hotelTotal && (
+                        <span className="text-xs font-bold" style={{ color: 'var(--elastic-blue)' }}>
+                          ${hotelTotal.toLocaleString()} <span className="font-normal opacity-70">· {nights}n</span>
+                        </span>
+                      )}
+                    </div>
+                    {h.rating > 0 && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-xs" style={{ color: 'var(--elastic-gold)' }}>★</span>
+                        <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>{h.rating.toFixed(1)}</span>
+                        {h.price_tier && (
+                          <span className="text-xs ml-1 opacity-50" style={{ color: 'var(--text-muted)' }}>· {h.price_tier}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

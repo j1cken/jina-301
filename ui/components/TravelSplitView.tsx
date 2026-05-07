@@ -49,19 +49,17 @@ export default function TravelSplitView({ initialMessage, onClose }: TravelSplit
     setSelectedHotel(hotel);
   }, []);
 
-  // AgentChat opens hotel modal via ChatHotel — not used for display anymore, but keep wiring
-  const handleOpenHotelFromChat = useCallback((_: ChatHotel) => {
-    // Hotel cards removed from chat; this is a no-op fallback
-  }, []);
+  const handleOpenHotelFromChat = useCallback((_: ChatHotel) => {}, []);
 
   return (
     <div
-      className="fixed inset-0 z-40 flex flex-col"
+      className="fixed inset-x-0 bottom-0 z-40 flex flex-col"
       style={{
+        top: '120px',
         background: 'var(--bg-base)',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(8px)',
-        transition: 'opacity 0.18s ease-out, transform 0.18s ease-out',
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.45s ease-out, transform 0.45s ease-out',
       }}
     >
       {/* Slim top bar */}
@@ -127,6 +125,7 @@ export default function TravelSplitView({ initialMessage, onClose }: TravelSplit
               tripContext={tripContext}
               onAgentHotels={setAgentHotels}
               onOpenHotel={handleOpenHotelFromChat}
+              onDatesParsed={(checkIn, checkOut) => setCart(prev => ({ ...prev, checkIn, checkOut }))}
             />
           </div>
         </div>

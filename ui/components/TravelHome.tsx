@@ -231,6 +231,15 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
             <Globe2 className="w-4 h-4" style={{ color: '#fff' }} />
           </div>
           <span className="font-bold text-lg tracking-tight" style={{ color: 'var(--text-primary)' }}>Horizon</span>
+          <span className="text-xs opacity-30" style={{ color: 'var(--text-muted)' }}>|</span>
+          <div className="flex items-center gap-1.5">
+            <svg width="15" height="15" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="16" cy="10" rx="10" ry="5" fill="#00BFB3" opacity="0.9"/>
+              <ellipse cx="16" cy="16" rx="13" ry="5" fill="#0077CC" opacity="0.85"/>
+              <ellipse cx="16" cy="22" rx="10" ry="5" fill="#00BFB3" opacity="0.7"/>
+            </svg>
+            <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Powered by Elastic</span>
+          </div>
         </div>
         <nav className="hidden md:flex items-center gap-1">
           {['Hotels', 'Flights', 'Packages', 'Deals'].map((item, i) => (

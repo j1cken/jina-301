@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare } from 'lucide-react';
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
+import { parseDateRange } from '@/lib/parseDates';
 
 const SUGGESTIONS = [
   'Quiet hotel for focused remote work, no casino noise',
@@ -232,6 +233,7 @@ interface AgentChatProps {
   tripContext?: string;
   onAgentHotels?: (hotels: ChatHotel[]) => void;
   onOpenHotel?: (hotel: ChatHotel) => void;
+  onDatesParsed?: (checkIn: Date, checkOut: Date) => void;
 }
 
 export default function AgentChat({
@@ -243,6 +245,7 @@ export default function AgentChat({
   tripContext,
   onAgentHotels,
   onOpenHotel,
+  onDatesParsed,
 }: AgentChatProps) {
   const demoMode = useDemoMode();
   const { messages, isLoading, sendMessage, reset } = useAgentChat(demoMode);
@@ -276,9 +279,11 @@ export default function AgentChat({
     const val = input.trim();
     if (!val || isLoading) return;
     setInput('');
+    const parsed = parseDateRange(val);
+    if (parsed) onDatesParsed?.(parsed.checkIn, parsed.checkOut);
     const msg = tripContext ? `[Trip context: ${tripContext}]\n\n${val}` : val;
     sendMessage(msg);
-  }, [input, isLoading, sendMessage, tripContext]);
+  }, [input, isLoading, sendMessage, tripContext, onDatesParsed]);
 
   const handleKey = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {

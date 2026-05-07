@@ -96,7 +96,7 @@ export default function Home() {
       <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)' }}>
         {demoMode && <DemoModeBanner onDisable={disableDemo} />}
 
-        {viewMode === 'travel' ? (
+        {viewMode === 'travel' || viewMode === 'split' ? (
           <TravelHome
             onShowDemo={() => setViewMode('demo')}
             onSelectStation={(s) => { setViewMode('demo'); setStation(s); }}
@@ -106,7 +106,7 @@ export default function Home() {
             demoMode={demoMode}
             onToggleDemo={toggleDemo}
           />
-        ) : viewMode === 'split' ? null : (
+        ) : (
           <div className="demo-blueprint flex flex-col flex-1">
             <Header
               demoMode={demoMode}
