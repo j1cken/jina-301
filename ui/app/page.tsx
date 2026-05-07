@@ -20,6 +20,7 @@ import StationDetailDrawer from '@/components/StationDetailDrawer';
 import { DemoModeContext } from '@/lib/demoMode';
 import type { Station, Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
 import type { ChatHotel } from '@/hooks/useAgentChat';
+import { type TripCartState } from '@/components/TripCart';
 import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 import { apiUrl } from '@/lib/api';
 
@@ -38,6 +39,7 @@ export default function Home() {
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
   const [splitInitialMessage, setSplitInitialMessage] = useState<string | undefined>();
+  const [cart, setCart] = useState<TripCartState>({ guests: 2, tripName: '' });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>(undefined);
 
@@ -105,6 +107,8 @@ export default function Home() {
             onToggleTheme={toggleTheme}
             demoMode={demoMode}
             onToggleDemo={toggleDemo}
+            cart={cart}
+            setCart={setCart}
           />
         ) : (
           <div className="demo-blueprint flex flex-col flex-1">
@@ -152,6 +156,8 @@ export default function Home() {
         <TravelSplitView
           initialMessage={splitInitialMessage}
           onClose={() => setViewMode('travel')}
+          cart={cart}
+          setCart={setCart}
         />
       )}
 

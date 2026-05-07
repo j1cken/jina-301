@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, type Dispatch, type SetStateAction } from 'react';
 import { X, Zap } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import type { ChatHotel } from '@/hooks/useAgentChat';
@@ -13,15 +13,14 @@ import { generatePNR } from '@/components/BookingConfirmation';
 interface TravelSplitViewProps {
   initialMessage?: string;
   onClose: () => void;
+  cart: TripCartState;
+  setCart: Dispatch<SetStateAction<TripCartState>>;
 }
 
-export default function TravelSplitView({ initialMessage, onClose }: TravelSplitViewProps) {
+export default function TravelSplitView({ initialMessage, onClose, cart, setCart }: TravelSplitViewProps) {
   const [tripContext, setTripContext] = useState('');
   const [agentHotels, setAgentHotels] = useState<ChatHotel[]>([]);
   const [visible, setVisible] = useState(false);
-
-  // Cart state
-  const [cart, setCart] = useState<TripCartState>({ guests: 2, tripName: '' });
   const [tripHotels, setTripHotels] = useState<Hotel[]>([]);
   const [bookingPNR, setBookingPNR] = useState<string | null>(null);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>();

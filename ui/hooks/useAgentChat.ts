@@ -136,8 +136,19 @@ function applyEvent(
             : tc
         ),
       };
-    case 'error':
-      return { ...msg, content: `⚠️ ${(raw.message as string) ?? 'Unknown error'}`, isComplete: true };
+    case 'error': {
+      console.error('[AgentChat] error event raw:', raw);
+      let errMsg: string;
+      if (typeof raw.message === 'string') errMsg = raw.message;
+      else if (typeof raw.error === 'string') errMsg = raw.error;
+      else if (raw.error && typeof raw.error === 'object') {
+        const e = raw.error as Record<string, unknown>;
+        errMsg = typeof e.message === 'string' ? e.message
+          : typeof e.reason === 'string' ? e.reason
+          : JSON.stringify(raw.error).slice(0, 200);
+      } else errMsg = JSON.stringify(raw).slice(0, 200);
+      return { ...msg, content: `⚠️ ${errMsg}`, isComplete: true };
+    }
     default:
       return msg;
   }

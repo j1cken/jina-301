@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect, type Dispatch, type SetStateAction } from 'react';
 import {
   Search, MapPin, Sparkles, X, Sun, Moon, Layers,
   Star, ArrowUpDown, Globe2, ChevronDown, SlidersHorizontal,
-  CheckCircle2, Shield,
+  CheckCircle2, Shield, Minus, Plus, Users,
 } from 'lucide-react';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import type { Hotel } from '@/lib/types';
+import { type TripCartState } from '@/components/TripCart';
 import { apiUrl, BASE_PATH } from '@/lib/api';
 import { resolveImageUrl } from '@/lib/images';
 import HotelDetailModal from './HotelDetailModal';
@@ -22,6 +25,8 @@ interface TravelHomeProps {
   onToggleTheme: () => void;
   demoMode: boolean;
   onToggleDemo: () => void;
+  cart: TripCartState;
+  setCart: Dispatch<SetStateAction<TripCartState>>;
 }
 
 type SortKey = 'relevance' | 'price_asc' | 'price_desc' | 'rating';
@@ -163,7 +168,7 @@ function FeaturedCard({ hotel, onClick }: { hotel: typeof FEATURED[0]; onClick: 
   );
 }
 
-export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, theme, onToggleTheme, demoMode, onToggleDemo }: TravelHomeProps) {
+export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, theme, onToggleTheme, demoMode, onToggleDemo, cart, setCart }: TravelHomeProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(false);
@@ -177,6 +182,8 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
   const [minRating, setMinRating] = useState(0);
   const [maxPrice, setMaxPrice] = useState(2000);
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showGuestPicker, setShowGuestPicker] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const runSearch = useCallback(async (q: string) => {
@@ -220,6 +227,25 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
   };
   const activeFilterCount = styleFilters.length + amenityFilters.length + (minRating > 0 ? 1 : 0) + (maxPrice < 2000 ? 1 : 0);
 
+  // Close hero pickers on outside click
+  useEffect(() => {
+    if (!showDatePicker && !showGuestPicker) return;
+    const handler = (e: MouseEvent) => {
+      if (!(e.target as Element).closest('[data-hero-picker]')) {
+        setShowDatePicker(false);
+        setShowGuestPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showDatePicker, showGuestPicker]);
+
+  const fmtDate = (d?: Date) => d?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const dateLabel = cart.checkIn && cart.checkOut
+    ? `📅 ${fmtDate(cart.checkIn)} – ${fmtDate(cart.checkOut)}`
+    : cart.checkIn ? `📅 ${fmtDate(cart.checkIn)} – out?`
+    : '📅 Add dates';
+
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'var(--bg-base)' }}>
 
@@ -231,15 +257,15 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
             <Globe2 className="w-4 h-4" style={{ color: '#fff' }} />
           </div>
           <span className="font-bold text-lg tracking-tight" style={{ color: 'var(--text-primary)' }}>Horizon</span>
-          <span className="text-xs opacity-30" style={{ color: 'var(--text-muted)' }}>|</span>
-          <div className="flex items-center gap-1.5">
-            <svg width="15" height="15" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="16" cy="10" rx="10" ry="5" fill="#00BFB3" opacity="0.9"/>
-              <ellipse cx="16" cy="16" rx="13" ry="5" fill="#0077CC" opacity="0.85"/>
-              <ellipse cx="16" cy="22" rx="10" ry="5" fill="#00BFB3" opacity="0.7"/>
-            </svg>
-            <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Powered by Elastic</span>
-          </div>
+          <span className="font-bold text-lg opacity-20" style={{ color: 'var(--text-muted)' }}>|</span>
+          <span className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>by</span>
+          <img
+            src={resolveImageUrl(theme === 'dark'
+              ? '/images/logo-elastic-horizontal-color-reverse.svg'
+              : '/images/logo-elastic-horizontal-color.svg')}
+            alt="Elastic"
+            style={{ height: '52px', width: 'auto' }}
+          />
         </div>
         <nav className="hidden md:flex items-center gap-1">
           {['Hotels', 'Flights', 'Packages', 'Deals'].map((item, i) => (
@@ -317,13 +343,73 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
                 <Sparkles className="w-4 h-4" /> Ask AI
               </button>
             </div>
-            {/* Row 2: Cosmetic detail chips */}
+            {/* Row 2: Interactive date + guest chips */}
             <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', cursor: 'default' }}>
-                📅 May 13 – 14
+              {/* Date chip */}
+              <div style={{ position: 'relative' }} data-hero-picker>
+                <div
+                  role="button" tabIndex={0}
+                  onClick={() => { setShowDatePicker(s => !s); setShowGuestPicker(false); }}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowDatePicker(s => !s); setShowGuestPicker(false); } }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', background: 'var(--bg-surface)', border: `1px solid ${showDatePicker ? 'var(--elastic-blue)' : 'var(--border)'}`, color: cart.checkIn ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {dateLabel}
+                  <ChevronDown className="w-3 h-3 opacity-50" />
+                </div>
+                {showDatePicker && (
+                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, zIndex: 200, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 12px 40px rgba(0,0,0,0.2)', padding: '8px' }}>
+                    <DayPicker
+                      mode="range"
+                      selected={{ from: cart.checkIn, to: cart.checkOut }}
+                      onSelect={r => setCart(prev => ({ ...prev, checkIn: r?.from, checkOut: r?.to }))}
+                      disabled={{ before: new Date() }}
+                    />
+                    {(cart.checkIn || cart.checkOut) && (
+                      <button
+                        onClick={() => { setCart(prev => ({ ...prev, checkIn: undefined, checkOut: undefined })); setShowDatePicker(false); }}
+                        style={{ width: '100%', padding: '6px', fontSize: '0.75rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        Clear dates
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', cursor: 'default' }}>
-                👤 2 guests
+
+              {/* Guest chip */}
+              <div style={{ position: 'relative' }} data-hero-picker>
+                <div
+                  role="button" tabIndex={0}
+                  onClick={() => { setShowGuestPicker(s => !s); setShowDatePicker(false); }}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setShowGuestPicker(s => !s); setShowDatePicker(false); } }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', background: 'var(--bg-surface)', border: `1px solid ${showGuestPicker ? 'var(--elastic-blue)' : 'var(--border)'}`, color: 'var(--text-primary)', cursor: 'pointer', userSelect: 'none' }}
+                >
+                  <Users className="w-3.5 h-3.5 opacity-60" />
+                  {cart.guests} guest{cart.guests !== 1 ? 's' : ''}
+                  <ChevronDown className="w-3 h-3 opacity-50" />
+                </div>
+                {showGuestPicker && (
+                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, zIndex: 200, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 12px 40px rgba(0,0,0,0.2)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px', minWidth: '160px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Guests</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+                      <button
+                        onClick={() => setCart(prev => ({ ...prev, guests: Math.max(1, prev.guests - 1) }))}
+                        style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border)', cursor: cart.guests <= 1 ? 'not-allowed' : 'pointer', opacity: cart.guests <= 1 ? 0.4 : 1 }}
+                        disabled={cart.guests <= 1}
+                      >
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span style={{ fontSize: '0.95rem', fontWeight: 600, minWidth: '20px', textAlign: 'center', color: 'var(--text-primary)' }}>{cart.guests}</span>
+                      <button
+                        onClick={() => setCart(prev => ({ ...prev, guests: Math.min(8, prev.guests + 1) }))}
+                        style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border)', cursor: cart.guests >= 8 ? 'not-allowed' : 'pointer', opacity: cart.guests >= 8 ? 0.4 : 1 }}
+                        disabled={cart.guests >= 8}
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
