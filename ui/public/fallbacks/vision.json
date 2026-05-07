@@ -1,0 +1,13 @@
+{
+  "analysis": {
+    "style": "Contemporary Luxury",
+    "visibleAmenities": [
+      "Hotel & Club",
+      "Zephyr Work Club",
+      "Hotel Amsterdam"
+    ],
+    "mood": "The image captures a serene and elegant atmosphere, with the warm glow of the evening sky reflecting off the canal and the brick buildings, creating a picturesque scene that exudes luxury and tranquility.",
+    "guestProfile": "Ideal guests for this property are those seeking a sophisticated and comfortable stay in a beautiful urban setting. The hotel offers a range of amenities and services to ensure a memorable experience for its guests, including a well-appointed hotel & club, a stylish work club, and a prime location in Amsterdam."
+  },
+  "rawJson": " {\n  \"style\": \"Contemporary Luxury\",\n  \"visibleAmenities\": [\"Hotel & Club\", \"Zephyr Work Club\", \"Hotel Amsterdam\"],\n  \"mood\": \"The image captures a serene and elegant atmosphere, with the warm glow of the evening sky reflecting off the canal and the brick buildings, creating a picturesque scene that exudes luxury and tranquility.\",\n  \"guestProfile\": \"Ideal guests for this property are those seeking a sophisticated and comfortable stay in a beautiful urban setting. The hotel offers a range of amenities and services to ensure a memorable experience for its guests, including a well-appointed hotel & club, a stylish work club, and a prime location in Amsterdam.\" \n}"
+}

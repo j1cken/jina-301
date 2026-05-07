@@ -32,7 +32,7 @@ export default function TravelHotelCard({ hotel, onClick }: TravelHotelCardProps
       }}
     >
       {/* Image */}
-      <div className="relative" style={{ height: '200px', background: 'var(--bg-surface)' }}>
+      <div className="relative" style={{ aspectRatio: '16/9', background: 'var(--bg-surface)' }}>
         {primaryImage ? (
           <img src={primaryImage} alt={hotel.name} className="w-full h-full object-cover" />
         ) : (

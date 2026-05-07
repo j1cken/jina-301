@@ -54,6 +54,7 @@ MANAGED_MARKER = "horizon-demo-managed"
 # Isolated so they're trivial to patch if the Kibana build uses different paths
 AGENTS_PATH = "/api/agent_builder/agents"
 TOOLS_PATH = "/api/agent_builder/tools"
+SKILLS_PATH = "/api/agent_builder/skills"
 CONVERSE_PATH = "/api/agent_builder/converse"
 CONNECTORS_PATH = "/api/actions/connectors"
 
@@ -90,9 +91,18 @@ TOOLS — choose based on the query:
 
 You may call both tools in a single turn (semantic to find candidates, ES|QL to sort/filter).
 
-ANSWER FORMAT
-For each hotel: name, location_name, price (~USD/night or tier), rating, and one
-differentiating sentence drawn from the description. Do not pad with filler.
+ANSWER FORMAT — CRITICAL
+The UI displays hotel results as full visual cards (image, name, price, rating,
+description). The user can already see all of that detail.
+
+DO NOT list hotels by name. DO NOT use bullet points or numbered lists of hotels.
+DO NOT repeat per-hotel price, rating, location, or description.
+
+Instead, respond as a human hotel concierge would: 2–4 sentences of warm, specific
+prose framing the set of recommendations — what vibe they share, how they differ from
+each other, and one short invitation to refine. You may reference a hotel by short name
+only when contrasting ("the Wynn leans polished, the Venetian leans grand suites").
+Never restate facts the cards already show.
 
 REFINEMENTS
 Each follow-up is a refinement of the prior request ("cheaper", "with a spa",
@@ -164,6 +174,70 @@ SEARCH_TOOL_PAYLOAD = {
 }
 
 
+SCHEMA_SKILL_ID = "horizon-hotel-schema"
+SCHEMA_SKILL_PAYLOAD = {
+    "id": SCHEMA_SKILL_ID,
+    "name": "Horizon Hotel Schema Reference",
+    "description": (
+        "Reference guide for the horizon-hotels Elasticsearch index. "
+        "Use when constructing ES|QL queries against hotel data to ensure correct "
+        "field names, types, and valid query patterns."
+    ),
+    "content": """\
+# Horizon Hotels — Index Schema
+
+Index name: `horizon-hotels`
+
+## Fields
+
+| Field | Type | Notes |
+|---|---|---|
+| id | keyword | unique hotel identifier |
+| name | keyword | hotel display name |
+| location_name | text | city / area description |
+| country | keyword | e.g. "Italy", "USA" |
+| region | keyword | geographic region |
+| price_per_night_usd | integer | nightly rate in USD |
+| price_tier | keyword | budget \\| mid-range \\| luxury \\| ultra-luxury |
+| rating | float | 1.0 – 5.0 |
+| amenities | keyword[] | e.g. ["pool", "spa", "gym"] |
+| style | keyword[] | e.g. ["boutique", "beachfront"] |
+| nearby_landmarks | keyword[] | points of interest |
+| descriptions_text | text | full hotel description |
+
+## Valid ES|QL Patterns
+
+```esql
+FROM horizon-hotels | WHERE country == "Italy" AND price_per_night_usd < 200 | SORT rating DESC | LIMIT 5
+FROM horizon-hotels | WHERE "pool" IN amenities AND price_tier == "luxury" | SORT rating DESC | LIMIT 5
+FROM horizon-hotels | WHERE region == "Southeast Asia" | SORT price_per_night_usd ASC | LIMIT 5
+```
+
+## Constraints
+
+- **No date or availability fields exist.** Never use `time_range`, date filters,
+  or any availability-related parameters — they will cause tool errors.
+- Ignore any travel dates the user mentions; they cannot be applied to this dataset.
+- Use `IN` for array fields like `amenities` and `style`.
+- `location_name` is full-text; use `WHERE location_name LIKE "%Las Vegas%"` for partial matches.
+""",
+    "tool_ids": ["platform.core.execute_esql"],
+}
+
+
+def ensure_skill() -> str:
+    r = api_call("GET", f"{SKILLS_PATH}/{SCHEMA_SKILL_ID}")
+    if r.ok:
+        print(f"Schema skill already exists: {SCHEMA_SKILL_ID}")
+        return SCHEMA_SKILL_ID
+    r = api_call("POST", SKILLS_PATH, SCHEMA_SKILL_PAYLOAD)
+    if not r.ok:
+        print(f"Failed to create schema skill: {r.status_code} {r.text[:400]}")
+        sys.exit(1)
+    print(f"Created schema skill: {SCHEMA_SKILL_ID}")
+    return SCHEMA_SKILL_ID
+
+
 def ensure_search_tool() -> str:
     r = api_call("GET", f"{TOOLS_PATH}/{SEARCH_TOOL_ID}")
     if r.ok:
@@ -177,13 +251,14 @@ def ensure_search_tool() -> str:
     return SEARCH_TOOL_ID
 
 
-def build_payload(name: str, search_tool_id: str) -> dict:
+def build_payload(name: str, search_tool_id: str, skill_id: str) -> dict:
     return {
         "id": str(uuid.uuid4()),
         "name": name,
         "description": MANAGED_MARKER,
         "configuration": {
             "instructions": SYSTEM_PROMPT,
+            "skill_ids": [skill_id],
             "tools": [
                 {"tool_ids": [search_tool_id]},
                 {"tool_ids": ["platform.core.execute_esql"]},
@@ -293,8 +368,9 @@ def do_create(name: str, connector_id: str, llm_type: str, force: bool, dry_run:
     validate_connector_env()
     check_connector_exists(connector_id)
 
+    skill_id = ensure_skill()
     search_tool_id = ensure_search_tool()
-    payload = build_payload(name, search_tool_id)
+    payload = build_payload(name, search_tool_id, skill_id)
 
     if dry_run:
         print("=== DRY RUN — payload that would be POSTed ===")

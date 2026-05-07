@@ -1,12 +1,35 @@
 'use client';
 
 import { useState, useCallback, useRef, Dispatch, SetStateAction } from 'react';
-import { apiUrl } from '@/lib/api';
+import { apiUrl, BASE_PATH } from '@/lib/api';
+
+export interface ChatHotel {
+  id: string;
+  name: string;
+  // Tier 1 hotels (8 hand-crafted) use singular; Tier 2 (129 generated) use array
+  description?: string;
+  descriptions?: string[];
+  image_paths: string[];
+  room_description?: string;
+  // Rich fields present on Tier 2 hotels — passed through to the detail modal
+  rating?: number;
+  price_per_night_usd?: number;
+  price_tier?: string;
+  amenities?: string[];
+  style?: string[];
+  location?: { lat: number; lon: number };
+  location_name?: string;
+  country?: string;
+  region?: string;
+  nearby_landmarks?: string[];
+}
 
 export interface ToolCall {
   id: string;
   name: string;
   status: 'pending' | 'complete';
+  input?: Record<string, unknown>;
+  output?: string;
 }
 
 export interface Message {
@@ -16,6 +39,78 @@ export interface Message {
   reasoning?: string;
   toolCalls: ToolCall[];
   isComplete: boolean;
+  hotels: ChatHotel[];
+  thinkingStartTime?: number;
+  thinkingDuration?: number;
+}
+
+// ── Hotel index: eager-fetch on client mount, longest-name-first for greedy matching ──
+let hotelsCache: ChatHotel[] | null = null;
+if (typeof window !== 'undefined') {
+  fetch(`${BASE_PATH}/hotels.json`)
+    .then(r => r.json())
+    .then((data: ChatHotel[]) => {
+      hotelsCache = data.sort((a, b) => b.name.length - a.name.length);
+    })
+    .catch(() => {});
+}
+
+// Words too generic to identify a specific hotel; won't be used as match tokens
+const GENERIC_HOTEL_WORDS = new Set([
+  'the', 'hotel', 'resort', 'inn', 'las', 'vegas', 'usa', 'and', 'spa',
+  'by', 'at', 'of', 'de', 'suites', 'luxury', 'experience', 'properties',
+  'collection', 'casino', 'palace', 'desert', 'beach', 'safari', 'arts',
+  'plaza', 'star', 'club', 'lodge', 'camp', 'mountain', 'island', 'city',
+  'royal', 'bay', 'tower', 'towers', 'suite', 'view', 'strip', 'center', 'villas', 'villa',
+  'world', 'grand', 'iconic', 'floor', 'heart', 'italian', 'access', 'hotels', 'small', 'private',
+]);
+
+function getHotelTokens(name: string): string[] {
+  return name.toLowerCase()
+    .replace(/[+&]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length >= 4 && !GENERIC_HOTEL_WORDS.has(w));
+}
+
+function tokenRegex(t: string): RegExp {
+  return new RegExp(`\\b${t}\\b`);
+}
+
+function hotelMentionedIn(nameLower: string, tokens: string[], cleaned: string): boolean {
+  if (cleaned.includes(nameLower)) return true;
+  return tokens.length > 0 && tokens.some(t => tokenRegex(t).test(cleaned));
+}
+
+function firstMentionPos(nameLower: string, tokens: string[], cleaned: string): number {
+  const exact = cleaned.indexOf(nameLower);
+  if (exact >= 0) return exact;
+  return tokens
+    .map(t => { const m = tokenRegex(t).exec(cleaned); return m ? m.index : -1; })
+    .filter(p => p >= 0)
+    .reduce((min, p) => Math.min(min, p), Infinity);
+}
+
+function extractHotelsFromText(text: string): ChatHotel[] {
+  if (!hotelsCache) return [];
+  const cleaned = text.replace(/\*{1,2}/g, '').toLowerCase();
+  const found: ChatHotel[] = [];
+  const seenNames = new Set<string>();
+  for (const hotel of hotelsCache) {
+    const nameLower = hotel.name.toLowerCase();
+    if (seenNames.has(nameLower)) continue;
+    const tokens = getHotelTokens(hotel.name);
+    if (hotelMentionedIn(nameLower, tokens, cleaned)) {
+      found.push(hotel);
+      seenNames.add(nameLower);
+      if (found.length >= 5) break;
+    }
+  }
+  // Sort by first mention in prose (exact or token); every matched entry has pos >= 0
+  found.sort((a, b) =>
+    firstMentionPos(a.name.toLowerCase(), getHotelTokens(a.name), cleaned) -
+    firstMentionPos(b.name.toLowerCase(), getHotelTokens(b.name), cleaned)
+  );
+  return found;
 }
 
 function normalizeType(explicit: string | null, payload: Record<string, unknown>): string {
@@ -40,15 +135,30 @@ function applyEvent(
       if (raw.conversation_id) setConvId(raw.conversation_id as string);
       return msg;
     case 'reasoning':
-      return { ...msg, reasoning: (msg.reasoning ?? '') + (raw.reasoning as string ?? '') };
+      return {
+        ...msg,
+        reasoning: (msg.reasoning ?? '') + ((raw.reasoning as string) ?? ''),
+        thinkingStartTime: msg.thinkingStartTime ?? Date.now(),
+      };
     case 'thinking_complete':
       return msg;
     case 'message_chunk':
-      return { ...msg, content: msg.content + ((raw.text_chunk ?? raw.text ?? '') as string) };
-    case 'message_complete':
-      return { ...msg, content: (raw.message_content as string) ?? msg.content, isComplete: true };
-    case 'round_complete':
-      return { ...msg, isComplete: true };
+      return { ...msg, content: msg.content + (((raw.text_chunk ?? raw.text ?? '') as string)) };
+    case 'message_complete': {
+      const content = (raw.message_content as string) ?? msg.content;
+      const hotels = extractHotelsFromText(content);
+      const thinkingDuration = msg.thinkingStartTime
+        ? Math.round((Date.now() - msg.thinkingStartTime) / 1000)
+        : undefined;
+      return { ...msg, content, isComplete: true, hotels, thinkingDuration };
+    }
+    case 'round_complete': {
+      const hotels = extractHotelsFromText(msg.content);
+      const thinkingDuration = msg.thinkingStartTime
+        ? Math.round((Date.now() - msg.thinkingStartTime) / 1000)
+        : undefined;
+      return { ...msg, isComplete: true, hotels, thinkingDuration };
+    }
     case 'tool_call':
       return {
         ...msg,
@@ -56,31 +166,47 @@ function applyEvent(
           id: (raw.tool_id as string) ?? String(Date.now()),
           name: (raw.tool_name as string) ?? 'tool',
           status: 'pending',
+          input: raw.tool_input as Record<string, unknown> | undefined,
         }],
       };
     case 'tool_result':
       return {
         ...msg,
         toolCalls: msg.toolCalls.map(tc =>
-          tc.id === (raw.tool_id as string) ? { ...tc, status: 'complete' } : tc
+          tc.id === (raw.tool_id as string)
+            ? { ...tc, status: 'complete', output: raw.tool_result as string | undefined }
+            : tc
         ),
       };
-    case 'error':
-      return { ...msg, content: `⚠️ ${(raw.message as string) ?? 'Unknown error'}`, isComplete: true };
+    case 'error': {
+      console.error('[AgentChat] error event raw:', raw);
+      let errMsg: string;
+      if (typeof raw.message === 'string') errMsg = raw.message;
+      else if (typeof raw.error === 'string') errMsg = raw.error;
+      else if (raw.error && typeof raw.error === 'object') {
+        const e = raw.error as Record<string, unknown>;
+        errMsg = typeof e.message === 'string' ? e.message
+          : typeof e.reason === 'string' ? e.reason
+          : JSON.stringify(raw.error).slice(0, 200);
+      } else errMsg = JSON.stringify(raw).slice(0, 200);
+      return { ...msg, content: `⚠️ ${errMsg}`, isComplete: true };
+    }
     default:
       return msg;
   }
 }
 
-// Fallback: canned stream for demo mode
+// Fallback: canned stream for demo mode — uses exact hotel names from hotels.json
 const FALLBACK: Array<{ delay: number; type: string; data: Record<string, unknown> }> = [
-  { delay: 200,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index for matching properties...' } },
-  { delay: 1000, type: 'thinking_complete',  data: {} },
-  { delay: 1200, type: 'message_chunk',      data: { text_chunk: "I found some great matches! Here are my top picks:\n\n" } },
-  { delay: 1500, type: 'message_chunk',      data: { text_chunk: "**Bellagio Las Vegas** — Iconic luxury on the Strip with fountain views and world-class spa. $359/night ⭐ 4.8\n\n" } },
-  { delay: 2000, type: 'message_chunk',      data: { text_chunk: "**Park MGM Las Vegas** — Boutique-style retreat with rooftop pool and city views. $219/night ⭐ 4.6\n\n" } },
-  { delay: 2500, type: 'message_chunk',      data: { text_chunk: "Would you like to refine this further or explore a different destination?" } },
-  { delay: 2700, type: 'message_complete',   data: { message_content: '' } },
+  { delay: 200,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
+  { delay: 600,  type: 'tool_call',         data: { tool_id: 'tc-1', tool_name: 'hotel_search', tool_input: { query: 'baller room vegas strip view' } } },
+  { delay: 1400, type: 'tool_result',       data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
+  { delay: 1600, type: 'thinking_complete', data: {} },
+  { delay: 1900, type: 'message_chunk',     data: { text_chunk: 'For a true baller Vegas experience with Strip views, the Bellagio is the gold standard — iconic fountain views, a world-class spa, and celebrity chef dining steps from the casino floor. ' } },
+  { delay: 2400, type: 'message_chunk',     data: { text_chunk: 'If you want grand Italian opulence, the Venetian delivers massive suites with sweeping Strip panoramas right from the heart of the Boulevard. ' } },
+  { delay: 2900, type: 'message_chunk',     data: { text_chunk: 'For refined elegance and a quieter perch, the Wynn offers private pool access and one of the best spas in Nevada.' } },
+  { delay: 3300, type: 'message_chunk',     data: { text_chunk: ' Would you like to narrow by price or a specific amenity like a rooftop pool or high-limit casino?' } },
+  { delay: 3500, type: 'message_complete',  data: { message_content: null } },
 ];
 
 async function replayFallback(assistantId: string, set: Dispatch<SetStateAction<Message[]>>) {
@@ -107,10 +233,11 @@ export function useAgentChat(demoMode: boolean) {
     if (!content.trim() || isLoading) return;
 
     const assistantId = `asst-${Date.now()}`;
+    const emptyMsg: Message = { id: assistantId, role: 'assistant', content: '', toolCalls: [], isComplete: false, hotels: [] };
     setMessages(prev => [
       ...prev,
-      { id: `user-${Date.now()}`, role: 'user', content, toolCalls: [], isComplete: true },
-      { id: assistantId, role: 'assistant', content: '', toolCalls: [], isComplete: false },
+      { id: `user-${Date.now()}`, role: 'user', content, toolCalls: [], isComplete: true, hotels: [] },
+      emptyMsg,
     ]);
     setIsLoading(true);
 

@@ -13,13 +13,18 @@ import CapstoneStation from '@/components/stations/CapstoneStation';
 import AgentStation from '@/components/stations/AgentStation';
 import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
+import TravelSplitView from '@/components/TravelSplitView';
+import HotelDetailModal from '@/components/HotelDetailModal';
 import StationInfoBand from '@/components/StationInfoBand';
 import StationDetailDrawer from '@/components/StationDetailDrawer';
 import { DemoModeContext } from '@/lib/demoMode';
 import type { Station, Hotel, RankedHotel, VlmAnalysis } from '@/lib/types';
+import type { ChatHotel } from '@/hooks/useAgentChat';
+import { type TripCartState } from '@/components/TripCart';
+import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 import { apiUrl } from '@/lib/api';
 
-type ViewMode = 'travel' | 'demo';
+type ViewMode = 'travel' | 'demo' | 'split';
 type Theme = 'light' | 'dark';
 
 export default function Home() {
@@ -33,7 +38,10 @@ export default function Home() {
   const [analyzedHotel, setAnalyzedHotel] = useState<Hotel | undefined>(undefined);
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
+  const [splitInitialMessage, setSplitInitialMessage] = useState<string | undefined>();
+  const [cart, setCart] = useState<TripCartState>({ guests: 2, tripName: '' });
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>(undefined);
 
   // Read ?mode=demo hatch and persisted preferences on mount
   useEffect(() => {
@@ -81,20 +89,26 @@ export default function Home() {
     }).catch(() => { /* silent */ });
   }, []);
 
+  const openHotelFromChat = useCallback((chatHotel: ChatHotel) => {
+    setSelectedHotel(chatHotelToHotel(chatHotel));
+  }, []);
+
   return (
     <DemoModeContext.Provider value={demoMode}>
       <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)' }}>
         {demoMode && <DemoModeBanner onDisable={disableDemo} />}
 
-        {viewMode === 'travel' ? (
+        {viewMode === 'travel' || viewMode === 'split' ? (
           <TravelHome
             onShowDemo={() => setViewMode('demo')}
             onSelectStation={(s) => { setViewMode('demo'); setStation(s); }}
-            onOpenAgent={() => setShowAgentChat(true)}
+            onOpenAgent={(query?: string) => { setSplitInitialMessage(query || undefined); setViewMode('split'); }}
             theme={theme}
             onToggleTheme={toggleTheme}
             demoMode={demoMode}
             onToggleDemo={toggleDemo}
+            cart={cart}
+            setCart={setCart}
           />
         ) : (
           <div className="demo-blueprint flex flex-col flex-1">
@@ -136,7 +150,38 @@ export default function Home() {
           </div>
         )}
       </div>
-      {showAgentChat && <AgentChat onClose={() => setShowAgentChat(false)} />}
+
+      {/* Split-view concierge — full-screen 65/35 layout; owns its own hotel modal + cart */}
+      {viewMode === 'split' && (
+        <TravelSplitView
+          initialMessage={splitInitialMessage}
+          onClose={() => setViewMode('travel')}
+          cart={cart}
+          setCart={setCart}
+        />
+      )}
+
+      {/* AI Concierge modal overlay — demo view only */}
+      {showAgentChat && viewMode === 'demo' && (
+        <AgentChat
+          onClose={() => setShowAgentChat(false)}
+          onOpenHotel={openHotelFromChat}
+        />
+      )}
+
+      {/* Hotel detail modal — shared between chat and search results */}
+      {selectedHotel && (
+        <HotelDetailModal
+          hotel={selectedHotel}
+          onClose={() => setSelectedHotel(undefined)}
+          onFindSimilar={(hotel) => {
+            setSelectedHotel(undefined);
+            setPendingFindQuery(hotel.name);
+            setViewMode('demo');
+            setStation('find');
+          }}
+        />
+      )}
     </DemoModeContext.Provider>
   );
 }
