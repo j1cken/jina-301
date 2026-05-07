@@ -59,15 +59,20 @@ function extractHotelsFromText(text: string): ChatHotel[] {
   if (!hotelsCache) return [];
   const cleaned = text.replace(/\*{1,2}/g, '').toLowerCase();
   const found: ChatHotel[] = [];
-  const seen = new Set<string>();
+  const seenNames = new Set<string>(); // dedup by name; same-named entries are UI-indistinguishable
   for (const hotel of hotelsCache) {
-    if (seen.has(hotel.id)) continue;
-    if (cleaned.includes(hotel.name.toLowerCase())) {
+    const nameLower = hotel.name.toLowerCase();
+    if (seenNames.has(nameLower)) continue;
+    if (cleaned.includes(nameLower)) {
       found.push(hotel);
-      seen.add(hotel.id);
+      seenNames.add(nameLower);
       if (found.length >= 5) break;
     }
   }
+  // Sort by first mention in agent prose — safe: every entry in found passed cleaned.includes(name)
+  found.sort((a, b) =>
+    cleaned.indexOf(a.name.toLowerCase()) - cleaned.indexOf(b.name.toLowerCase())
+  );
   return found;
 }
 
