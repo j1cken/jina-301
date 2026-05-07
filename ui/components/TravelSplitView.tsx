@@ -123,7 +123,7 @@ export default function TravelSplitView({ initialMessage, onClose, cart, setCart
               initialMessage={initialMessage}
               tripContext={tripContext}
               onAgentHotels={setAgentHotels}
-              onReset={() => setAgentHotels([])}
+              onReset={() => { setAgentHotels([]); setTripHotels([]); setBookingPNR(null); }}
               onOpenHotel={handleOpenHotelFromChat}
               onDatesParsed={(checkIn, checkOut) => setCart(prev => ({ ...prev, checkIn, checkOut }))}
             />
