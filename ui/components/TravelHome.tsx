@@ -408,6 +408,15 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
                 )}
               </div>
               <span style={{ flex: 1 }} />
+              <button
+                onClick={() => setQuery('baller hotel room with view of vegas strip')}
+                style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 500, flexShrink: 0, background: 'transparent', color: 'var(--text-muted)', border: '1px solid transparent', cursor: 'pointer', opacity: 0.45, transition: 'opacity 0.2s', userSelect: 'none' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '0.45')}
+                title="Demo query"
+              >
+                demo
+              </button>
               <button onClick={() => runSearch(query)} disabled={loading || !query.trim()}
                 style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, flexShrink: 0, background: 'var(--bg-surface)', color: query.trim() ? 'var(--text-primary)' : 'var(--text-muted)', border: '1px solid var(--border)', cursor: query.trim() ? 'pointer' : 'not-allowed', transition: 'background 0.2s', userSelect: 'none' }}>
                 <Search className="w-3.5 h-3.5" />
