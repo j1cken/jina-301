@@ -61,7 +61,7 @@ const GENERIC_HOTEL_WORDS = new Set([
   'by', 'at', 'of', 'de', 'suites', 'luxury', 'experience', 'properties',
   'collection', 'casino', 'palace', 'desert', 'beach', 'safari', 'arts',
   'plaza', 'star', 'club', 'lodge', 'camp', 'mountain', 'island', 'city',
-  'royal', 'bay', 'tower', 'towers', 'suite', 'view', 'strip', 'center',
+  'royal', 'bay', 'tower', 'towers', 'suite', 'view', 'strip', 'center', 'villas', 'villa',
 ]);
 
 function getHotelTokens(name: string): string[] {
@@ -197,16 +197,15 @@ function applyEvent(
 
 // Fallback: canned stream for demo mode — uses exact hotel names from hotels.json
 const FALLBACK: Array<{ delay: number; type: string; data: Record<string, unknown> }> = [
-  { delay: 200,  type: 'reasoning',        data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
-  { delay: 600,  type: 'tool_call',        data: { tool_id: 'tc-1', tool_name: 'semantic_search', tool_input: { query: 'baller room vegas strip view' } } },
-  { delay: 1400, type: 'tool_result',      data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
+  { delay: 200,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
+  { delay: 600,  type: 'tool_call',         data: { tool_id: 'tc-1', tool_name: 'hotel_search', tool_input: { query: 'baller room vegas strip view' } } },
+  { delay: 1400, type: 'tool_result',       data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
   { delay: 1600, type: 'thinking_complete', data: {} },
-  { delay: 1800, type: 'message_chunk',    data: { text_chunk: "Here are my top picks for a luxurious Las Vegas stay with Strip views:\n\n" } },
-  { delay: 2100, type: 'message_chunk',    data: { text_chunk: "**Bellagio** — Iconic luxury on the Strip with world-famous fountain views, premier spa, and celebrity chef restaurants. $359/night ⭐ 4.9\n\n" } },
-  { delay: 2500, type: 'message_chunk',    data: { text_chunk: "**The Venetian Resort Las Vegas** — Grand Italian-inspired suites, indoor gondolas, and sweeping Strip panoramas from every room. $289/night ⭐ 4.8\n\n" } },
-  { delay: 2900, type: 'message_chunk',    data: { text_chunk: "**Wynn Las Vegas** — Sophisticated elegance with private pool villas, signature dining, and one of the best spas in Nevada. $429/night ⭐ 4.9\n\n" } },
-  { delay: 3200, type: 'message_chunk',    data: { text_chunk: "Would you like more details on any of these, or shall I filter by price range or specific amenities?" } },
-  { delay: 3400, type: 'message_complete', data: { message_content: '' } },
+  { delay: 1900, type: 'message_chunk',     data: { text_chunk: 'For a true baller Vegas experience with Strip views, the Bellagio is the gold standard — iconic fountain views, a world-class spa, and celebrity chef dining steps from the casino floor. ' } },
+  { delay: 2400, type: 'message_chunk',     data: { text_chunk: 'If you want grand Italian opulence, the Venetian delivers massive suites with sweeping Strip panoramas right from the heart of the Boulevard. ' } },
+  { delay: 2900, type: 'message_chunk',     data: { text_chunk: 'For refined elegance and a quieter perch, the Wynn offers private pool access and one of the best spas in Nevada.' } },
+  { delay: 3300, type: 'message_chunk',     data: { text_chunk: ' Would you like to narrow by price or a specific amenity like a rooftop pool or high-limit casino?' } },
+  { delay: 3500, type: 'message_complete',  data: { message_content: null } },
 ];
 
 async function replayFallback(assistantId: string, set: Dispatch<SetStateAction<Message[]>>) {
