@@ -1,0 +1,40 @@
+[
+  {
+    "step": "fetch",
+    "status": "start",
+    "message": "Jina Reader is fetching the page..."
+  },
+  {
+    "step": "fetch",
+    "status": "done",
+    "message": "Received 12,480 characters of clean markdown"
+  },
+  {
+    "step": "parse",
+    "status": "start",
+    "message": "Extracting hotel fields from markdown..."
+  },
+  {
+    "step": "parse",
+    "status": "done",
+    "message": "Parsed: The Venetian Resort Las Vegas",
+    "detail": {
+      "name": "The Venetian Resort Las Vegas"
+    }
+  },
+  {
+    "step": "index",
+    "status": "start",
+    "message": "Indexing with .jina-embeddings-v5-text-small..."
+  },
+  {
+    "step": "index",
+    "status": "done",
+    "message": "1 document indexed with auto-embedding"
+  },
+  {
+    "step": "complete",
+    "status": "done",
+    "message": "Hotel ready for search"
+  }
+]

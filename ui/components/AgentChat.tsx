@@ -209,7 +209,7 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
             ) : (
               <>
                 <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
-                  {msg.content}
+                  {stripHotelListLines(msg.content, msg.hotels.map(h => h.name))}
                 </ReactMarkdown>
                 {!msg.isComplete && isLast && (
                   <span className="inline-block w-1.5 h-4 ml-0.5 align-middle animate-pulse rounded-sm"
@@ -224,6 +224,20 @@ function MessageBubble({ msg, isLast, onOpenHotel }: {
   );
 }
 
+function stripHotelListLines(text: string, hotelNames: string[]): string {
+  if (!hotelNames.length) return text;
+  return text
+    .split('\n')
+    .filter(line => {
+      const isBullet = /^(\s*[-*•]|\s*\d+\.)/.test(line);
+      if (!isBullet) return true;
+      const lower = line.toLowerCase();
+      return !hotelNames.some(n => lower.includes(n.toLowerCase()));
+    })
+    .join('\n')
+    .trim();
+}
+
 interface AgentChatProps {
   onClose?: () => void;
   embedded?: boolean;
@@ -232,6 +246,7 @@ interface AgentChatProps {
   initialMessage?: string;
   tripContext?: string;
   onAgentHotels?: (hotels: ChatHotel[]) => void;
+  onReset?: () => void;
   onOpenHotel?: (hotel: ChatHotel) => void;
   onDatesParsed?: (checkIn: Date, checkOut: Date) => void;
 }
@@ -244,6 +259,7 @@ export default function AgentChat({
   initialMessage,
   tripContext,
   onAgentHotels,
+  onReset,
   onOpenHotel,
   onDatesParsed,
 }: AgentChatProps) {
@@ -310,11 +326,12 @@ export default function AgentChat({
         </div>
         <div className="flex items-center gap-1">
           {messages.length > 0 && (
-            <button onClick={reset}
-              className="p-1.5 rounded-lg transition-colors hover:opacity-70"
-              style={{ color: 'var(--text-muted)' }}
-              title="New conversation">
-              <RotateCcw className="w-4 h-4" />
+            <button
+              onClick={() => { reset(); onReset?.(); }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors hover:opacity-80"
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
+              title="Start a new conversation">
+              <RotateCcw className="w-3.5 h-3.5" /> New Chat
             </button>
           )}
           {onClose && (

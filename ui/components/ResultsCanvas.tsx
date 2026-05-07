@@ -143,7 +143,7 @@ export default function ResultsCanvas({ onOpenHotel, agentHotels = [] }: Results
         )}
 
         {loading && (
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         )}
@@ -157,7 +157,7 @@ export default function ResultsCanvas({ onOpenHotel, agentHotels = [] }: Results
                 AI Picks
               </span>
             </div>
-            <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
               {agentHotelsFull.map(h => (
                 <div key={h.id} className="relative">
                   <div
@@ -186,7 +186,7 @@ export default function ResultsCanvas({ onOpenHotel, agentHotels = [] }: Results
                     </span>
                   </div>
                 )}
-                <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
                   {picks.map(h => (
                     <div key={h.id} className="relative">
                       <div
@@ -207,7 +207,7 @@ export default function ResultsCanvas({ onOpenHotel, agentHotels = [] }: Results
                 {(picks.length > 0 || agentHotelsFull.length > 0) && (
                   <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>All Results</p>
                 )}
-                <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
                   {rest.map(h => (
                     <TravelHotelCard key={h.id} hotel={h} onClick={() => onOpenHotel(h)} />
                   ))}

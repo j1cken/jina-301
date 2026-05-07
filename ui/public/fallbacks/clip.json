@@ -1,0 +1,344 @@
+{
+  "results": [
+    {
+      "id": "zephyr-workclub-amsterdam",
+      "name": "Zephyr Work Club Amsterdam",
+      "descriptions": [
+        "This luxurious hotel room offers a serene and inviting atmosphere with a large indoor pool that reflects the surrounding palm trees and cityscape. The room features a mix of natural and warm lighting, creating a cozy ambiance. The pool area is surrounded by comfortable lounge chairs with plush cushions and throw blankets, perfect for relaxation. The walls are adorned with large windows that provide breathtaking views of the city, while the ceiling is decorated with elegant arches and pendant lights. The overall design of the room combines modern elements with traditional touches, offering a unique and memorable experience for guests."
+      ],
+      "location": {
+        "lat": 0,
+        "lon": 0
+      },
+      "location_name": "",
+      "country": "",
+      "region": "",
+      "amenities": [],
+      "style": [],
+      "price_tier": "mid",
+      "price_per_night_usd": 0,
+      "image_paths": [
+        "/images/hotels/zephyr-workclub-amsterdam_1.png",
+        "/images/hotels/zephyr-workclub-amsterdam_2.png"
+      ],
+      "rating": 0,
+      "nearby_landmarks": [],
+      "score": 0.99998105
+    },
+    {
+      "id": "sir-adam-hotel-amsterdam",
+      "name": "Sir Adam Hotel, Amsterdam",
+      "descriptions": [
+        "Sir Adam Hotel is a trendy and stylish hotel located in the iconic A'DAM Tower in Amsterdam. With its panoramic views of the city and its vibrant atmosphere, it's the perfect choice for a modern and unforgettable stay. From its rooftop bar to its cool and contemporary rooms, Sir Adam offers a unique and exciting experience.",
+        "The Butcher Social Club, our signature restaurant, offers a gourmet burger experience with stunning city views. Savor delicious burgers made with the finest ingredients, while enjoying the vibrant atmosphere and panoramic vistas. The restaurant's lively ambiance and friendly service make it the perfect place to unwind and enjoy a meal.",
+        "Located in the A'DAM Tower, Sir Adam offers unparalleled views of Amsterdam and the surrounding area. The hotel is easily accessible by ferry from Amsterdam Central Station. Explore the vibrant cultural scene of the north side of Amsterdam, with its museums, art galleries, and music venues.",
+        "Sir Adam Hotel exudes a cool and contemporary vibe. Its modern design, vibrant atmosphere, and friendly staff create a truly unique and unforgettable experience. Whether you're enjoying a drink at the rooftop bar or relaxing in your room, you'll feel energized and inspired.",
+        "Our standard rooms are stylish and comfortable, with floor-to-ceiling windows offering panoramic views of the city. Enjoy a peaceful night's sleep in our well-appointed rooms, which feature comfortable beds and modern amenities. Rooms on higher floors are quieter, offering respite from the city's hum.",
+        "Upgrade to one of our corner suites for even more space and breathtaking views. Enjoy a separate living area, a luxurious bathroom, and personalized service. Our suites offer the perfect blend of comfort and style, making your stay even more memorable."
+      ],
+      "location": {
+        "lat": 52.393,
+        "lon": 4.904
+      },
+      "location_name": "Amsterdam, Netherlands",
+      "country": "Netherlands",
+      "region": "Western Europe",
+      "amenities": [
+        "restaurant",
+        "bar",
+        "concierge",
+        "gym"
+      ],
+      "style": [
+        "boutique",
+        "business"
+      ],
+      "price_tier": "upscale",
+      "price_per_night_usd": 400,
+      "image_paths": [
+        "/images/hotels/sir-adam-hotel-amsterdam_1.png"
+      ],
+      "rating": 4.5,
+      "nearby_landmarks": [
+        "A'DAM Tower",
+        "Eye Film Museum"
+      ],
+      "score": 0.90531856
+    },
+    {
+      "id": "al-wadi-hotel-doha",
+      "name": "Al Wadi Hotel Doha - MGallery",
+      "descriptions": [
+        "Nestled in the heart of Doha's vibrant Souq Waqif, Al Wadi Hotel Doha offers a luxurious and authentic Qatari experience. The hotel seamlessly blends traditional Arabian architecture with modern comforts. Guests can explore the bustling souk with its spice stalls, artisan shops, and traditional cafes, all just steps from the hotel's grand entrance. Enjoy personalized service, exquisite dining, and a tranquil oasis in the heart of the city's cultural hub. A perfect base for exploring Doha's rich heritage and modern attractions.",
+        "The M|Spa at Al Wadi offers a sanctuary of tranquility. Indulge in traditional Arabian treatments using locally sourced ingredients like camel milk and dates. Relax in the hammam, sauna, or steam room before enjoying a rejuvenating massage. The spa's serene atmosphere and skilled therapists will leave you feeling refreshed and revitalized, ready to embrace the energy of Doha.",
+        "Ideally located in Souq Waqif, Al Wadi Hotel Doha provides unparalleled access to Doha's cultural heart. Explore the souk's labyrinthine alleyways, filled with the aroma of spices and the sounds of traditional music. The Corniche, Museum of Islamic Art, and National Museum of Qatar are just a short taxi ride away.",
+        "Al Wadi offers a sophisticated and relaxing ambiance, perfect for both leisure and business travelers. The attentive staff provides personalized service, ensuring every guest feels welcome and cared for. Enjoy traditional Qatari hospitality and a truly authentic cultural experience.",
+        "Our Deluxe rooms offer stunning views of the Souq Waqif. The rooms are elegantly furnished with Arabian-inspired decor and feature plush bedding, a spacious work area, and a luxurious bathroom. The double-paned windows ensure a quiet and peaceful retreat, shielding you from the lively souk sounds below.",
+        "The Emiri Suites offer unparalleled luxury and space. These expansive suites feature a separate living area, dining area, and a private balcony with panoramic views of Doha's skyline. Enjoy exclusive access to the hotel's executive lounge and personalized butler service for a truly unforgettable stay.",
+        "This luxurious hotel room offers a serene and inviting atmosphere with a large, rectangular swimming pool that reflects the warm lighting. The room features a stone floor and walls, creating a cozy and rustic ambiance. A staircase with a wooden railing leads to the pool area, and a balcony with a railing provides a view of the pool. The room is furnished with comfortable seating, including a couch and a chair, and there are several potted plants adding a touch of greenery. The room also includes a gym area with treadmills and other exercise equipment. The overall experience offered is one of relaxation and luxury, with a focus on comfort and convenience."
+      ],
+      "location": {
+        "lat": 25.286,
+        "lon": 51.531
+      },
+      "location_name": "Doha, Qatar",
+      "country": "Qatar",
+      "region": "Middle East",
+      "amenities": [
+        "pool",
+        "spa",
+        "gym",
+        "restaurant",
+        "bar",
+        "concierge"
+      ],
+      "style": [
+        "luxury",
+        "boutique",
+        "heritage"
+      ],
+      "price_tier": "luxury",
+      "price_per_night_usd": 350,
+      "image_paths": [
+        "/images/hotels/al-wadi-hotel-doha_1.png",
+        "/images/hotels/al-wadi-hotel-doha_2.png"
+      ],
+      "rating": 4.6,
+      "nearby_landmarks": [
+        "Souq Waqif",
+        "Museum of Islamic Art",
+        "The Corniche"
+      ],
+      "score": 0.879554
+    },
+    {
+      "id": "the-hoxton-holborn-london",
+      "name": "The Hoxton, Holborn",
+      "descriptions": [
+        "The Hoxton, Holborn is a vibrant and stylish hotel in the heart of London. With its unique blend of contemporary design and urban charm, it's the perfect base for exploring the city. From its trendy rooms to its lively bar and restaurant, The Hoxton offers a truly unforgettable experience. Whether you're traveling for business or leisure, you'll find everything you need for a comfortable and enjoyable stay.",
+        "Hubble is our signature restaurant, serving modern British cuisine with a focus on seasonal ingredients. Enjoy a relaxed and informal dining experience in a stylish setting. Our talented chefs create innovative dishes that showcase the best of British produce. The restaurant's lively atmosphere and attentive service make it the perfect place to unwind after a long day.",
+        "Located in the vibrant Holborn neighborhood, The Hoxton is surrounded by theaters, museums, and restaurants. The British Museum and Covent Garden are just a short walk away, while the West End is easily accessible by public transport. Explore the eclectic mix of shops and cafes in this bustling area.",
+        "The Hoxton, Holborn exudes a cool and contemporary vibe. Its trendy design and lively atmosphere make it a popular choice for young professionals and creative types. The hotel's friendly and welcoming staff are always on hand to assist with any needs, ensuring a comfortable and enjoyable stay.",
+        "Our standard rooms are stylish and comfortable, with a range of modern amenities. Enjoy a peaceful night's sleep in our well-appointed rooms, which feature comfortable beds and soundproofed windows. Higher-floor rooms offer city views and a quieter ambiance, away from the street noise.",
+        "Upgrade to one of our concept rooms for a truly unique experience. Each room is designed with a different theme, from a vintage-inspired studio to a modern art gallery. Enjoy extra space and luxurious amenities, making your stay even more special.",
+        "The hotel room is a luxurious blend of classic and modern design, with warm wooden tones and elegant gold accents. The atmosphere is cozy and inviting, with plush seating and a bar area that offers a variety of drinks. The visible amenities include a concierge desk, a comfortable couch, and a dining area with a fireplace. The experience offered is one of comfort and luxury, with attention to detail and a focus on providing a memorable stay for guests."
+      ],
+      "location": {
+        "lat": 51.518,
+        "lon": -0.118
+      },
+      "location_name": "London, UK",
+      "country": "United Kingdom",
+      "region": "Western Europe",
+      "amenities": [
+        "restaurant",
+        "bar",
+        "concierge"
+      ],
+      "style": [
+        "boutique",
+        "business"
+      ],
+      "price_tier": "mid",
+      "price_per_night_usd": 300,
+      "image_paths": [
+        "/images/hotels/the-hoxton-holborn-london_1.png",
+        "/images/hotels/the-hoxton-holborn-london_2.png"
+      ],
+      "rating": 4.4,
+      "nearby_landmarks": [
+        "British Museum",
+        "Covent Garden"
+      ],
+      "score": 0.8790726
+    },
+    {
+      "id": "the-nomad-hotel-new-york",
+      "name": "The NoMad Hotel New York",
+      "descriptions": [
+        "The NoMad Hotel New York is a haven of refined elegance in the heart of Manhattan. Inspired by Jacques Garcia's Parisian aesthetic, the hotel exudes a timeless charm with its rich fabrics, custom-designed furnishings, and curated art collection. Located in a landmark Beaux-Arts building, The NoMad offers a serene escape from the bustling city, providing guests with an unparalleled experience of luxury and sophistication. Its central location allows for easy access to major attractions and cultural landmarks, making it an ideal base for exploring the city.",
+        "The NoMad Restaurant, helmed by Chef Daniel Humm, is a culinary destination in itself. The dimly lit, elegant space features soaring ceilings and a grand fireplace. Guests can indulge in a multi-course tasting menu featuring seasonal ingredients and innovative techniques, paired with an extensive wine list. The restaurant's ambiance is intimate and inviting, perfect for a special occasion or a romantic dinner.",
+        "Located in the vibrant NoMad neighborhood, the hotel is surrounded by trendy boutiques, art galleries, and world-class restaurants. Its central location provides easy access to major attractions like the Empire State Building and Madison Square Park, both just a short walk away. The neighborhood's lively atmosphere and convenient transportation options make it an ideal base for exploring the city.",
+        "The NoMad cultivates an atmosphere of understated luxury and refined hospitality. Guests can expect impeccable service and a personalized experience, with a focus on creating memorable moments. The hotel's elegant ambiance and attentive staff create a sense of tranquility and escape, allowing guests to relax and unwind in style.",
+        "Standard rooms at The NoMad are designed with comfort and elegance in mind. Featuring custom-designed furnishings, rich fabrics, and curated artwork, these rooms offer a serene retreat from the city. North-facing rooms overlook a quiet courtyard, providing a peaceful atmosphere, while south-facing rooms may experience some city noise.",
+        "The NoMad Suite offers an unparalleled experience of luxury and comfort. Featuring a spacious living area, a separate bedroom, and a lavish bathroom, this suite provides ample space to relax and unwind. The suite is adorned with exquisite details, including custom-designed furniture, original artwork, and a curated selection of books.",
+        "This hotel room interior exudes a luxurious and sophisticated ambiance. The space is characterized by a warm, inviting color palette dominated by rich browns, golds, and soft whites. The room features elegant wooden furniture, including a plush green velvet bar stool and a sleek marble countertop. The floor is adorned with intricate red and gold patterned rugs, adding a touch of opulence.\n\nThe room is well-lit, with a combination of natural light streaming in through large windows and soft, ambient lighting from chandeliers and pendant lights. The walls are decorated with tasteful artwork and framed photographs, enhancing the room's refined aesthetic.\n\nA prominent feature of the room is the bar area, which is equipped with a variety of bottles and glasses, suggesting a well-stocked bar. The bar is staffed by attentive bartenders who are engaged in serving drinks to the guests.\n\nThe room also includes a dining area with a table set for a meal, complete with plates, cutlery, and glasses. The dining area is surrounded by comfortable chairs, and the table is set with a white tablecloth and elegant tableware.\n\nOverall, the room interior offers a high-end, comfortable, and stylish experience, making it an ideal choice for guests seeking a luxurious stay."
+      ],
+      "location": {
+        "lat": 40.746,
+        "lon": -73.987
+      },
+      "location_name": "New York, USA",
+      "country": "USA",
+      "region": "North America",
+      "amenities": [
+        "restaurant",
+        "bar",
+        "concierge",
+        "gym"
+      ],
+      "style": [
+        "luxury",
+        "boutique"
+      ],
+      "price_tier": "luxury",
+      "price_per_night_usd": 650,
+      "image_paths": [
+        "/images/hotels/the-nomad-hotel-new-york_1.png",
+        "/images/hotels/the-nomad-hotel-new-york_2.png"
+      ],
+      "rating": 4.7,
+      "nearby_landmarks": [
+        "Empire State Building",
+        "Madison Square Park"
+      ],
+      "score": 0.8789932
+    },
+    {
+      "id": "jumeirah-mina-a-salam",
+      "name": "Jumeirah Mina A'Salam",
+      "descriptions": [
+        "Jumeirah Mina A'Salam, meaning 'Harbor of Peace', is a luxurious boutique hotel that forms part of the Madinat Jumeirah resort. Inspired by Arabian architecture, the hotel offers a tranquil escape with waterways weaving through the property, connecting guests to the vibrant souk and pristine beach. Experience the best of Dubai with world-class dining, shopping, and entertainment at your doorstep.",
+        "Talise Spa at Madinat Jumeirah provides a sanctuary of rejuvenation with treatments that blend ancient traditions and modern techniques. Relax in the steam rooms, saunas, and plunge pools before indulging in a customized massage or facial. The serene atmosphere and skilled therapists ensure a truly transformative experience.",
+        "Located within the Madinat Jumeirah resort, Jumeirah Mina A'Salam offers easy access to the Souk Madinat Jumeirah, the beach, and a variety of restaurants and bars. The hotel is a short drive from major attractions like the Burj Al Arab and Wild Wadi Waterpark, making it an ideal base for exploring Dubai.",
+        "Jumeirah Mina A'Salam exudes a sense of Arabian elegance and warm hospitality. Guests are treated to personalized service and a tranquil atmosphere that encourages relaxation and exploration. The waterways and lush gardens create a unique and unforgettable experience.",
+        "The Arabian Deluxe Room features a private balcony with views of the waterways or the Arabian Gulf. Decorated in a traditional Arabian style, the room offers plush furnishings and modern amenities. Rooms facing the water may experience gentle ambient noise from the abra boats, while inner-facing rooms are generally quieter.",
+        "The Ocean Suite offers breathtaking views of the Arabian Gulf, a separate living area, and access to the Club Lounge. The suite is decorated in a luxurious style with handcrafted details and plush fabrics. Enjoy the ultimate in comfort and convenience with personalized service and exclusive amenities.",
+        "This luxurious hotel room offers a serene and inviting atmosphere with a blend of traditional and modern design elements. The space is adorned with warm, natural lighting that enhances the cozy ambiance. The room features a comfortable seating area with plush leather furniture, including a sofa and two armchairs, perfect for relaxation. A wooden coffee table with a vase of flowers adds a touch of elegance and tranquility.\n\nThe room opens up to a stunning outdoor space with a large, inviting swimming pool that reflects the surrounding greenery. The pool area is furnished with lounge chairs and a small table, providing a perfect spot for unwinding and enjoying the view. The pool is surrounded by lush palm trees and other tropical plants, creating a serene and tropical ambiance.\n\nIn the background, the hotel's architecture is visible, with a mix of traditional and modern design elements. The building has a warm, inviting color palette with beige and brown tones, complemented by wooden accents. The architecture features arched doorways and windows, adding a touch of elegance and sophistication.\n\nThe hotel also offers a range of amenities, including a spa and gym, as indicated by the signs visible in the room. The spa and gym are well-equipped and provide a range of services and facilities for guests to enjoy.\n\nOverall, this hotel room offers a luxurious and comfortable experience with a stunning outdoor space, comfortable seating, and a range of amenities. The combination of traditional and modern design elements, along with the warm and inviting atmosphere, creates a perfect setting for relaxation"
+      ],
+      "location": {
+        "lat": 25.126,
+        "lon": 55.186
+      },
+      "location_name": "Dubai, UAE",
+      "country": "UAE",
+      "region": "Middle East",
+      "amenities": [
+        "pool",
+        "spa",
+        "gym",
+        "restaurant",
+        "bar",
+        "concierge"
+      ],
+      "style": [
+        "luxury",
+        "boutique",
+        "resort",
+        "heritage"
+      ],
+      "price_tier": "luxury",
+      "price_per_night_usd": 650,
+      "image_paths": [
+        "/images/hotels/jumeirah-mina-a-salam_1.png",
+        "/images/hotels/jumeirah-mina-a-salam_2.png"
+      ],
+      "rating": 4.7,
+      "nearby_landmarks": [
+        "Burj Al Arab",
+        "Souk Madinat Jumeirah"
+      ],
+      "score": 0.8726089
+    },
+    {
+      "id": "parkroyal-collection-marinabay",
+      "name": "PARKROYAL COLLECTION Marina Bay, Singapore",
+      "descriptions": [
+        "PARKROYAL COLLECTION Marina Bay, Singapore, is a landmark hotel renowned for its distinctive architecture and commitment to sustainability. Boasting a 'hotel-in-a-garden' concept, the property features lush greenery, cascading vertical gardens, and a stunning rooftop infinity pool overlooking the city skyline. Experience eco-luxury in the heart of Singapore.",
+        "The St. Gregory spa offers a range of holistic treatments designed to restore balance and harmony to your mind, body, and soul. Indulge in a traditional Asian massage, a revitalizing facial, or a soothing body wrap. The spa uses sustainable and organic products whenever possible, aligning with the hotel's eco-friendly ethos.",
+        "Strategically located in Marina Bay, the PARKROYAL COLLECTION offers unparalleled access to Singapore's iconic attractions. Explore Gardens by the Bay, marvel at the Marina Bay Sands, or immerse yourself in the vibrant arts and culture scene at the Esplanade. The hotel is also well-connected to the city's business district.",
+        "The PARKROYAL COLLECTION provides a serene and eco-conscious experience in the heart of the city. Guests are surrounded by lush greenery and enjoy stunning views of the Marina Bay skyline. The hotel's commitment to sustainability creates a unique and refreshing atmosphere.",
+        "The Urban Deluxe rooms feature floor-to-ceiling windows offering panoramic city views. Rooms facing the Marina Bay Sands are particularly scenic, though may experience some ambient city noise. Expect a modern and comfortable space with eco-friendly amenities and a restful atmosphere.",
+        "The COLLECTION Club rooms offer exclusive access to the COLLECTION Club Lounge, with complimentary breakfast, all-day refreshments, and evening cocktails. These rooms also boast enhanced amenities and personalized service, ensuring a luxurious and memorable stay.",
+        "This hotel room offers a luxurious and modern interior with a large swimming pool and a gym area. The room features a comfortable lounge area with a woman reading a book and a man swimming in the pool. The gym area has a treadmill and other exercise equipment. The room has a warm and inviting atmosphere with natural light coming through the large windows. The hotel also offers a spa and wellness center, as well as a restaurant and bar. The hotel is located in a high-rise building with a stunning view of the city skyline."
+      ],
+      "location": {
+        "lat": 1.288,
+        "lon": 103.854
+      },
+      "location_name": "Singapore, Singapore",
+      "country": "Singapore",
+      "region": "Asia Pacific",
+      "amenities": [
+        "pool",
+        "spa",
+        "gym",
+        "restaurant",
+        "bar",
+        "concierge"
+      ],
+      "style": [
+        "luxury",
+        "business",
+        "wellness"
+      ],
+      "price_tier": "upscale",
+      "price_per_night_usd": 380,
+      "image_paths": [
+        "/images/hotels/parkroyal-collection-marinabay_1.png",
+        "/images/hotels/parkroyal-collection-marinabay_2.png"
+      ],
+      "rating": 4.6,
+      "nearby_landmarks": [
+        "Gardens by the Bay",
+        "Marina Bay Sands"
+      ],
+      "score": 0.8715749
+    },
+    {
+      "id": "cape-grace-hotel",
+      "name": "Cape Grace Hotel",
+      "descriptions": [
+        "Located on its own private quay in Cape Town\u2019s vibrant V&A Waterfront, Cape Grace offers unparalleled views of Table Mountain and the bustling harbor. Experience world-class service, exquisite dining, and luxurious accommodations. Discover a haven of tranquility where elegance meets adventure, promising an unforgettable South African experience.",
+        "The Cape Grace Spa offers a holistic approach to wellness, incorporating indigenous African ingredients and techniques. Indulge in a range of rejuvenating treatments designed to restore balance and harmony. Experience the ultimate in relaxation in our serene sanctuary, leaving you feeling refreshed and revitalized.",
+        "Situated in the heart of the V&A Waterfront, Cape Grace provides easy access to Cape Town\u2019s top attractions. Explore the vibrant shops, restaurants, and museums, or take a ferry to Robben Island. The hotel's prime location makes it the perfect base for exploring the wonders of the Cape.",
+        "Cape Grace exudes an atmosphere of understated elegance and refined luxury. Guests can enjoy a sense of exclusivity and personalized service. Whether you're traveling for business or leisure, our attentive staff will ensure a seamless and memorable stay. Relax by the pool, savor exquisite cuisine, and immerse yourself in the charm of Cape Town.",
+        "Our standard rooms offer a comfortable and stylish retreat, featuring plush bedding, en-suite bathrooms, and stunning views of the harbor or Table Mountain. The rooms facing the harbor can experience slight morning activity from boat traffic, while those on the mountain side are quieter.",
+        "The Table Mountain Suite offers the ultimate in luxury and privacy, with a separate living area, a private balcony, and breathtaking views of Table Mountain. Enjoy personalized butler service and exclusive access to the hotel's amenities. The suite's spacious layout is perfect for entertaining or simply relaxing in style.",
+        "This hotel room offers a luxurious and modern interior design with a focus on comfort and relaxation. The room features a large, inviting pool area with a wooden deck and lounge chairs, perfect for unwinding after a long day. The pool is surrounded by a warm, inviting atmosphere with soft lighting and natural wood accents.\n\nThe room also includes a spacious living area with a comfortable couch and a coffee table, providing a cozy space for reading or socializing. The living area is well-lit with natural light streaming in through the large windows, which offer stunning views of the city skyline.\n\nThe hotel room also features a gym area with a treadmill and weightlifting equipment, providing guests with a convenient and comfortable space to work out. The gym area is well-equipped and well-maintained, with a variety of machines and equipment available for guests to use.\n\nOverall, this hotel room offers a luxurious and comfortable space for guests to relax and unwind, with a variety of amenities and features to enhance their stay."
+      ],
+      "location": {
+        "lat": -33.906,
+        "lon": 18.421
+      },
+      "location_name": "Cape Town, South Africa",
+      "country": "South Africa",
+      "region": "Cape Town",
+      "amenities": [
+        "pool",
+        "spa",
+        "gym",
+        "restaurant",
+        "bar",
+        "concierge"
+      ],
+      "style": [
+        "luxury",
+        "boutique",
+        "heritage"
+      ],
+      "price_tier": "luxury",
+      "price_per_night_usd": 600,
+      "image_paths": [
+        "/images/hotels/cape-grace-hotel_1.png",
+        "/images/hotels/cape-grace-hotel_2.png"
+      ],
+      "rating": 4.7,
+      "nearby_landmarks": [
+        "Table Mountain",
+        "Robben Island"
+      ],
+      "score": 0.86912525
+    }
+  ],
+  "query_vector_preview": [
+    -0.02368164,
+    0.09570312,
+    0.03173828,
+    -0.01141357,
+    -0.02478027,
+    0.02526855,
+    -0.03271484,
+    -0.11621094
+  ]
+}

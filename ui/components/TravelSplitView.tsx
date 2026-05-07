@@ -99,7 +99,7 @@ export default function TravelSplitView({ initialMessage, onClose, cart, setCart
           {/* Trip Cart */}
           <div
             style={{
-              flex: '0 0 42%',
+              flex: '0 0 32%',
               minHeight: 0,
               overflow: 'visible',
               borderBottom: '1px solid var(--border)',
@@ -117,12 +117,13 @@ export default function TravelSplitView({ initialMessage, onClose, cart, setCart
           </div>
 
           {/* AgentChat */}
-          <div style={{ flex: '1 1 58%', minHeight: 0, overflow: 'hidden' }}>
+          <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <AgentChat
               panel
               initialMessage={initialMessage}
               tripContext={tripContext}
               onAgentHotels={setAgentHotels}
+              onReset={() => setAgentHotels([])}
               onOpenHotel={handleOpenHotelFromChat}
               onDatesParsed={(checkIn, checkOut) => setCart(prev => ({ ...prev, checkIn, checkOut }))}
             />
