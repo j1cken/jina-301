@@ -55,23 +55,59 @@ if (typeof window !== 'undefined') {
     .catch(() => {});
 }
 
+// Words too generic to identify a specific hotel; won't be used as match tokens
+const GENERIC_HOTEL_WORDS = new Set([
+  'the', 'hotel', 'resort', 'inn', 'las', 'vegas', 'usa', 'and', 'spa',
+  'by', 'at', 'of', 'de', 'suites', 'luxury', 'experience', 'properties',
+  'collection', 'casino', 'palace', 'desert', 'beach', 'safari', 'arts',
+  'plaza', 'star', 'club', 'lodge', 'camp', 'mountain', 'island', 'city',
+  'royal', 'bay',
+]);
+
+function getHotelTokens(name: string): string[] {
+  return name.toLowerCase()
+    .replace(/[+&]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length >= 4 && !GENERIC_HOTEL_WORDS.has(w));
+}
+
+function tokenRegex(t: string): RegExp {
+  return new RegExp(`\\b${t}\\b`);
+}
+
+function hotelMentionedIn(nameLower: string, tokens: string[], cleaned: string): boolean {
+  if (cleaned.includes(nameLower)) return true;
+  return tokens.length > 0 && tokens.some(t => tokenRegex(t).test(cleaned));
+}
+
+function firstMentionPos(nameLower: string, tokens: string[], cleaned: string): number {
+  const exact = cleaned.indexOf(nameLower);
+  if (exact >= 0) return exact;
+  return tokens
+    .map(t => { const m = tokenRegex(t).exec(cleaned); return m ? m.index : -1; })
+    .filter(p => p >= 0)
+    .reduce((min, p) => Math.min(min, p), Infinity);
+}
+
 function extractHotelsFromText(text: string): ChatHotel[] {
   if (!hotelsCache) return [];
   const cleaned = text.replace(/\*{1,2}/g, '').toLowerCase();
   const found: ChatHotel[] = [];
-  const seenNames = new Set<string>(); // dedup by name; same-named entries are UI-indistinguishable
+  const seenNames = new Set<string>();
   for (const hotel of hotelsCache) {
     const nameLower = hotel.name.toLowerCase();
     if (seenNames.has(nameLower)) continue;
-    if (cleaned.includes(nameLower)) {
+    const tokens = getHotelTokens(hotel.name);
+    if (hotelMentionedIn(nameLower, tokens, cleaned)) {
       found.push(hotel);
       seenNames.add(nameLower);
       if (found.length >= 5) break;
     }
   }
-  // Sort by first mention in agent prose — safe: every entry in found passed cleaned.includes(name)
+  // Sort by first mention in prose (exact or token); every matched entry has pos >= 0
   found.sort((a, b) =>
-    cleaned.indexOf(a.name.toLowerCase()) - cleaned.indexOf(b.name.toLowerCase())
+    firstMentionPos(a.name.toLowerCase(), getHotelTokens(a.name), cleaned) -
+    firstMentionPos(b.name.toLowerCase(), getHotelTokens(b.name), cleaned)
   );
   return found;
 }
