@@ -62,6 +62,7 @@ const GENERIC_HOTEL_WORDS = new Set([
   'collection', 'casino', 'palace', 'desert', 'beach', 'safari', 'arts',
   'plaza', 'star', 'club', 'lodge', 'camp', 'mountain', 'island', 'city',
   'royal', 'bay', 'tower', 'towers', 'suite', 'view', 'strip', 'center', 'villas', 'villa',
+  'world', 'grand', 'iconic', 'floor', 'heart', 'italian', 'access', 'hotels', 'small', 'private',
 ]);
 
 function getHotelTokens(name: string): string[] {
