@@ -3,6 +3,8 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Hotel } from '@/lib/types';
+import { resolveImageUrl } from '@/lib/images';
+import { apiUrl } from '@/lib/api';
 
 const ACCENT = '#10B981';
 const BLUE = '#0077CC';
@@ -224,7 +226,7 @@ function ModalitySwitcher() {
     <div className="rounded-2xl p-6 flex flex-col gap-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <div>
         <h3 className="text-2xl font-bold text-white mb-1">Modality Switcher</h3>
-        <p className="text-base text-white/50">Query: <span className="text-white/80 italic">"quiet beachfront villa at sunset"</span> — toggle which input types you have</p>
+        <p className="text-lg text-white/70">Query: <span className="text-white/90 italic">"romantic beachfront with private pool villa and spa"</span> — toggle which input types you have</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -244,32 +246,32 @@ function ModalitySwitcher() {
       <div className="grid grid-cols-2 gap-4">
         {/* Without Omni */}
         <div className="flex flex-col gap-3">
-          <p className="text-base font-bold text-red-400">Without Omni</p>
+          <p className="text-xl font-bold text-red-400">Without Omni</p>
           <AnimatePresence>
             {activeModels.map(m => (
               <motion.div key={m.id}
                 initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}
-                className="rounded-xl px-4 py-3 text-sm"
+                className="rounded-xl px-4 py-3 text-base"
                 style={{ background: m.color + '12', border: `1px solid ${m.color}30`, color: m.color }}>
                 <span className="font-mono">{m.model}</span>
-                <span className="ml-2 text-white/50 font-normal text-xs">✅ EIS</span>
+                <span className="ml-2 font-normal text-sm" style={{ color: m.color + 'aa' }}>✅ EIS</span>
               </motion.div>
             ))}
           </AnimatePresence>
-          <div className="text-sm text-white/40 mt-1">
+          <div className="text-base text-white/70 mt-1">
             {withoutCount} model{withoutCount !== 1 ? 's' : ''} · {withoutCount} index{withoutCount !== 1 ? 'es' : ''} · {withoutCount > 1 ? 'fusion layer required' : 'standard'}
           </div>
         </div>
 
         {/* With Omni */}
         <div className="flex flex-col gap-3">
-          <p className="text-base font-bold" style={{ color: ACCENT }}>With Omni</p>
-          <div className="rounded-xl px-4 py-3 text-sm" style={{ background: ACCENT + '12', border: `1px solid ${ACCENT}30`, color: ACCENT }}>
+          <p className="text-xl font-bold" style={{ color: ACCENT }}>With Omni</p>
+          <div className="rounded-xl px-4 py-3 text-base" style={{ background: ACCENT + '12', border: `1px solid ${ACCENT}30`, color: ACCENT }}>
             <span className="font-mono">jina-embeddings-v5-omni-small</span>
-            <span className="ml-2 text-white/50 font-normal text-xs">✅ EIS</span>
+            <span className="ml-2 font-normal text-sm" style={{ color: ACCENT + 'aa' }}>✅ EIS</span>
           </div>
-          <div className="text-sm" style={{ color: ACCENT + 'cc' }}>1 model · 1 index · no fusion code</div>
+          <div className="text-base font-semibold" style={{ color: ACCENT }}>1 model · 1 index · no fusion code</div>
         </div>
       </div>
     </div>
@@ -366,7 +368,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   const SAMPLE_IMAGE = '/images/hotels/al-wadi-desert-ras-al-khaimah_1.png';
 
   async function runOmni(payload: Record<string, unknown>): Promise<Hotel[]> {
-    const res = await fetch('/api/omni', {
+    const res = await fetch(apiUrl('/api/omni'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, demoMode: payload.liveMode ? false : (demoMode ?? true) }),
@@ -421,26 +423,39 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
     <div className="flex flex-col gap-14 pb-16">
 
       {/* Hero */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold px-3 py-1 rounded-full"
-            style={{ background: ACCENT + '25', color: ACCENT, border: `1px solid ${ACCENT}50` }}>
-            ✅ ON EIS
-          </span>
+      <div className="flex flex-row items-center gap-8">
+        {/* Text left */}
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold px-3 py-1 rounded-full"
+              style={{ background: ACCENT + '25', color: ACCENT, border: `1px solid ${ACCENT}50` }}>
+              ✅ ON EIS
+            </span>
+          </div>
+          <h1 className="text-5xl font-black text-white leading-tight tracking-tight">
+            ONE MODEL.<br />EVERY MODALITY.
+          </h1>
+          <div className="flex flex-col gap-2">
+            <p className="text-lg text-white/80 leading-relaxed">
+              Omni handles text, images, audio, and video in the same vector space. Text embeddings are identical to v5-text — <strong className="text-white">existing indices don&apos;t need rebuilding</strong>.
+            </p>
+            <p className="text-lg text-white/80 leading-relaxed">
+              One inference call. One index. No fusion code.
+            </p>
+            <p className="text-base" style={{ color: ACCENT }}>
+              Reach for it when a customer&apos;s data has more than one modality.
+            </p>
+          </div>
         </div>
-        <h1 className="text-5xl font-black text-white leading-tight tracking-tight">
-          ONE MODEL.<br />EVERY MODALITY.
-        </h1>
-        <div className="flex flex-col gap-2 max-w-2xl">
-          <p className="text-lg text-white/80 leading-relaxed">
-            Omni handles text, images, audio, and video in the same vector space. Text embeddings are identical to v5-text — <strong className="text-white">existing indices don&apos;t need rebuilding</strong>.
-          </p>
-          <p className="text-lg text-white/80 leading-relaxed">
-            One inference call. One index. No fusion code.
-          </p>
-          <p className="text-base" style={{ color: ACCENT }}>
-            Reach for it when a customer&apos;s data has more than one modality.
-          </p>
+        {/* Image right */}
+        <div className="w-[42%] shrink-0 rounded-2xl overflow-hidden" style={{ maxHeight: 320 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolveImageUrl('/images/omni/omni-hero.png')}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ objectPosition: '20% 65%' }}
+          />
         </div>
       </div>
 
@@ -458,11 +473,12 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             title="Text Query"
             description="Type any description. Omni finds matching hotels across a 150-property multimodal index."
             inputSlot={
-              <input
+              <textarea
                 value={textQuery}
                 onChange={e => setTextQuery(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleTextRun()}
-                className="w-full bg-transparent text-base text-white outline-none placeholder-white/30"
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleTextRun(); } }}
+                rows={2}
+                className="w-full bg-transparent text-base text-white outline-none placeholder-white/30 resize-none"
                 placeholder="describe what you're looking for…"
               />
             }
@@ -482,7 +498,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             inputSlot={
               <div className="relative rounded-lg overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={SAMPLE_IMAGE} alt="Sample hotel" className="w-full h-28 object-cover" />
+                <img src={resolveImageUrl(SAMPLE_IMAGE)} alt="Sample hotel" className="w-full h-28 object-cover" />
                 <div className="absolute inset-0 flex items-center justify-center"
                   style={{ background: 'rgba(0,0,0,0.35)' }}>
                   <div className="w-10 h-10 rounded-full flex items-center justify-center"

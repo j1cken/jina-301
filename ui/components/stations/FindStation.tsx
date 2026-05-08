@@ -152,7 +152,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
     setClipPreviewUrl(previewUrl);
 
     try {
-      const res = await fetch(apiUrl('/api/clip'), {
+      const res = await fetch(apiUrl('/api/omni'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...body, demoMode }),
@@ -445,7 +445,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
               </span>
               {!clipLoading && (
                 <span className="text-xs ml-1" style={{ color: 'var(--text-muted)' }}>
-                  CLIP v2 · {process.env.CLIP_VIA_EIS === 'true' ? 'EIS' : 'Jina API'} · 1024-dim
+                  Omni · EIS · 1024-dim
                 </span>
               )}
             </div>
@@ -465,7 +465,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
             <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
               <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin flex-shrink-0"
                 style={{ borderColor: 'var(--elastic-teal)', borderTopColor: 'transparent' }} />
-              Embedding image with CLIP v2 and running kNN…
+              Embedding with Omni and running kNN…
             </div>
           )}
 
