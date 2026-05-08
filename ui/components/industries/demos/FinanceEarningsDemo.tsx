@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepProgressBar from '../StepProgressBar';
+import DemoSummarySlide from '../DemoSummarySlide';
+import type { DemoComponentProps } from '../DemoModal';
+import type { InteractiveCardData } from '@/lib/industriesData';
 
 const QUERY = 'AI infrastructure spend commitment Q4';
 
@@ -20,53 +23,74 @@ const RERANKED_RESULTS = [
   { title: 'FY2023 Annual Report — Capital Expenditure', snippet: 'Total capex of $18.2B was allocated across data centers, network infrastructure, and general operations.', score: 0.18, dim: true },
 ];
 
-const STEPS = [
-  'query',
-  'keyword',
-  'reranking',
-  'reranked',
-];
+const STEPS = ['query', 'keyword', 'reranking', 'reranked', 'summary'];
+const ACCENT = '#0077CC';
 
-export default function FinanceEarningsDemo() {
+export default function FinanceEarningsDemo({ card, autoPlay, advanceTick, restartTick }: DemoComponentProps) {
+  const interactiveCard = card as InteractiveCardData;
   const [step, setStep] = useState(0);
   const [typedQuery, setTypedQuery] = useState('');
-  const [reranking, setReranking] = useState(false);
+  const [typingComplete, setTypingComplete] = useState(false);
+  const hasAdvancedOnce = useRef(false);
 
-  // Auto-advance
+  const advance = () => {
+    setStep(s => {
+      if (s < STEPS.length - 1) { hasAdvancedOnce.current = true; return s + 1; }
+      return s;
+    });
+  };
+
+  // Typing animation — always runs regardless of autoPlay
   useEffect(() => {
-    if (step === 0) {
-      let i = 0;
-      const t = setInterval(() => {
-        i++;
-        setTypedQuery(QUERY.slice(0, i));
-        if (i >= QUERY.length) {
-          clearInterval(t);
-          setTimeout(() => setStep(1), 700);
-        }
-      }, 40);
-      return () => clearInterval(t);
-    }
-    if (step === 1) {
-      const t = setTimeout(() => setStep(2), 2500);
-      return () => clearTimeout(t);
-    }
-    if (step === 2) {
-      setReranking(true);
-      const t = setTimeout(() => { setReranking(false); setStep(3); }, 1800);
-      return () => clearTimeout(t);
-    }
+    if (step !== 0) { setTypedQuery(''); setTypingComplete(false); return; }
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      setTypedQuery(QUERY.slice(0, i));
+      if (i >= QUERY.length) { clearInterval(t); setTypingComplete(true); }
+    }, 40);
+    return () => clearInterval(t);
   }, [step]);
 
-  const advance = () => { if (step < STEPS.length - 1) setStep(s => s + 1); };
+  // Auto-advance: step 0 waits for typing, steps 1-3 advance after delay
+  useEffect(() => {
+    if (!autoPlay) return;
+    if (step === 0) {
+      if (!typingComplete) return;
+      const t = setTimeout(advance, 700);
+      return () => clearTimeout(t);
+    }
+    if (step >= STEPS.length - 1) return;
+    const delay = step === 2 ? 1800 : 2500;
+    const t = setTimeout(advance, delay);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, autoPlay, typingComplete]);
+
+  // Restart: re-trigger step timer when auto is toggled back on
+  useEffect(() => {
+    if (restartTick === 0 || !autoPlay) return;
+    if (step >= STEPS.length - 1) return;
+    if (step === 0 && !typingComplete) return;
+    const delay = step === 2 ? 1800 : 2500;
+    const t = setTimeout(advance, delay);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restartTick]);
+
+  // Manual advance via advanceTick
+  useEffect(() => {
+    if (advanceTick === 0) return;
+    advance();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [advanceTick]);
 
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex items-center justify-between">
-        <StepProgressBar total={STEPS.length} current={step} accentColor="#0077CC" />
-        {step < STEPS.length - 1 && (
-          <button onClick={advance} className="text-xs text-white/50 hover:text-white/80 transition-colors">
-            Skip →
-          </button>
+        <StepProgressBar total={STEPS.length} current={step} accentColor={ACCENT} />
+        {!autoPlay && step < STEPS.length - 1 && !hasAdvancedOnce.current && (
+          <span className="text-xs text-white/30 italic">Press → or Next to advance</span>
         )}
       </div>
 
@@ -78,7 +102,7 @@ export default function FinanceEarningsDemo() {
           {step === 0 && <span className="animate-pulse">|</span>}
         </span>
         {step >= 1 && (
-          <span className="ml-auto text-xs px-2 py-0.5 rounded" style={{ background: '#0077CC20', color: '#0077CC' }}>
+          <span className="ml-auto text-xs px-2 py-0.5 rounded" style={{ background: ACCENT + '20', color: ACCENT }}>
             {step >= 3 ? 'Reranked' : 'Semantic'}
           </span>
         )}
@@ -155,6 +179,12 @@ export default function FinanceEarningsDemo() {
                 className="mt-2 rounded-lg border border-white/10 bg-white/5 p-3 text-center">
                 <p className="text-xs text-white/60">Reranker v3 found the needle. Keyword search returned <span className="text-white font-medium">47 irrelevant matches</span> before it.</p>
               </motion.div>
+            </motion.div>
+          )}
+
+          {step === 4 && interactiveCard.summaryData && (
+            <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1">
+              <DemoSummarySlide data={interactiveCard.summaryData} card={card} accentColor={ACCENT} />
             </motion.div>
           )}
         </AnimatePresence>

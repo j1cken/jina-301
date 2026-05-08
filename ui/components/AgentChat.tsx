@@ -3,10 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare } from 'lucide-react';
+import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare, Camera } from 'lucide-react';
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
 import { parseDateRange } from '@/lib/parseDates';
+import { apiUrl } from '@/lib/api';
+import type { Hotel } from '@/lib/types';
 
 const SUGGESTIONS = [
   'Quiet hotel for focused remote work, no casino noise',
@@ -269,6 +271,9 @@ export default function AgentChat({
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasSentInitial = useRef(false);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const clipPreviewRef = useRef<string | null>(null);
+  const [clipResult, setClipResult] = useState<{ previewUrl: string; results: Hotel[]; loading: boolean; error?: string } | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -290,6 +295,34 @@ export default function AgentChat({
       onAgentHotels(last.hotels);
     }
   }, [messages, onAgentHotels]);
+
+  const handleCameraImage = useCallback(async (file: File) => {
+    if (file.size > 5 * 1024 * 1024 || !file.type.startsWith('image/')) return;
+
+    const preview = URL.createObjectURL(file);
+    if (clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); }
+    clipPreviewRef.current = preview;
+    setClipResult({ previewUrl: preview, results: [], loading: true });
+
+    try {
+      const base64: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve((e.target!.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch(apiUrl('/api/clip'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType: file.type, demoMode }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? `CLIP error ${res.status}`);
+      const data = await res.json();
+      setClipResult({ previewUrl: preview, results: data.results ?? [], loading: false });
+    } catch (err) {
+      setClipResult(prev => prev ? { ...prev, loading: false, error: (err as Error).message } : null);
+    }
+  }, [demoMode]);
 
   const submit = useCallback(() => {
     const val = input.trim();
@@ -346,6 +379,64 @@ export default function AgentChat({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: 0 }}>
+        {/* CLIP image search results panel */}
+        {clipResult && (
+          <div className="mb-4 rounded-xl overflow-hidden"
+            style={{ border: '1px solid rgba(0,191,179,0.3)', background: 'rgba(0,191,179,0.05)' }}>
+            <div className="flex items-center gap-2 px-3 py-2"
+              style={{ borderBottom: '1px solid rgba(0,191,179,0.15)' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={clipResult.previewUrl} alt="" className="w-7 h-7 rounded-lg object-cover flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <span className="text-xs font-semibold" style={{ color: 'var(--elastic-teal)' }}>
+                  {clipResult.loading ? 'Searching by image…' : clipResult.error ? 'Image search error' : 'Direct CLIP v2 lookup'}
+                </span>
+                {!clipResult.loading && !clipResult.error && (
+                  <span className="text-xs ml-1.5" style={{ color: 'var(--text-muted)' }}>· bypasses agent · 1024-dim kNN</span>
+                )}
+              </div>
+              <button onClick={() => { if (clipPreviewRef.current) URL.revokeObjectURL(clipPreviewRef.current); clipPreviewRef.current = null; setClipResult(null); }}
+                className="p-1 rounded transition-colors hover:opacity-70 flex-shrink-0"
+                style={{ color: 'var(--text-muted)' }}>
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            {clipResult.loading && (
+              <div className="px-3 py-2 flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+                <span className="w-3 h-3 border border-t-transparent rounded-full animate-spin flex-shrink-0"
+                  style={{ borderColor: 'var(--elastic-teal)', borderTopColor: 'transparent' }} />
+                Embedding with CLIP v2 · running kNN on image_embedding…
+              </div>
+            )}
+            {clipResult.error && (
+              <p className="px-3 py-2 text-xs" style={{ color: 'var(--elastic-pink)' }}>{clipResult.error}</p>
+            )}
+            {!clipResult.loading && !clipResult.error && clipResult.results.length > 0 && (
+              <div className="px-3 py-2 space-y-1.5">
+                {clipResult.results.slice(0, 4).map(h => (
+                  <button key={h.id} onClick={() => onOpenHotel?.(h as unknown as ChatHotel)}
+                    className="w-full flex items-center gap-2 text-left px-2 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                    {h.image_paths?.[0] && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={`/images/hotels/${h.image_paths[0]}`} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{h.name}</p>
+                      <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{h.location_name}</p>
+                    </div>
+                    {h.score != null && (
+                      <span className="ml-auto text-xs flex-shrink-0" style={{ color: 'var(--elastic-teal)' }}>
+                        {h.score.toFixed(3)}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center gap-4">
             <div className="text-center">
@@ -403,6 +494,25 @@ export default function AgentChat({
             disabled={isLoading}
             className="flex-1 resize-none bg-transparent px-3 py-2.5 text-sm outline-none"
             style={{ color: 'var(--text-primary)', maxHeight: '120px', overflowY: 'auto' }}
+          />
+          <button
+            type="button"
+            onClick={() => cameraInputRef.current?.click()}
+            disabled={isLoading}
+            title="Search by image (CLIP v2)"
+            className="m-1.5 p-2 rounded-lg transition-colors flex-shrink-0 disabled:opacity-40"
+            style={{ color: 'var(--text-muted)' }}>
+            <Camera className="w-4 h-4" />
+          </button>
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) { handleCameraImage(file); e.target.value = ''; }
+            }}
           />
           <button
             onClick={submit}

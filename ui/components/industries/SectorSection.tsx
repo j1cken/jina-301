@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import type { SectorData, InteractiveCardData } from '@/lib/industriesData';
+import type { SectorData, InteractiveCardData, InfoCardData } from '@/lib/industriesData';
 import UseCaseCard from './UseCaseCard';
 import UseCaseInfoCard from './UseCaseInfoCard';
 import DemoModal from './DemoModal';
@@ -14,6 +14,7 @@ interface SectorSectionProps {
 
 export default function SectorSection({ sector, delay = 0 }: SectorSectionProps) {
   const [activeCard, setActiveCard] = useState<InteractiveCardData | null>(null);
+  const [activeInfoCard, setActiveInfoCard] = useState<InfoCardData | null>(null);
 
   return (
     <>
@@ -46,19 +47,34 @@ export default function SectorSection({ sector, delay = 0 }: SectorSectionProps)
         </div>
 
         {/* Info cards — 3-col */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
           {sector.infoCards.map((card, i) => (
-            <UseCaseInfoCard key={`${sector.id}-info-${i}`} card={card} index={i} />
+            <UseCaseInfoCard
+              key={`${sector.id}-info-${i}`}
+              card={card}
+              index={i}
+              onClick={() => setActiveInfoCard(card)}
+            />
           ))}
         </div>
       </motion.div>
 
-      {/* Demo modal */}
+      {/* Spotlight demo modal */}
       {activeCard && (
         <DemoModal
           card={activeCard}
           sectorAccentColor={sector.accentColor}
           onClose={() => setActiveCard(null)}
+        />
+      )}
+
+      {/* Compact info card demo modal */}
+      {activeInfoCard && (
+        <DemoModal
+          card={activeInfoCard}
+          sectorAccentColor={sector.accentColor}
+          onClose={() => setActiveInfoCard(null)}
+          variant="compact"
         />
       )}
     </>

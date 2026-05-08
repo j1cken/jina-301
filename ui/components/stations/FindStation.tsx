@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2, Minimize2, Camera, X as XIcon } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
 import { apiUrl } from '@/lib/api';
 import HotelCard from '@/components/HotelCard';
@@ -70,6 +70,18 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   const [mapExpanded, setMapExpanded] = useState(false);
   const [geoResetNotice, setGeoResetNotice] = useState(false);
 
+  // CLIP image search state
+  const [clipResults, setClipResults] = useState<Hotel[] | null>(null);
+  const [clipLoading, setClipLoading] = useState(false);
+  const [clipPreviewUrl, setClipPreviewUrl] = useState<string | null>(null);
+  const [clipError, setClipError] = useState<string | null>(null);
+  const clipPreviewRef = useRef<string | null>(null);
+
+  // Revoke object URLs on unmount or when preview changes
+  useEffect(() => {
+    return () => { if (clipPreviewRef.current) URL.revokeObjectURL(clipPreviewRef.current); };
+  }, []);
+
   const getList = (mode: SearchMode): Hotel[] =>
     mode === 'bm25' ? (results?.bm25 ?? []) :
     mode === 'hybrid' ? (results?.hybrid ?? []) :
@@ -128,6 +140,55 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
     } finally {
       setLoading(false);
     }
+  };
+
+  const runClipSearch = async (body: Record<string, unknown>, previewUrl: string, isObjectUrl: boolean) => {
+    setClipResults(null);
+    setClipError(null);
+    setClipLoading(true);
+    // Revoke previous object URL if it was one
+    if (clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); clipPreviewRef.current = null; }
+    if (isObjectUrl) clipPreviewRef.current = previewUrl;
+    setClipPreviewUrl(previewUrl);
+
+    try {
+      const res = await fetch(apiUrl('/api/clip'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...body, demoMode }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? `CLIP error ${res.status}`);
+      const data = await res.json();
+      setClipResults(data.results ?? []);
+    } catch (err) {
+      setClipError((err as Error).message);
+    } finally {
+      setClipLoading(false);
+    }
+  };
+
+  const handleImageSearch = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) { setClipError('Image too large — please use an image under 5MB'); return; }
+    if (!file.type.startsWith('image/')) return;
+
+    const preview = URL.createObjectURL(file);
+    const base64: string = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve((e.target!.result as string).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    await runClipSearch({ imageBase64: base64, mimeType: file.type }, preview, true);
+  };
+
+  const handleSampleImage = () =>
+    runClipSearch({ imageUrl: '/images/sample-hotel-room.png' }, '/images/sample-hotel-room.png', false);
+
+  const clearClip = () => {
+    if (clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); clipPreviewRef.current = null; }
+    setClipResults(null);
+    setClipPreviewUrl(null);
+    setClipError(null);
   };
 
   const fetchExplain = async (hotel: Hotel, mode: SearchMode) => {
@@ -332,9 +393,22 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
           onChange={setQuery}
           onSubmit={() => search()}
           placeholder="Describe your ideal hotel..."
-          disabled={loading}
+          disabled={loading || clipLoading}
           suggestions={DEMO_QUERIES}
+          onImageSearch={handleImageSearch}
         />
+
+        {/* Sample image shortcut */}
+        {!clipResults && !clipLoading && (
+          <button
+            onClick={handleSampleImage}
+            className="text-xs flex items-center gap-1.5 transition-colors hover:opacity-80"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <Camera className="w-3.5 h-3.5" />
+            Use sample hotel room image →
+          </button>
+        )}
 
         <label className="flex items-center gap-2 cursor-pointer">
           <input
@@ -353,6 +427,61 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
           </p>
         )}
       </div>
+
+      {/* CLIP image search results */}
+      {(clipLoading || clipResults || clipError) && (
+        <div className="space-y-3">
+          {/* Results banner */}
+          <div className="flex items-center gap-3 px-3 py-2 rounded-xl"
+            style={{ background: 'rgba(0,191,179,0.08)', border: '1px solid rgba(0,191,179,0.25)' }}>
+            {clipPreviewUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={clipPreviewUrl} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+            )}
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Camera className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--elastic-teal)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--elastic-teal)' }}>
+                {clipLoading ? 'Searching by image…' : clipError ? 'Image search error' : 'Hotels matching your image'}
+              </span>
+              {!clipLoading && (
+                <span className="text-xs ml-1" style={{ color: 'var(--text-muted)' }}>
+                  CLIP v2 · {process.env.CLIP_VIA_EIS === 'true' ? 'EIS' : 'Jina API'} · 1024-dim
+                </span>
+              )}
+            </div>
+            <button onClick={clearClip} className="flex-shrink-0 p-1 rounded transition-colors hover:opacity-70"
+              style={{ color: 'var(--text-muted)' }}>
+              <XIcon className="w-4 h-4" />
+            </button>
+          </div>
+
+          {clipError && (
+            <div className="p-3 rounded-lg text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+              {clipError}
+            </div>
+          )}
+
+          {clipLoading && (
+            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
+              <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin flex-shrink-0"
+                style={{ borderColor: 'var(--elastic-teal)', borderTopColor: 'transparent' }} />
+              Embedding image with CLIP v2 and running kNN…
+            </div>
+          )}
+
+          {clipResults && clipResults.length > 0 && (
+            <div className="space-y-2">
+              {clipResults.slice(0, 5).map((hotel, i) => (
+                <HotelCard key={hotel.id} hotel={hotel} index={i} onClick={setSelectedModal} showScore />
+              ))}
+            </div>
+          )}
+
+          {clipResults && clipResults.length === 0 && (
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No visual matches found.</p>
+          )}
+        </div>
+      )}
 
       {results && (
         <>

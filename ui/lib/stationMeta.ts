@@ -180,6 +180,21 @@ export const STATION_META: StationMeta[] = [
     ],
   },
   {
+    id: 'omni',
+    label: 'Omni',
+    model: 'Omni v5',
+    modelFull: 'jina-embeddings-v5-omni-small / nano',
+    icon: '🌐',
+    color: '#10B981',
+    lede: 'One embedding model for text, images, audio, and video — the net that catches everything.',
+    flow: [],
+    wiringNotes: [
+      'jina-embeddings-v5-omni is live on the Jina API — coming to EIS soon',
+      'Same inference_id pattern as other Jina models; existing semantic_text mappings keep working',
+      'Architecture: SigLIP2 (vision) + Whisper-large-v3 (audio) → trained projectors → unchanged v5-text backbone',
+    ],
+  },
+  {
     id: 'industries',
     label: 'Industries',
     model: 'All Models',

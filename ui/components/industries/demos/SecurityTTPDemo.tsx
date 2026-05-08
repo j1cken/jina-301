@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepProgressBar from '../StepProgressBar';
+import DemoSummarySlide from '../DemoSummarySlide';
+import type { DemoComponentProps } from '../DemoModal';
+import type { InteractiveCardData } from '@/lib/industriesData';
 
 const K = {
   bg: '#1D1E24',
@@ -38,38 +41,79 @@ const HISTORICAL = {
 
 const STEPS = ['report', 'embed', 'ttps', 'history', 'summary'];
 
-export default function SecurityTTPDemo() {
+export default function SecurityTTPDemo({ card, autoPlay, advanceTick, restartTick }: DemoComponentProps) {
+  const interactiveCard = card as InteractiveCardData;
   const [step, setStep] = useState(0);
   const [visibleReport, setVisibleReport] = useState(0);
+  const [typingComplete, setTypingComplete] = useState(false);
   const [spinDot, setSpinDot] = useState(0);
+  const hasAdvancedOnce = useRef(false);
 
+  const advance = () => {
+    setStep(s => {
+      if (s < STEPS.length - 1) { hasAdvancedOnce.current = true; return s + 1; }
+      return s;
+    });
+  };
+
+  // Typing animation — always runs regardless of autoPlay
   useEffect(() => {
-    if (step === 0) {
-      let i = 0;
-      const t = setInterval(() => {
-        i += 3;
-        setVisibleReport(Math.min(i, REPORT.length));
-        if (i >= REPORT.length) { clearInterval(t); setTimeout(() => setStep(1), 800); }
-      }, 18);
-      return () => clearInterval(t);
-    }
-    if (step === 1) {
-      const d = setInterval(() => setSpinDot(x => (x + 1) % 3), 350);
-      const t = setTimeout(() => { clearInterval(d); setStep(2); }, 2200);
-      return () => { clearTimeout(t); clearInterval(d); };
-    }
-    if (step === 2) { const t = setTimeout(() => setStep(3), 3000); return () => clearTimeout(t); }
-    if (step === 3) { const t = setTimeout(() => setStep(4), 3000); return () => clearTimeout(t); }
+    if (step !== 0) { setVisibleReport(0); setTypingComplete(false); return; }
+    let i = 0;
+    const t = setInterval(() => {
+      i += 3;
+      setVisibleReport(Math.min(i, REPORT.length));
+      if (i >= REPORT.length) { clearInterval(t); setTypingComplete(true); }
+    }, 18);
+    return () => clearInterval(t);
   }, [step]);
 
-  const advance = () => { if (step < STEPS.length - 1) setStep(s => s + 1); };
+  // spinDot animation on step 1 — always runs
+  useEffect(() => {
+    if (step !== 1) return;
+    const d = setInterval(() => setSpinDot(x => (x + 1) % 3), 350);
+    return () => clearInterval(d);
+  }, [step]);
+
+  // Auto-advance — gated on autoPlay flag
+  useEffect(() => {
+    if (!autoPlay) return;
+    if (step === 0) {
+      if (!typingComplete) return;
+      const t = setTimeout(advance, 800);
+      return () => clearTimeout(t);
+    }
+    if (step >= STEPS.length - 1) return;
+    const delay = step === 1 ? 2200 : 3000;
+    const t = setTimeout(advance, delay);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, autoPlay, typingComplete]);
+
+  // Restart
+  useEffect(() => {
+    if (restartTick === 0 || !autoPlay) return;
+    if (step >= STEPS.length - 1) return;
+    if (step === 0 && !typingComplete) return;
+    const delay = step === 1 ? 2200 : 3000;
+    const t = setTimeout(advance, delay);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restartTick]);
+
+  // Manual advance
+  useEffect(() => {
+    if (advanceTick === 0) return;
+    advance();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [advanceTick]);
 
   return (
     <div className="flex flex-col gap-3 h-full" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="flex items-center justify-between">
         <StepProgressBar total={STEPS.length} current={step} accentColor={K.pink} />
-        {step < STEPS.length - 1 && (
-          <button onClick={advance} className="text-xs transition-colors" style={{ color: K.muted }}>Skip →</button>
+        {!autoPlay && step < STEPS.length - 1 && !hasAdvancedOnce.current && (
+          <span className="text-xs italic" style={{ color: K.muted + '80' }}>Press → or Next to advance</span>
         )}
       </div>
 
@@ -155,26 +199,9 @@ export default function SecurityTTPDemo() {
           </motion.div>
         )}
 
-        {step === 4 && (
-          <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center gap-5 text-center">
-            <div className="text-5xl">🕵️</div>
-            <p className="text-lg font-bold" style={{ color: K.text }}>Coordinated campaign revealed.</p>
-            <div className="grid grid-cols-3 gap-3 w-full max-w-xs">
-              <div className="rounded-lg p-3" style={{ background: K.surface }}>
-                <p className="text-xl font-bold" style={{ color: K.red }}>0</p>
-                <p className="text-xs mt-1" style={{ color: K.muted }}>IOC matches</p>
-              </div>
-              <div className="rounded-lg p-3" style={{ background: K.surface }}>
-                <p className="text-xl font-bold" style={{ color: K.pink }}>0.91</p>
-                <p className="text-xs mt-1" style={{ color: K.muted }}>semantic match</p>
-              </div>
-              <div className="rounded-lg p-3" style={{ background: K.surface }}>
-                <p className="text-xl font-bold" style={{ color: K.green }}>6mo</p>
-                <p className="text-xs mt-1" style={{ color: K.muted }}>campaign history</p>
-              </div>
-            </div>
-            <p className="text-sm max-w-xs" style={{ color: K.muted }}>Signature databases returned nothing. Embeddings found a coordinated nation-state campaign hiding in plain sight.</p>
+        {step === 4 && interactiveCard.summaryData && (
+          <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1">
+            <DemoSummarySlide data={interactiveCard.summaryData} card={card} accentColor={K.pink} />
           </motion.div>
         )}
       </AnimatePresence>
