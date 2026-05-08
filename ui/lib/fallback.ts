@@ -1,4 +1,4 @@
-import type { SearchResponse, RerankResponse, ClipResponse, VisionResponse, IngestStep } from './types';
+import type { SearchResponse, RerankResponse, ClipResponse, VisionResponse, IngestStep, OmniResponse } from './types';
 
 type FallbackData = {
   ingest?: IngestStep[];
@@ -6,6 +6,7 @@ type FallbackData = {
   rerank?: Record<string, RerankResponse>;
   clip?: ClipResponse;
   vision?: VisionResponse;
+  omni?: Record<string, OmniResponse>;
 };
 
 let cache: FallbackData | null = null;
@@ -23,15 +24,16 @@ async function loadFallbacks(): Promise<FallbackData> {
     }
   };
 
-  const [ingest, search, rerank, clip, vision] = await Promise.all([
+  const [ingest, search, rerank, clip, vision, omni] = await Promise.all([
     load('/fallbacks/ingest.json'),
     load('/fallbacks/search.json'),
     load('/fallbacks/rerank.json'),
     load('/fallbacks/clip.json'),
     load('/fallbacks/vision.json'),
+    load('/fallbacks/omni.json'),
   ]);
 
-  cache = { ingest, search, rerank, clip, vision };
+  cache = { ingest, search, rerank, clip, vision, omni };
   return cache;
 }
 
@@ -63,4 +65,11 @@ export async function getFallbackVision(): Promise<VisionResponse | null> {
 export async function getFallbackIngest(): Promise<IngestStep[] | null> {
   const data = await loadFallbacks();
   return data.ingest ?? null;
+}
+
+export async function getFallbackOmni(key: string): Promise<OmniResponse | null> {
+  const data = await loadFallbacks();
+  if (!data.omni) return null;
+  const match = Object.keys(data.omni).find(k => k.toLowerCase().includes(key.toLowerCase().slice(0, 20))) ?? Object.keys(data.omni)[0];
+  return match ? data.omni[match] : null;
 }

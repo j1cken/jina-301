@@ -149,7 +149,7 @@ export default function Home() {
               {station === 'capstone' && <CapstoneStation searchResults={findResults} topRanked={topRanked} vlmAnalysis={vlmAnalysis} analyzedHotel={analyzedHotel} />}
               {station === 'agent' && <AgentStation />}
               {station === 'industries' && <IndustriesStation />}
-              {station === 'omni' && <OmniStation />}
+              {station === 'omni' && <OmniStation demoMode={demoMode} />}
             </main>
           </div>
         )}

@@ -51,6 +51,12 @@ export interface ClipResponse {
   query_vector_preview: number[];
 }
 
+export interface OmniResponse {
+  results: Hotel[];
+  query_vector_preview: number[];
+  took: number;
+}
+
 export interface VlmAnalysis {
   style: string;
   visibleAmenities: string[];

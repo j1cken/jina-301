@@ -105,6 +105,42 @@ def capture_vision():
     return res.json() if res.ok else None
 
 
+def capture_omni():
+    """Capture omni embeddings for text queries + image/audio demo keys."""
+    hotels_file = PROJECT_ROOT / "data" / "hotels.json"
+    results = {}
+
+    # Text queries
+    for query in DEMO_QUERIES:
+        print(f"  Capturing omni (text): {query[:40]}...")
+        res = requests.post(f"{BASE_URL}/api/omni", json={"query": query, "demoMode": False})
+        if res.ok:
+            results[query] = res.json()
+        time.sleep(2)  # omni is slow — ~10s each, give server breathing room
+
+    # Image demo — use the drone-frame hotel image
+    import base64
+    hotels = json.loads(hotels_file.read_text()) if hotels_file.exists() else []
+    first_image = next((h["image_paths"][0] for h in hotels if h.get("image_paths")), None)
+    if first_image:
+        img_path = PROJECT_ROOT / "ui" / "public" / first_image.lstrip("/")
+        if img_path.exists():
+            print(f"  Capturing omni (image_demo): {first_image}...")
+            b64 = base64.b64encode(img_path.read_bytes()).decode()
+            res = requests.post(f"{BASE_URL}/api/omni", json={"imageBase64": b64, "demoMode": False})
+            if res.ok:
+                results["image_demo"] = res.json()
+            time.sleep(2)
+
+    # Audio demo — use a text proxy query representing the audio concept
+    print("  Capturing omni (audio_demo): ocean waves ambient lobby sound...")
+    res = requests.post(f"{BASE_URL}/api/omni", json={"query": "ocean waves ambient hotel lobby relaxing sound", "demoMode": False})
+    if res.ok:
+        results["audio_demo"] = res.json()
+
+    return results
+
+
 def capture_ingest():
     """Pre-baked ingest steps for demo mode."""
     return [
@@ -145,6 +181,14 @@ def main():
     if vision:
         (FALLBACKS_DIR / "vision.json").write_text(json.dumps(vision, indent=2))
         print("  → saved")
+    else:
+        print("  → skipped")
+
+    print("Capturing omni fallbacks (slow — ~10s per query)...")
+    omni = capture_omni()
+    if omni:
+        (FALLBACKS_DIR / "omni.json").write_text(json.dumps(omni, indent=2))
+        print(f"  → {len(omni)} keys saved")
     else:
         print("  → skipped")
 
