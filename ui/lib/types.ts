@@ -71,7 +71,7 @@ export interface GeoFilter {
   radiusMiles: number;
 }
 
-export type Station = 'ingest' | 'find' | 'rank' | 'look' | 'describe' | 'capstone' | 'agent';
+export type Station = 'ingest' | 'find' | 'rank' | 'look' | 'describe' | 'capstone' | 'agent' | 'industries';
 
 export interface IngestStep {
   step: 'fetch' | 'reader_output' | 'parse' | 'index' | 'complete';

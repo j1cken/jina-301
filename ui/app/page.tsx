@@ -11,6 +11,7 @@ import LookStation from '@/components/stations/LookStation';
 import DescribeStation from '@/components/stations/DescribeStation';
 import CapstoneStation from '@/components/stations/CapstoneStation';
 import AgentStation from '@/components/stations/AgentStation';
+import IndustriesStation from '@/components/stations/IndustriesStation';
 import AgentChat from '@/components/AgentChat';
 import TravelHome from '@/components/TravelHome';
 import TravelSplitView from '@/components/TravelSplitView';
@@ -146,6 +147,7 @@ export default function Home() {
               )}
               {station === 'capstone' && <CapstoneStation searchResults={findResults} topRanked={topRanked} vlmAnalysis={vlmAnalysis} analyzedHotel={analyzedHotel} />}
               {station === 'agent' && <AgentStation />}
+              {station === 'industries' && <IndustriesStation />}
             </main>
           </div>
         )}

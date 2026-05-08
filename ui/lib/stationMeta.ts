@@ -179,6 +179,21 @@ export const STATION_META: StationMeta[] = [
       'Agent interprets intent and selects the right retrieval path — semantic, visual, or reranked',
     ],
   },
+  {
+    id: 'industries',
+    label: 'Industries',
+    model: 'All Models',
+    modelFull: 'Embeddings v5 · Reranker v3 · CLIP v2 · Reader · VLM',
+    icon: '🏭',
+    color: '#10B981',
+    lede: 'Jina AI models power more than ecommerce. Explore how Embeddings, Reranker, and CLIP solve real problems across Search, Observability, and Security verticals.',
+    flow: [],
+    wiringNotes: [
+      'Guided interactive demos — no live ES backend required',
+      'O11y and Security demos simulate the Kibana UI to ground field engineers in familiar tools',
+      'Use cases sourced from production deployments: Dynatrace, CrowdStrike, Moogsoft, Elastic Security Labs',
+    ],
+  },
 ];
 
 export function getStationMeta(id: Station): StationMeta {
