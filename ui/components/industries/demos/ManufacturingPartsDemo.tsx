@@ -86,7 +86,7 @@ export default function ManufacturingPartsDemo({ card, autoPlay, advanceTick, re
               <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 1.6, ease: 'linear' }}
                 className="h-1 rounded-full mt-2" style={{ background: ACCENT }} />
             </div>
-            <p className="text-xs text-white/40">Mechanic doesn't know the part name — just snapped a photo</p>
+            <p className="text-xs text-white/40">Mechanic doesn&apos;t know the part name — just snapped a photo</p>
           </motion.div>
         )}
 

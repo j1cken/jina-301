@@ -60,7 +60,7 @@ export default function DemoSummarySlide({ data, card, accentColor }: DemoSummar
         </div>
 
         <div className="rounded-xl p-4 flex flex-col gap-2" style={{ background: 'rgba(239,68,68,0.06)', borderTop: '1px solid rgba(239,68,68,0.18)', borderRight: '1px solid rgba(239,68,68,0.18)', borderBottom: '1px solid rgba(239,68,68,0.18)', borderLeft: '3px solid rgba(239,68,68,0.55)' }}>
-          <p className="text-sm font-semibold text-red-500">✗ Don't position when</p>
+          <p className="text-sm font-semibold text-red-500">✗ Don&apos;t position when</p>
           <ul className="flex flex-col gap-2">
             {data.dontPositionWhen.map((item, i) => (
               <li key={i} className="text-sm flex gap-1.5 leading-snug" style={{ color: 'var(--text-primary)' }}>

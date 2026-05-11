@@ -181,7 +181,7 @@ const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = 
   hr: () => <hr className="my-2 opacity-20" />,
 };
 
-function MessageBubble({ msg, isLast, onOpenHotel }: {
+function MessageBubble({ msg, isLast, onOpenHotel: _onOpenHotel }: {
   msg: Message;
   isLast: boolean;
   onOpenHotel: (hotel: ChatHotel) => void;

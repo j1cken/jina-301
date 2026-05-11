@@ -118,7 +118,7 @@ export default function SecurityCVEServiceDemo({ card, autoPlay, advanceTick, re
             <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <p className="text-xs text-white/40 mb-1">Keyword search on service catalog</p>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-white/60">search: "Apache Commons Text"</span>
+                <span className="text-xs font-mono text-white/60">search: &ldquo;Apache Commons Text&rdquo;</span>
                 <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-white/40">0 results</span>
               </div>
               <p className="text-xs text-white/30 mt-1">No service names mention the library — manual triage begins</p>

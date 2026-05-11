@@ -6,7 +6,7 @@ import 'react-day-picker/style.css';
 import { CalendarDays, Users, Minus, Plus, X, ShoppingBag, ChevronDown } from 'lucide-react';
 import type { Hotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
-import { BookingConfirmation, generatePNR } from '@/components/BookingConfirmation';
+import { BookingConfirmation } from '@/components/BookingConfirmation';
 
 export interface TripCartState {
   checkIn?: Date;
@@ -51,8 +51,6 @@ function buildContext(cart: TripCartState): string {
 export default function TripCart({ cart, setCart, hotels, onRemove, onBook, bookingPNR, onContextChange }: TripCartProps) {
   const [showIn, setShowIn] = useState(false);
   const [showOut, setShowOut] = useState(false);
-  // Stable PNR — only used when bookingPNR is set externally (for trip booking flow)
-  const [singlePNR] = useState(() => generatePNR());
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Debounced context sync

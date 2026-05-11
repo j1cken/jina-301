@@ -49,7 +49,7 @@ export default function TravelSplitView({ initialMessage, initialImageFile, onCl
     setSelectedHotel(hotel);
   }, []);
 
-  const handleOpenHotelFromChat = useCallback((_: ChatHotel) => {}, []);
+  const handleOpenHotelFromChat = useCallback((_hotel: ChatHotel) => {}, []);
 
   const handleClipResults = useCallback((hotels: Hotel[]) => {
     setAgentHotels(hotels as unknown as ChatHotel[]);

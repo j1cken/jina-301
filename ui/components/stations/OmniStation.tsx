@@ -226,7 +226,7 @@ function ModalitySwitcher() {
     <div className="rounded-2xl p-6 flex flex-col gap-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <div>
         <h3 className="text-2xl font-bold text-white mb-1">Modality Switcher</h3>
-        <p className="text-lg text-white/70">Query: <span className="text-white/90 italic">"romantic beachfront with private pool villa and spa"</span> — toggle which input types you have</p>
+        <p className="text-lg text-white/70">Query: <span className="text-white/90 italic">&ldquo;romantic beachfront with private pool villa and spa&rdquo;</span> — toggle which input types you have</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -622,7 +622,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
       {/* Model comparison table */}
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl font-bold text-white">Model comparison</h2>
-        <p className="text-sm text-white/40">Screenshot this. Use it for the "which model?" conversation.</p>
+        <p className="text-sm text-white/40">Screenshot this. Use it for the &ldquo;which model?&rdquo; conversation.</p>
         <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
           <table className="w-full">
             <thead>
