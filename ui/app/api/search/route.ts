@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { searchSemantic, searchBm25 } from '@/lib/elasticsearch';
 import type { GeoFilter, Hotel } from '@/lib/types';
 
@@ -25,15 +27,12 @@ export async function POST(req: NextRequest) {
 
   if (demoMode) {
     try {
-      const res = await fetch(new URL('/fallbacks/search.json', req.url));
-      if (res.ok) {
-        const fallbacks = await res.json();
-        const key = Object.keys(fallbacks).find(k => k.toLowerCase().includes(query.toLowerCase().slice(0, 15))) ?? Object.keys(fallbacks)[0];
-        if (key) {
-          const fb = fallbacks[key];
-          if (!fb.hybrid && fb.semantic && fb.bm25) fb.hybrid = rrf(fb.semantic, fb.bm25);
-          return NextResponse.json(fb);
-        }
+      const fallbacks = JSON.parse(readFileSync(join(process.cwd(), 'public', 'fallbacks', 'search.json'), 'utf-8'));
+      const key = Object.keys(fallbacks).find(k => k.toLowerCase().includes(query.toLowerCase().slice(0, 15))) ?? Object.keys(fallbacks)[0];
+      if (key) {
+        const fb = fallbacks[key];
+        if (!fb.hybrid && fb.semantic && fb.bm25) fb.hybrid = rrf(fb.semantic, fb.bm25);
+        return NextResponse.json(fb);
       }
     } catch { /* fall through to live */ }
   }

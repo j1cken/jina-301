@@ -66,7 +66,7 @@ export default function CompactDemo({ card, autoPlay, advanceTick, restartTick }
       <div className="flex items-center justify-between">
         <StepProgressBar total={totalSteps} current={step} accentColor={accentColor} />
         {!autoPlay && step < totalSteps - 1 && !hasAdvancedOnce.current && (
-          <span className="text-xs text-white/30 italic">Press → or Next to advance</span>
+          <span className="text-xs italic" style={{ color: 'var(--text-muted)' }}>Press → or Next to advance</span>
         )}
       </div>
 
@@ -93,10 +93,10 @@ export default function CompactDemo({ card, autoPlay, advanceTick, restartTick }
             </div>
 
             {/* Heading */}
-            <h4 className="text-sm font-semibold text-white leading-snug">{currentStep.heading}</h4>
+            <h4 className="text-base font-semibold leading-snug" style={{ color: 'var(--text-primary)' }}>{currentStep.heading}</h4>
 
             {/* Body */}
-            <p className="text-xs text-white/60 leading-relaxed">{currentStep.body}</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{currentStep.body}</p>
 
             {/* Highlight metric */}
             {currentStep.highlight && (
@@ -107,8 +107,8 @@ export default function CompactDemo({ card, autoPlay, advanceTick, restartTick }
                 className="rounded-xl p-4 text-center mt-1"
                 style={{ background: accentColor + '0d', border: `1px solid ${accentColor}30` }}
               >
-                <p className="text-xs text-white/40 mb-1">Result</p>
-                <p className="text-sm font-medium leading-relaxed" style={{ color: accentColor }}>
+                <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Result</p>
+                <p className="text-base font-medium leading-relaxed" style={{ color: accentColor }}>
                   {currentStep.highlight}
                 </p>
               </motion.div>

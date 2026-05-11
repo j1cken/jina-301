@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { searchByClipVector, getClipEmbeddingViaEIS } from '@/lib/elasticsearch';
 
 const JINA_EMBEDDINGS_URL = 'https://api.jina.ai/v1/embeddings';
@@ -52,8 +54,8 @@ export async function POST(req: NextRequest) {
 
   if (demoMode) {
     try {
-      const res = await fetch(new URL('/fallbacks/clip.json', req.url));
-      if (res.ok) return NextResponse.json(await res.json());
+      const clipPath = join(process.cwd(), 'public', 'fallbacks', 'clip.json');
+      return NextResponse.json(JSON.parse(readFileSync(clipPath, 'utf-8')));
     } catch { /* fall through */ }
   }
 

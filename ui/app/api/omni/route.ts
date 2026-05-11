@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { searchByClipVector } from '@/lib/elasticsearch';
 
 const JINA_EMBEDDINGS_URL = 'https://api.jina.ai/v1/embeddings';
@@ -38,18 +40,22 @@ export async function POST(req: NextRequest) {
   const { query, imageBase64: rawBase64, imageUrl, audioBase64, demoMode } = await req.json();
 
   // Determine fallback lookup key
-  const fallbackKey = query ?? (imageUrl ? 'image_demo' : 'audio_demo');
+  const fallbackKey = query ?? ((rawBase64 || imageUrl) ? 'image_demo' : 'audio_demo');
 
   if (demoMode) {
     try {
-      const res = await fetch(new URL('/fallbacks/omni.json', req.url));
-      if (res.ok) {
-        const all = await res.json();
-        const key =
-          Object.keys(all).find(k => k.toLowerCase().includes(fallbackKey.toLowerCase().slice(0, 20))) ??
-          Object.keys(all)[0];
-        if (key) return NextResponse.json(all[key]);
-      }
+      const omniPath = join(process.cwd(), 'public', 'fallbacks', 'omni.json');
+      const all = JSON.parse(readFileSync(omniPath, 'utf-8'));
+      const key =
+        Object.keys(all).find(k => k.toLowerCase().includes(fallbackKey.toLowerCase().slice(0, 20))) ??
+        Object.keys(all)[0];
+      if (key) return NextResponse.json(all[key]);
+    } catch { /* fall through */ }
+    // Emergency fallback: use clip.json shape if omni.json missing or unmatched
+    try {
+      const clipPath = join(process.cwd(), 'public', 'fallbacks', 'clip.json');
+      const clip = JSON.parse(readFileSync(clipPath, 'utf-8'));
+      return NextResponse.json({ results: clip.results ?? [], query_vector_preview: [], took: 0 });
     } catch { /* fall through to live */ }
   }
 

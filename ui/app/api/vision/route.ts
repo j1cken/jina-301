@@ -41,8 +41,10 @@ export async function POST(req: NextRequest) {
 
   if (demoMode) {
     try {
-      const res = await fetch(new URL('/fallbacks/vision.json', req.url));
-      if (res.ok) return NextResponse.json(await res.json());
+      const { readFileSync } = await import('fs');
+      const { join } = await import('path');
+      const p = join(process.cwd(), 'public', 'fallbacks', 'vision.json');
+      return NextResponse.json(JSON.parse(readFileSync(p, 'utf-8')));
     } catch { /* fall through */ }
   }
 

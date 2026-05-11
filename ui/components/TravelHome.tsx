@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, useRef, useEffect, type Dispatch, type 
 import {
   Search, MapPin, Sparkles, X, Sun, Moon, Layers,
   Star, ArrowUpDown, Globe2, ChevronDown, SlidersHorizontal,
-  CheckCircle2, Shield, Minus, Plus, Users,
+  CheckCircle2, Shield, Minus, Plus, Users, Camera, Image as ImageIcon,
 } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
@@ -20,7 +20,7 @@ const MapPanel = dynamic(() => import('./MapPanel'), { ssr: false });
 interface TravelHomeProps {
   onShowDemo: () => void;
   onSelectStation: (s: 'find' | 'rank' | 'look' | 'describe' | 'ingest' | 'capstone' | 'agent') => void;
-  onOpenAgent: (query?: string) => void;
+  onOpenAgent: (query?: string, imageFile?: File) => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
   demoMode: boolean;
@@ -185,6 +185,7 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showGuestPicker, setShowGuestPicker] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   const runSearch = useCallback(async (q: string) => {
     if (!q.trim()) return;
@@ -334,6 +335,22 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
                   onFocus={e => (e.currentTarget.style.borderColor = 'var(--elastic-blue)')}
                   onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')} />
               </div>
+              <input ref={cameraRef} type="file" accept="image/*" style={{ display: 'none' }}
+                onChange={e => { const f = e.target.files?.[0]; if (f) { onOpenAgent(undefined, f); e.currentTarget.value = ''; } }} />
+              <button onClick={async () => {
+                  const resp = await fetch(resolveImageUrl('/images/sample-hotel-room.png') as string);
+                  const buf = await resp.arrayBuffer();
+                  onOpenAgent(undefined, new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+                }}
+                style={{ padding: '13px 14px', borderRadius: '12px', flexShrink: 0, background: 'var(--bg-surface)', border: '1.5px solid var(--border)', color: 'var(--text-muted)', cursor: 'pointer' }}
+                title="Search with sample image">
+                <ImageIcon className="w-5 h-5" />
+              </button>
+              <button onClick={() => cameraRef.current?.click()}
+                style={{ padding: '13px 14px', borderRadius: '12px', flexShrink: 0, background: 'var(--bg-surface)', border: '1.5px solid var(--border)', color: 'var(--text-muted)', cursor: 'pointer' }}
+                title="Upload image to search">
+                <Camera className="w-5 h-5" />
+              </button>
               <button onClick={() => onOpenAgent(query || undefined)}
                 style={{ padding: '13px 20px', fontSize: '0.95rem', fontWeight: 700, borderRadius: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center', background: 'rgba(0,191,179,0.12)', color: 'var(--elastic-teal)', border: '1.5px solid rgba(0,191,179,0.35)', cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
                 <Sparkles className="w-4 h-4" /> Ask the Concierge

@@ -12,12 +12,13 @@ import { generatePNR } from '@/components/BookingConfirmation';
 
 interface TravelSplitViewProps {
   initialMessage?: string;
+  initialImageFile?: File;
   onClose: () => void;
   cart: TripCartState;
   setCart: Dispatch<SetStateAction<TripCartState>>;
 }
 
-export default function TravelSplitView({ initialMessage, onClose, cart, setCart }: TravelSplitViewProps) {
+export default function TravelSplitView({ initialMessage, initialImageFile, onClose, cart, setCart }: TravelSplitViewProps) {
   const [tripContext, setTripContext] = useState('');
   const [agentHotels, setAgentHotels] = useState<ChatHotel[]>([]);
   const [visible, setVisible] = useState(false);
@@ -49,6 +50,10 @@ export default function TravelSplitView({ initialMessage, onClose, cart, setCart
   }, []);
 
   const handleOpenHotelFromChat = useCallback((_: ChatHotel) => {}, []);
+
+  const handleClipResults = useCallback((hotels: Hotel[]) => {
+    setAgentHotels(hotels as unknown as ChatHotel[]);
+  }, []);
 
   return (
     <div
@@ -121,8 +126,10 @@ export default function TravelSplitView({ initialMessage, onClose, cart, setCart
             <AgentChat
               panel
               initialMessage={initialMessage}
+              initialImageFile={initialImageFile}
               tripContext={tripContext}
               onAgentHotels={setAgentHotels}
+              onClipResults={handleClipResults}
               onReset={() => { setAgentHotels([]); setTripHotels([]); setBookingPNR(null); }}
               onOpenHotel={handleOpenHotelFromChat}
               onDatesParsed={(checkIn, checkOut) => setCart(prev => ({ ...prev, checkIn, checkOut }))}

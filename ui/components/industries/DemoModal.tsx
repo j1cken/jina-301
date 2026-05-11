@@ -73,7 +73,7 @@ export default function DemoModal({ card, sectorAccentColor, onClose, variant = 
     }
   };
 
-  const maxW = variant === 'compact' ? 'max-w-xl' : 'max-w-2xl';
+  const maxW = variant === 'compact' ? 'max-w-xl' : 'max-w-3xl';
   const bodyPad = variant === 'compact' ? 'p-4' : 'p-5';
   const headerPad = variant === 'compact' ? 'px-4 py-3' : 'px-5 py-4';
 
@@ -93,20 +93,20 @@ export default function DemoModal({ card, sectorAccentColor, onClose, variant = 
           exit={{ opacity: 0, scale: 0.96, y: 16 }}
           transition={{ duration: 0.25 }}
           className={`w-full ${maxW} max-h-[90vh] flex flex-col rounded-2xl overflow-hidden`}
-          style={{ background: 'var(--bg-base, #0f172a)', border: '1px solid rgba(255,255,255,0.12)' }}
+          style={{ background: 'var(--bg-base, #0f172a)', border: '1px solid var(--border, rgba(255,255,255,0.12))' }}
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className={`flex items-start justify-between gap-3 ${headerPad}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{card.sectorIcon}</span>
-              <div>
+          <div className={`flex flex-wrap items-start justify-between gap-2 ${headerPad}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-2xl flex-shrink-0">{card.sectorIcon}</span>
+              <div className="min-w-0">
                 <p className="text-xs font-medium" style={{ color: sectorAccentColor }}>{card.sector}</p>
                 <h2 className="text-base font-bold text-white">{card.title}</h2>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1.5 flex-wrap justify-end">
+            <div className="flex items-center gap-1.5 flex-wrap justify-end flex-shrink-0">
+              <div className="flex gap-1 flex-wrap justify-end">
                 {card.models.map(m => (
                   <span key={m.label} className="text-xs px-2 py-0.5 rounded-full font-medium"
                     style={{ background: m.color + '20', color: m.color, border: `1px solid ${m.color}40` }}>

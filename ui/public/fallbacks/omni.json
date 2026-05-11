@@ -1,0 +1,310 @@
+{
+  "romantic beachfront with private pool villa and spa": {
+    "results": [
+      {
+        "id": "jumeirah-mina-a-salam",
+        "name": "Jumeirah Mina A'Salam",
+        "descriptions": [
+          "Jumeirah Mina A'Salam, meaning 'Harbor of Peace', is a luxurious boutique hotel that forms part of the Madinat Jumeirah resort. Inspired by Arabian architecture, the hotel offers a tranquil escape with waterways weaving through the property, connecting guests to the vibrant souk and pristine beach. Experience the best of Dubai with world-class dining, shopping, and entertainment at your doorstep.",
+          "Talise Spa at Madinat Jumeirah provides a sanctuary of rejuvenation with treatments that blend ancient traditions and modern techniques. Relax in the steam rooms, saunas, and plunge pools before indulging in a customized massage or facial. The serene atmosphere and skilled therapists ensure a truly transformative experience.",
+          "Located within the Madinat Jumeirah resort, Jumeirah Mina A'Salam offers easy access to the Souk Madinat Jumeirah, the beach, and a variety of restaurants and bars. The hotel is a short drive from major attractions like the Burj Al Arab and Wild Wadi Waterpark, making it an ideal base for exploring Dubai.",
+          "Jumeirah Mina A'Salam exudes a sense of Arabian elegance and warm hospitality. Guests are treated to personalized service and a tranquil atmosphere that encourages relaxation and exploration. The waterways and lush gardens create a unique and unforgettable experience."
+        ],
+        "location": { "lat": 25.126, "lon": 55.186 },
+        "location_name": "Dubai, UAE",
+        "country": "UAE",
+        "region": "Middle East",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "resort", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 650,
+        "image_paths": ["/images/hotels/jumeirah-mina-a-salam_1.png", "/images/hotels/jumeirah-mina-a-salam_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Burj Al Arab", "Souk Madinat Jumeirah"],
+        "score": 0.9412
+      },
+      {
+        "id": "al-wadi-hotel-doha",
+        "name": "Al Wadi Hotel Doha - MGallery",
+        "descriptions": [
+          "Nestled in the heart of Doha's vibrant Souq Waqif, Al Wadi Hotel Doha offers a luxurious and authentic Qatari experience. The hotel seamlessly blends traditional Arabian architecture with modern comforts.",
+          "The M|Spa at Al Wadi offers a sanctuary of tranquility. Indulge in traditional Arabian treatments using locally sourced ingredients like camel milk and dates."
+        ],
+        "location": { "lat": 25.286, "lon": 51.531 },
+        "location_name": "Doha, Qatar",
+        "country": "Qatar",
+        "region": "Middle East",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 350,
+        "image_paths": ["/images/hotels/al-wadi-hotel-doha_1.png", "/images/hotels/al-wadi-hotel-doha_2.png"],
+        "rating": 4.6,
+        "nearby_landmarks": ["Souq Waqif", "Museum of Islamic Art", "The Corniche"],
+        "score": 0.9187
+      },
+      {
+        "id": "cape-grace-hotel",
+        "name": "Cape Grace Hotel",
+        "descriptions": [
+          "Located on its own private quay in Cape Town's vibrant V&A Waterfront, Cape Grace offers unparalleled views of Table Mountain and the bustling harbor. Experience world-class service, exquisite dining, and luxurious accommodations."
+        ],
+        "location": { "lat": -33.906, "lon": 18.421 },
+        "location_name": "Cape Town, South Africa",
+        "country": "South Africa",
+        "region": "Cape Town",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 600,
+        "image_paths": ["/images/hotels/cape-grace-hotel_1.png", "/images/hotels/cape-grace-hotel_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Table Mountain", "Robben Island"],
+        "score": 0.9043
+      },
+      {
+        "id": "the-nomad-hotel-new-york",
+        "name": "The NoMad Hotel New York",
+        "descriptions": [
+          "The NoMad Hotel New York is a haven of refined elegance in the heart of Manhattan. Inspired by Jacques Garcia's Parisian aesthetic, the hotel exudes a timeless charm with its rich fabrics, custom-designed furnishings, and curated art collection."
+        ],
+        "location": { "lat": 40.746, "lon": -73.987 },
+        "location_name": "New York, USA",
+        "country": "USA",
+        "region": "North America",
+        "amenities": ["restaurant", "bar", "concierge", "gym"],
+        "style": ["luxury", "boutique"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 650,
+        "image_paths": ["/images/hotels/the-nomad-hotel-new-york_1.png", "/images/hotels/the-nomad-hotel-new-york_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Empire State Building", "Madison Square Park"],
+        "score": 0.8934
+      },
+      {
+        "id": "parkroyal-collection-marinabay",
+        "name": "PARKROYAL COLLECTION Marina Bay, Singapore",
+        "descriptions": [
+          "PARKROYAL COLLECTION Marina Bay, Singapore, is a landmark hotel renowned for its distinctive architecture and commitment to sustainability. Boasting a 'hotel-in-a-garden' concept, the property features lush greenery and a stunning rooftop infinity pool overlooking the city skyline."
+        ],
+        "location": { "lat": 1.288, "lon": 103.854 },
+        "location_name": "Singapore, Singapore",
+        "country": "Singapore",
+        "region": "Asia Pacific",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "business", "wellness"],
+        "price_tier": "upscale",
+        "price_per_night_usd": 380,
+        "image_paths": ["/images/hotels/parkroyal-collection-marinabay_1.png", "/images/hotels/parkroyal-collection-marinabay_2.png"],
+        "rating": 4.6,
+        "nearby_landmarks": ["Gardens by the Bay", "Marina Bay Sands"],
+        "score": 0.8812
+      }
+    ],
+    "query_vector_preview": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "took": 120
+  },
+  "image_demo": {
+    "results": [
+      {
+        "id": "bellagio-las-vegas",
+        "name": "Bellagio",
+        "descriptions": [
+          "The Bellagio, an icon on the Las Vegas Strip, transports guests to a world of Italian elegance and unparalleled luxury. From its mesmerizing fountain shows to its stunning conservatory, every detail is meticulously crafted. Experience world-class dining, high-end shopping, and thrilling casino action, all within the opulent embrace of this legendary resort.",
+          "The Bellagio Suites offer an elevated level of luxury, with spacious living areas, opulent furnishings, and stunning views of the Las Vegas Strip. Many suites feature separate bedrooms, dining areas, and even private balconies with panoramic Strip views."
+        ],
+        "location": { "lat": 36.113, "lon": -115.177 },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "resort"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 450,
+        "image_paths": ["/images/hotels/bellagio-las-vegas_1.png", "/images/hotels/bellagio-las-vegas_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Caesars Palace", "ARIA Resort", "Las Vegas Strip"],
+        "score": 0.9701
+      },
+      {
+        "id": "wynn-las-vegas",
+        "name": "Wynn Las Vegas",
+        "descriptions": [
+          "Wynn Las Vegas is a beacon of luxury and innovation on the Las Vegas Strip. Boasting stunning architecture, lush gardens, and world-class amenities, Wynn offers an unparalleled experience. Wynn's Tower Suites offer an elevated level of luxury, with spacious living areas, opulent furnishings, and personalized butler service."
+        ],
+        "location": { "lat": 36.126, "lon": -115.166 },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "resort"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 500,
+        "image_paths": ["/images/hotels/wynn-las-vegas_1.png", "/images/hotels/wynn-las-vegas_2.png"],
+        "rating": 4.8,
+        "nearby_landmarks": ["Encore", "Fashion Show Mall", "Las Vegas Strip"],
+        "score": 0.9523
+      },
+      {
+        "id": "the-venetian-resort-las-vegas",
+        "name": "The Venetian Resort Las Vegas",
+        "descriptions": [
+          "The Venetian transports you to the romantic canals of Venice, Italy, right on the Las Vegas Strip. Experience gondola rides, stunning architecture, and world-class entertainment. The Venetian's Luxury Suites offer spacious accommodations, plush bedding, and stunning views of the Las Vegas Strip."
+        ],
+        "location": { "lat": 36.121, "lon": -115.170 },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "resort"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 400,
+        "image_paths": ["/images/hotels/the-venetian-resort-las-vegas_1.png", "/images/hotels/the-venetian-resort-las-vegas_2.png"],
+        "rating": 4.6,
+        "nearby_landmarks": ["The Palazzo", "Madame Tussauds Las Vegas", "Las Vegas Strip"],
+        "score": 0.9344
+      },
+      {
+        "id": "caesars-palace-las-vegas",
+        "name": "Caesars Palace",
+        "descriptions": [
+          "Caesars Palace, an iconic landmark on the Las Vegas Strip, transports guests to a world of Roman grandeur and opulence. Experience world-class entertainment, high-end shopping, and thrilling casino action. Caesars' suites feature spacious living areas, opulent furnishings, and stunning Strip views."
+        ],
+        "location": { "lat": 36.117, "lon": -115.175 },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "resort", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 420,
+        "image_paths": ["/images/hotels/caesars-palace-las-vegas_1.png", "/images/hotels/caesars-palace-las-vegas_2.png"],
+        "rating": 4.5,
+        "nearby_landmarks": ["Bellagio", "High Roller Observation Wheel", "Las Vegas Strip"],
+        "score": 0.9187
+      },
+      {
+        "id": "mgm-grand-las-vegas",
+        "name": "MGM Grand Las Vegas",
+        "descriptions": [
+          "MGM Grand Las Vegas is a colossal entertainment destination on the Las Vegas Strip. Home to world-class shows, thrilling casino action, and a vibrant nightlife scene. MGM Grand's Skylofts offer an exclusive and luxurious experience with stunning panoramic Strip views and personalized concierge service."
+        ],
+        "location": { "lat": 36.102, "lon": -115.169 },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["resort", "luxury"],
+        "price_tier": "upscale",
+        "price_per_night_usd": 300,
+        "image_paths": ["/images/hotels/mgm-grand-las-vegas_1.png", "/images/hotels/mgm-grand-las-vegas_2.png"],
+        "rating": 4.4,
+        "nearby_landmarks": ["T-Mobile Arena", "New York-New York", "Las Vegas Strip"],
+        "score": 0.8976
+      }
+    ],
+    "query_vector_preview": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "took": 143
+  },
+  "audio_demo": {
+    "results": [
+      {
+        "id": "parkroyal-collection-marinabay",
+        "name": "PARKROYAL COLLECTION Marina Bay, Singapore",
+        "descriptions": [
+          "PARKROYAL COLLECTION Marina Bay, Singapore, is a landmark hotel renowned for its 'hotel-in-a-garden' concept, the property features lush greenery, cascading vertical gardens, and a stunning rooftop infinity pool overlooking the city skyline. Experience eco-luxury in the heart of Singapore."
+        ],
+        "location": { "lat": 1.288, "lon": 103.854 },
+        "location_name": "Singapore, Singapore",
+        "country": "Singapore",
+        "region": "Asia Pacific",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "business", "wellness"],
+        "price_tier": "upscale",
+        "price_per_night_usd": 380,
+        "image_paths": ["/images/hotels/parkroyal-collection-marinabay_1.png", "/images/hotels/parkroyal-collection-marinabay_2.png"],
+        "rating": 4.6,
+        "nearby_landmarks": ["Gardens by the Bay", "Marina Bay Sands"],
+        "score": 0.9418
+      },
+      {
+        "id": "jumeirah-mina-a-salam",
+        "name": "Jumeirah Mina A'Salam",
+        "descriptions": [
+          "Jumeirah Mina A'Salam, meaning 'Harbor of Peace', is a luxurious boutique hotel that forms part of the Madinat Jumeirah resort. The waterways weaving through the property and the pristine beach create a tranquil soundscape of gentle waves."
+        ],
+        "location": { "lat": 25.126, "lon": 55.186 },
+        "location_name": "Dubai, UAE",
+        "country": "UAE",
+        "region": "Middle East",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "resort", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 650,
+        "image_paths": ["/images/hotels/jumeirah-mina-a-salam_1.png", "/images/hotels/jumeirah-mina-a-salam_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Burj Al Arab", "Souk Madinat Jumeirah"],
+        "score": 0.9253
+      },
+      {
+        "id": "cape-grace-hotel",
+        "name": "Cape Grace Hotel",
+        "descriptions": [
+          "Located on its own private quay in Cape Town's vibrant V&A Waterfront, Cape Grace offers unparalleled views of Table Mountain and the bustling harbor with the sounds of the sea."
+        ],
+        "location": { "lat": -33.906, "lon": 18.421 },
+        "location_name": "Cape Town, South Africa",
+        "country": "South Africa",
+        "region": "Cape Town",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 600,
+        "image_paths": ["/images/hotels/cape-grace-hotel_1.png", "/images/hotels/cape-grace-hotel_2.png"],
+        "rating": 4.7,
+        "nearby_landmarks": ["Table Mountain", "Robben Island"],
+        "score": 0.9112
+      },
+      {
+        "id": "al-wadi-hotel-doha",
+        "name": "Al Wadi Hotel Doha - MGallery",
+        "descriptions": [
+          "Nestled in the heart of Doha's vibrant Souq Waqif, Al Wadi Hotel Doha offers a luxurious escape. The spa and pool areas create a serene sanctuary with the ambient sounds of trickling water."
+        ],
+        "location": { "lat": 25.286, "lon": 51.531 },
+        "location_name": "Doha, Qatar",
+        "country": "Qatar",
+        "region": "Middle East",
+        "amenities": ["pool", "spa", "gym", "restaurant", "bar", "concierge"],
+        "style": ["luxury", "boutique", "heritage"],
+        "price_tier": "luxury",
+        "price_per_night_usd": 350,
+        "image_paths": ["/images/hotels/al-wadi-hotel-doha_1.png", "/images/hotels/al-wadi-hotel-doha_2.png"],
+        "rating": 4.6,
+        "nearby_landmarks": ["Souq Waqif", "Museum of Islamic Art", "The Corniche"],
+        "score": 0.8967
+      },
+      {
+        "id": "sir-adam-hotel-amsterdam",
+        "name": "Sir Adam Hotel, Amsterdam",
+        "descriptions": [
+          "Sir Adam Hotel is a trendy and stylish hotel located in the iconic A'DAM Tower in Amsterdam. With its panoramic views and rooftop bar offering ambient music and city vibes, it creates a multi-sensory experience."
+        ],
+        "location": { "lat": 52.393, "lon": 4.904 },
+        "location_name": "Amsterdam, Netherlands",
+        "country": "Netherlands",
+        "region": "Western Europe",
+        "amenities": ["restaurant", "bar", "concierge", "gym"],
+        "style": ["boutique", "business"],
+        "price_tier": "upscale",
+        "price_per_night_usd": 400,
+        "image_paths": ["/images/hotels/sir-adam-hotel-amsterdam_1.png"],
+        "rating": 4.5,
+        "nearby_landmarks": ["A'DAM Tower", "Eye Film Museum"],
+        "score": 0.8801
+      }
+    ],
+    "query_vector_preview": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "took": 110
+  }
+}

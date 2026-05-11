@@ -41,6 +41,7 @@ export default function Home() {
   const [pendingFindQuery, setPendingFindQuery] = useState<string | null>(null);
   const [showAgentChat, setShowAgentChat] = useState(false);
   const [splitInitialMessage, setSplitInitialMessage] = useState<string | undefined>();
+  const [splitInitialImageFile, setSplitInitialImageFile] = useState<File | undefined>();
   const [cart, setCart] = useState<TripCartState>({ guests: 2, tripName: '' });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | undefined>(undefined);
@@ -104,7 +105,7 @@ export default function Home() {
           <TravelHome
             onShowDemo={() => setViewMode('demo')}
             onSelectStation={(s) => { setViewMode('demo'); setStation(s); }}
-            onOpenAgent={(query?: string) => { setSplitInitialMessage(query || undefined); setViewMode('split'); }}
+            onOpenAgent={(query?: string, imageFile?: File) => { setSplitInitialMessage(query || undefined); setSplitInitialImageFile(imageFile || undefined); setViewMode('split'); }}
             theme={theme}
             onToggleTheme={toggleTheme}
             demoMode={demoMode}
@@ -159,7 +160,8 @@ export default function Home() {
       {viewMode === 'split' && (
         <TravelSplitView
           initialMessage={splitInitialMessage}
-          onClose={() => setViewMode('travel')}
+          initialImageFile={splitInitialImageFile}
+          onClose={() => { setViewMode('travel'); setSplitInitialImageFile(undefined); }}
           cart={cart}
           setCart={setCart}
         />

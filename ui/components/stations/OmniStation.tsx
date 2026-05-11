@@ -56,8 +56,8 @@ const MODELS = [
 const MODALITIES = [
   { id: 'text',  label: '📝 Text',  model: 'jina-embeddings-v5-text-small', color: BLUE },
   { id: 'image', label: '🖼 Image', model: 'jina-clip-v2',                  color: TEAL },
-  { id: 'audio', label: '🎵 Audio', model: 'jina-omni-small (audio encoder)', color: GOLD },
-  { id: 'video', label: '🎬 Video', model: 'jina-omni-small (video encoder)', color: ORANGE },
+  { id: 'audio', label: '🎵 Audio', model: 'whisper-large-v3',   color: GOLD },
+  { id: 'video', label: '🎬 Video', model: 'siglip2 + whisper', color: ORANGE },
 ];
 
 const SITUATIONS = [
@@ -253,9 +253,9 @@ function ModalitySwitcher() {
                 initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}
                 className="rounded-xl px-4 py-3 text-base"
-                style={{ background: m.color + '12', border: `1px solid ${m.color}30`, color: m.color }}>
+                style={{ background: m.color, color: '#0A0F1E' }}>
                 <span className="font-mono">{m.model}</span>
-                <span className="ml-2 font-normal text-sm" style={{ color: m.color + 'aa' }}>✅ EIS</span>
+                <span className="ml-2 font-normal text-sm" style={{ color: 'rgba(10,15,30,0.65)' }}>✅ EIS</span>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -267,9 +267,9 @@ function ModalitySwitcher() {
         {/* With Omni */}
         <div className="flex flex-col gap-3">
           <p className="text-xl font-bold" style={{ color: ACCENT }}>With Omni</p>
-          <div className="rounded-xl px-4 py-3 text-base" style={{ background: ACCENT + '12', border: `1px solid ${ACCENT}30`, color: ACCENT }}>
+          <div className="rounded-xl px-4 py-3 text-base" style={{ background: ACCENT, color: '#0A0F1E' }}>
             <span className="font-mono">jina-embeddings-v5-omni-small</span>
-            <span className="ml-2 font-normal text-sm" style={{ color: ACCENT + 'aa' }}>✅ EIS</span>
+            <span className="ml-2 font-normal text-sm" style={{ color: 'rgba(10,15,30,0.65)' }}>✅ EIS</span>
           </div>
           <div className="text-base font-semibold" style={{ color: ACCENT }}>1 model · 1 index · no fusion code</div>
         </div>
@@ -390,7 +390,15 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   async function handleImageRun() {
     setImageLoading(true); setImageError(null);
     try {
-      setImageResults(await runOmni({ imageUrl: SAMPLE_IMAGE, liveMode: imageLive }));
+      if (!imageLive) {
+        setImageResults(await runOmni({ query: 'image_demo', liveMode: false }));
+      } else {
+        const resp = await fetch(resolveImageUrl(SAMPLE_IMAGE) as string);
+        const buf = await resp.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''));
+        setImageResults(await runOmni({ imageBase64: b64, liveMode: true }));
+      }
     } catch (e) {
       setImageError((e as Error).message);
     } finally { setImageLoading(false); }

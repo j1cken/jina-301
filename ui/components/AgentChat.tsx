@@ -3,11 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare, Camera } from 'lucide-react';
+import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSquare, Camera, Image as ImageIcon } from 'lucide-react';
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
 import { parseDateRange } from '@/lib/parseDates';
 import { apiUrl } from '@/lib/api';
+import { resolveImageUrl } from '@/lib/images';
 import type { Hotel } from '@/lib/types';
 
 const SUGGESTIONS = [
@@ -246,8 +247,10 @@ interface AgentChatProps {
   sidebar?: boolean;
   panel?: boolean;
   initialMessage?: string;
+  initialImageFile?: File;
   tripContext?: string;
   onAgentHotels?: (hotels: ChatHotel[]) => void;
+  onClipResults?: (hotels: Hotel[]) => void;
   onReset?: () => void;
   onOpenHotel?: (hotel: ChatHotel) => void;
   onDatesParsed?: (checkIn: Date, checkOut: Date) => void;
@@ -259,8 +262,10 @@ export default function AgentChat({
   sidebar = false,
   panel = false,
   initialMessage,
+  initialImageFile,
   tripContext,
   onAgentHotels,
+  onClipResults,
   onReset,
   onOpenHotel,
   onDatesParsed,
@@ -273,7 +278,8 @@ export default function AgentChat({
   const hasSentInitial = useRef(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const clipPreviewRef = useRef<string | null>(null);
-  const [clipResult, setClipResult] = useState<{ previewUrl: string; results: Hotel[]; loading: boolean; error?: string } | null>(null);
+  const [clipResult, setClipResult] = useState<{ previewUrl: string; results: Hotel[]; loading: boolean; model?: string; error?: string } | null>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -287,6 +293,12 @@ export default function AgentChat({
     }
   }, [initialMessage, sendMessage]);
 
+  // Auto-trigger image search if an image was passed from TravelHome
+  useEffect(() => {
+    if (initialImageFile) handleCameraImage(initialImageFile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Notify parent when agent response completes with hotels
   useEffect(() => {
     if (!onAgentHotels) return;
@@ -297,12 +309,18 @@ export default function AgentChat({
   }, [messages, onAgentHotels]);
 
   const handleCameraImage = useCallback(async (file: File) => {
-    if (file.size > 5 * 1024 * 1024 || !file.type.startsWith('image/')) return;
+    if (file.size > 10 * 1024 * 1024 || !file.type.startsWith('image/')) return;
 
-    const preview = URL.createObjectURL(file);
-    if (clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); }
-    clipPreviewRef.current = preview;
-    setClipResult({ previewUrl: preview, results: [], loading: true });
+    // Use static URL for sample image so preview works even if the fetch was empty
+    const isSample = file.name === 'sample-hotel-room.png';
+    const preview = isSample
+      ? (resolveImageUrl('/images/sample-hotel-room.png') ?? URL.createObjectURL(file))
+      : URL.createObjectURL(file);
+    if (!isSample && clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); }
+    if (!isSample) clipPreviewRef.current = preview;
+    const useDemoFallback = demoMode || isSample;
+    const model = useDemoFallback ? 'omni' : 'clip';
+    setClipResult({ previewUrl: preview, results: [], loading: true, model });
 
     try {
       const base64: string = await new Promise((resolve, reject) => {
@@ -311,18 +329,21 @@ export default function AgentChat({
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
-      const res = await fetch(apiUrl('/api/omni'), {
+      const endpoint = useDemoFallback ? '/api/omni' : '/api/clip';
+      const res = await fetch(apiUrl(endpoint), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mimeType: file.type, demoMode }),
+        body: JSON.stringify({ imageBase64: base64, mimeType: file.type, demoMode: useDemoFallback }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? `Omni error ${res.status}`);
+      if (!res.ok) throw new Error((await res.json()).error ?? `${endpoint} error ${res.status}`);
       const data = await res.json();
-      setClipResult({ previewUrl: preview, results: data.results ?? [], loading: false });
+      const results: Hotel[] = data.results ?? [];
+      setClipResult({ previewUrl: preview, results, loading: false, model });
+      onClipResults?.(results);
     } catch (err) {
       setClipResult(prev => prev ? { ...prev, loading: false, error: (err as Error).message } : null);
     }
-  }, [demoMode]);
+  }, [demoMode, onClipResults]);
 
   const submit = useCallback(() => {
     const val = input.trim();
@@ -383,16 +404,28 @@ export default function AgentChat({
         {clipResult && (
           <div className="mb-4 rounded-xl overflow-hidden"
             style={{ border: '1px solid rgba(0,191,179,0.3)', background: 'rgba(0,191,179,0.05)' }}>
-            <div className="flex items-center gap-2 px-3 py-2"
-              style={{ borderBottom: '1px solid rgba(0,191,179,0.15)' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={clipResult.previewUrl} alt="" className="w-7 h-7 rounded-lg object-cover flex-shrink-0" />
+            <div className="flex items-center gap-2 px-3 py-2">
+              {/* Clickable thumbnail → lightbox */}
+              <button
+                onClick={() => setLightboxUrl(clipResult.previewUrl)}
+                className="flex-shrink-0 rounded-lg overflow-hidden hover:opacity-80 transition-opacity cursor-zoom-in"
+                title="Click to enlarge"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={clipResult.previewUrl} alt="" className="w-9 h-9 object-cover" />
+              </button>
               <div className="flex-1 min-w-0">
                 <span className="text-xs font-semibold" style={{ color: 'var(--elastic-teal)' }}>
-                  {clipResult.loading ? 'Searching by image…' : clipResult.error ? 'Image search error' : 'Direct CLIP v2 lookup'}
+                  {clipResult.loading
+                    ? 'Searching by image…'
+                    : clipResult.error
+                    ? 'Image search error'
+                    : clipResult.model === 'clip' ? 'CLIP v2 · EIS' : 'Omni multimodal lookup'}
                 </span>
                 {!clipResult.loading && !clipResult.error && (
-                  <span className="text-xs ml-1.5" style={{ color: 'var(--text-muted)' }}>· bypasses agent · 1024-dim kNN</span>
+                  <span className="text-xs ml-1.5" style={{ color: 'var(--text-muted)' }}>
+                    · {clipResult.results.length} results in canvas
+                  </span>
                 )}
               </div>
               <button onClick={() => { if (clipPreviewRef.current) URL.revokeObjectURL(clipPreviewRef.current); clipPreviewRef.current = null; setClipResult(null); }}
@@ -402,38 +435,32 @@ export default function AgentChat({
               </button>
             </div>
             {clipResult.loading && (
-              <div className="px-3 py-2 flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+              <div className="px-3 pb-2 flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
                 <span className="w-3 h-3 border border-t-transparent rounded-full animate-spin flex-shrink-0"
                   style={{ borderColor: 'var(--elastic-teal)', borderTopColor: 'transparent' }} />
                 Embedding with Omni · running kNN…
               </div>
             )}
             {clipResult.error && (
-              <p className="px-3 py-2 text-xs" style={{ color: 'var(--elastic-pink)' }}>{clipResult.error}</p>
+              <p className="px-3 pb-2 text-xs" style={{ color: 'var(--elastic-pink)' }}>{clipResult.error}</p>
             )}
-            {!clipResult.loading && !clipResult.error && clipResult.results.length > 0 && (
-              <div className="px-3 py-2 space-y-1.5">
-                {clipResult.results.slice(0, 4).map(h => (
-                  <button key={h.id} onClick={() => onOpenHotel?.(h as unknown as ChatHotel)}
-                    className="w-full flex items-center gap-2 text-left px-2 py-1.5 rounded-lg transition-colors hover:opacity-80"
-                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                    {h.image_paths?.[0] && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={`/images/hotels/${h.image_paths[0]}`} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{h.name}</p>
-                      <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{h.location_name}</p>
-                    </div>
-                    {h.score != null && (
-                      <span className="ml-auto text-xs flex-shrink-0" style={{ color: 'var(--elastic-teal)' }}>
-                        {h.score.toFixed(3)}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
+          </div>
+        )}
+
+        {/* Lightbox overlay */}
+        {lightboxUrl && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(0,0,0,0.85)' }}
+            onClick={() => setLightboxUrl(null)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={lightboxUrl}
+              alt="Search image"
+              className="max-w-[90vw] max-h-[90vh] rounded-xl object-contain"
+              onClick={e => e.stopPropagation()}
+            />
           </div>
         )}
 
@@ -497,9 +524,22 @@ export default function AgentChat({
           />
           <button
             type="button"
+            onClick={async () => {
+              const resp = await fetch(resolveImageUrl('/images/sample-hotel-room.png') as string);
+              const buf = await resp.arrayBuffer();
+              handleCameraImage(new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+            }}
+            disabled={isLoading}
+            title="Search with sample image"
+            className="m-1.5 p-2 rounded-lg transition-colors flex-shrink-0 disabled:opacity-40"
+            style={{ color: 'var(--elastic-teal)' }}>
+            <ImageIcon className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
             onClick={() => cameraInputRef.current?.click()}
             disabled={isLoading}
-            title="Search by image (Omni)"
+            title="Upload image to search (Omni)"
             className="m-1.5 p-2 rounded-lg transition-colors flex-shrink-0 disabled:opacity-40"
             style={{ color: 'var(--text-muted)' }}>
             <Camera className="w-4 h-4" />
