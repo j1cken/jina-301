@@ -261,11 +261,9 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
           <span className="font-bold text-lg opacity-20" style={{ color: 'var(--text-muted)' }}>|</span>
           <span className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>by</span>
           <img
-            src={resolveImageUrl(theme === 'dark'
-              ? '/images/logo-elastic-horizontal-color-reverse.svg'
-              : '/images/logo-elastic-horizontal-color.svg')}
+            src={`${BASE_PATH}/images/${theme === 'dark' ? 'logo-elastic-horizontal-color-reverse.svg' : 'logo-elastic-horizontal-color.svg'}`}
             alt="Elastic"
-            style={{ height: '52px', width: 'auto' }}
+            style={{ height: '28px', width: 'auto' }}
           />
         </div>
         <nav className="hidden md:flex items-center gap-1">
@@ -338,9 +336,13 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
               <input ref={cameraRef} type="file" accept="image/*" style={{ display: 'none' }}
                 onChange={e => { const f = e.target.files?.[0]; if (f) { onOpenAgent(undefined, f); e.currentTarget.value = ''; } }} />
               <button onClick={async () => {
-                  const resp = await fetch(resolveImageUrl('/images/sample-hotel-room.png') as string);
-                  const buf = await resp.arrayBuffer();
-                  onOpenAgent(undefined, new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+                  try {
+                    const resp = await fetch(`${BASE_PATH}/images/sample-hotel-room.png`);
+                    const buf = await resp.arrayBuffer();
+                    onOpenAgent(undefined, new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+                  } catch (e) {
+                    console.error('Sample image load failed:', e);
+                  }
                 }}
                 style={{ padding: '13px 14px', borderRadius: '12px', flexShrink: 0, background: 'var(--bg-surface)', border: '1.5px solid var(--border)', color: 'var(--text-muted)', cursor: 'pointer' }}
                 title="Search with sample image">

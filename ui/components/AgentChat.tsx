@@ -7,8 +7,7 @@ import { Send, X, RotateCcw, ChevronDown, ChevronRight, Wrench, Zap, MessageSqua
 import { useAgentChat, type Message, type ChatHotel } from '@/hooks/useAgentChat';
 import { useDemoMode } from '@/lib/demoMode';
 import { parseDateRange } from '@/lib/parseDates';
-import { apiUrl } from '@/lib/api';
-import { resolveImageUrl } from '@/lib/images';
+import { apiUrl, BASE_PATH } from '@/lib/api';
 import type { Hotel } from '@/lib/types';
 
 const SUGGESTIONS = [
@@ -314,7 +313,7 @@ export default function AgentChat({
     // Use static URL for sample image so preview works even if the fetch was empty
     const isSample = file.name === 'sample-hotel-room.png';
     const preview = isSample
-      ? (resolveImageUrl('/images/sample-hotel-room.png') ?? URL.createObjectURL(file))
+      ? `${BASE_PATH}/images/sample-hotel-room.png`
       : URL.createObjectURL(file);
     if (!isSample && clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); }
     if (!isSample) clipPreviewRef.current = preview;
@@ -525,9 +524,13 @@ export default function AgentChat({
           <button
             type="button"
             onClick={async () => {
-              const resp = await fetch(resolveImageUrl('/images/sample-hotel-room.png') as string);
-              const buf = await resp.arrayBuffer();
-              handleCameraImage(new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+              try {
+                const resp = await fetch(`${BASE_PATH}/images/sample-hotel-room.png`);
+                const buf = await resp.arrayBuffer();
+                handleCameraImage(new File([buf], 'sample-hotel-room.png', { type: 'image/png' }));
+              } catch (e) {
+                console.error('Sample image load failed:', e);
+              }
             }}
             disabled={isLoading}
             title="Search with sample image"
