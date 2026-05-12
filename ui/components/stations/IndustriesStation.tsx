@@ -7,8 +7,8 @@ export default function IndustriesStation() {
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Industries</h1>
-        <p className="text-sm text-white/50">
+        <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Industries</h1>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
           Customers don&apos;t buy embeddings. They buy faster incident triage, fewer
           false-positive alerts, and analysts who can actually find the right document.
           These 15 use cases show how Jina models on Elastic deliver those outcomes —

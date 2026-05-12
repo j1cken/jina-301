@@ -451,7 +451,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   }
 
   return (
-    <div className="flex flex-col gap-14 pb-16">
+    <div data-theme="dark" className="flex flex-col gap-14 pb-16" style={{ background: 'var(--bg-base)', borderRadius: '12px', padding: '8px' }}>
 
       {/* Hero */}
       <div className="flex flex-row items-center gap-8">

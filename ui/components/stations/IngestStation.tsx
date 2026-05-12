@@ -27,7 +27,7 @@ function renderJson(json: string): React.ReactNode[] {
     } else if (token === 'true' || token === 'false' || token === 'null') {
       color = 'var(--elastic-pink)';
     } else {
-      color = '#6EE7B7';
+      color = 'var(--code-number)';
     }
     nodes.push(<span key={i++} style={{ color }}>{token}</span>);
     last = match.index + token.length;

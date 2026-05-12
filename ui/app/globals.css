@@ -18,9 +18,10 @@
   --bg-surface: #0A1525;
   --text-primary: #F0F4F8;
   --text-secondary: #8EA7C0;
-  --text-muted: #4A6278;
+  --text-muted: #7FA3C0;
   --border: #1A2E42;
   --border-active: #0077CC;
+  --code-number: #6EE7B7;
 }
 
 [data-theme="light"] {
@@ -30,9 +31,10 @@
   --bg-surface: #EFF3F8;
   --text-primary: #0D1B2E;
   --text-secondary: #4A6278;
-  --text-muted: #8EA7C0;
+  --text-muted: #52708A;
   --border: #D0DBE6;
   --border-active: #0077CC;
+  --code-number: #059669;
 }
 
 [data-theme="dark"] {
@@ -42,9 +44,10 @@
   --bg-surface: #0A1525;
   --text-primary: #F0F4F8;
   --text-secondary: #8EA7C0;
-  --text-muted: #4A6278;
+  --text-muted: #7FA3C0;
   --border: #1A2E42;
   --border-active: #0077CC;
+  --code-number: #6EE7B7;
 }
 
 * {
