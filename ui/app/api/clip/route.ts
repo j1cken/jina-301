@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { searchByClipVector, getClipEmbeddingViaEIS } from '@/lib/elasticsearch';
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout';
 
 const JINA_EMBEDDINGS_URL = 'https://api.jina.ai/v1/embeddings';
 
 async function getClipEmbedding(imageBase64: string, mimeType: string, apiKey: string): Promise<number[]> {
-  const res = await fetch(JINA_EMBEDDINGS_URL, {
+  const res = await fetchWithTimeout(JINA_EMBEDDINGS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,11 +39,11 @@ export async function POST(req: NextRequest) {
   // Server-side fetch for sample images — SSRF allowlist: only /images/ paths
   let imageBase64 = rawBase64;
   if (imageUrl) {
-    if (!imageUrl.startsWith('/images/')) {
+    if (!imageUrl.startsWith('/images/') && !imageUrl.startsWith('/horizon/images/')) {
       return NextResponse.json({ error: 'Invalid imageUrl' }, { status: 400 });
     }
     const origin = new URL(req.url).origin;
-    const resp = await fetch(`${origin}${imageUrl}`);
+    const resp = await fetchWithTimeout(`${origin}${imageUrl}`);
     if (!resp.ok) return NextResponse.json({ error: 'Image fetch failed' }, { status: 400 });
     const buf = await resp.arrayBuffer();
     imageBase64 = Buffer.from(buf).toString('base64');

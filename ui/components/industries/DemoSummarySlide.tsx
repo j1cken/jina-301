@@ -41,8 +41,15 @@ export default function DemoSummarySlide({ data, card, accentColor }: DemoSummar
 
       {/* Technical solution */}
       <div className="rounded-xl p-4" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
-        <p className="text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-muted)' }}>How It Works</p>
-        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary, var(--text-primary))' }}>{data.technicalSolution}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>How It Works</p>
+        <div className="flex flex-col gap-1.5">
+          {data.technicalSolution.split('. ').filter(Boolean).map((sentence, i, arr) => (
+            <p key={i} className="text-sm leading-relaxed flex gap-1.5" style={{ color: 'var(--text-secondary)' }}>
+              <span className="shrink-0 mt-0.5" style={{ color: 'var(--text-muted)' }}>·</span>
+              <span>{sentence}{i < arr.length - 1 ? '.' : ''}</span>
+            </p>
+          ))}
+        </div>
       </div>
 
       {/* Position when / Don't position when */}

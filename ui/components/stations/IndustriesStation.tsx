@@ -9,8 +9,10 @@ export default function IndustriesStation() {
       <div>
         <h1 className="text-2xl font-bold text-white mb-1">Industries</h1>
         <p className="text-sm text-white/50">
-          Vector search and embedding models solve real problems far beyond ecommerce.
-          Explore how Jina AI models power search, observability, and security across industries.
+          Customers don&apos;t buy embeddings. They buy faster incident triage, fewer
+          false-positive alerts, and analysts who can actually find the right document.
+          These 15 use cases show how Jina models on Elastic deliver those outcomes —
+          across Search, Observability, and Security.
         </p>
       </div>
 

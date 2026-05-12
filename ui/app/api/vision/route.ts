@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout';
 
 const VLM_URL = 'https://api-beta-vlm.jina.ai/v1/chat/completions';
 const COLD_START_CODES = new Set([502, 503, 429]);
@@ -86,21 +87,31 @@ export async function POST(req: NextRequest) {
     max_tokens: 500,
   };
 
-  // Retry with backoff on cold-start
+  // Retry with backoff on cold-start (20s per-attempt timeout to keep worst-case ~95s)
   const delays = [0, 15000, 30000];
   let lastStatus = 200;
 
-  for (const delay of delays) {
-    if (delay > 0) await new Promise(r => setTimeout(r, delay));
+  for (let i = 0; i < delays.length; i++) {
+    if (delays[i] > 0) await new Promise(r => setTimeout(r, delays[i]));
 
-    const vlmRes = await fetch(VLM_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    let vlmRes: Response;
+    try {
+      vlmRes = await fetchWithTimeout(VLM_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(payload),
+      }, 20_000);
+    } catch {
+      // Timeout or network error — treat like cold-start and retry if attempts remain
+      if (i < delays.length - 1) continue;
+      return NextResponse.json(
+        { error: 'Vision model timed out. Please retry in ~30 seconds.', coldStart: true, status: 504 },
+        { status: 502 }
+      );
+    }
 
     lastStatus = vlmRes.status;
 

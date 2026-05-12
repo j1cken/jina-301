@@ -6,7 +6,7 @@ const inFlight = new Set<string>();
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { query, hotelId, delta = 0 } = body as { query: string; hotelId: string; delta?: number };
+  const { query, hotelId, delta = 0, demoMode } = body as { query: string; hotelId: string; delta?: number; demoMode?: boolean };
 
   console.log('[explain-rank] START hotelId=%s query=%s', hotelId, query.slice(0, 40));
 
@@ -28,6 +28,15 @@ export async function POST(req: NextRequest) {
 
   console.log('[explain-rank] hotel found: %s, descriptions=%d, score=%s', hotel.name, hotel.descriptions.length, hotel.score);
 
+  if (demoMode) {
+    const firstSentence = hotel.descriptions[0]?.split('.')[0] ?? hotel.name;
+    const dir = delta > 0 ? 'up' : 'down';
+    const n = Math.abs(delta);
+    return NextResponse.json({
+      explanation: `"${firstSentence}." — The bi-encoder collapsed this description into a single vector and couldn't weight individual signals. Reranker v3 read the query and full description together with cross-attention, catching the semantic match the vector missed.\n\nMoved ${dir} ${n} position${n !== 1 ? 's' : ''} after reranking.`,
+    });
+  }
+
   const descriptionText = hotel.descriptions.join(' ').slice(0, 1500);
   const score = hotel.score ?? 0;
 
@@ -40,11 +49,9 @@ export async function POST(req: NextRequest) {
   const ai = new GoogleGenAI({ vertexai: true, project: 'elastic-sa', location: 'us-central1' });
 
   const t0 = Date.now();
-  try {
-    console.log('[explain-rank] calling Gemini...');
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `You are explaining to an Elastic Field Engineer why Jina Reranker v3 re-ordered a hotel search result.
+  const geminiCall = ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: `You are explaining to an Elastic Field Engineer why Jina Reranker v3 re-ordered a hotel search result.
 
 Query: "${query}"
 Hotel: "${hotel.name}"${score > 0 ? `\nReranker score: ${score.toFixed(3)}` : ''}
@@ -60,20 +67,27 @@ Example:
 {"quotedPhrase":"soundproofed co-working rooms","explanation":"The bi-encoder under-weighted 'soundproofed' because 'quiet' wasn't a verbatim match; the reranker caught the semantic equivalence.","mismatch":null}
 
 Rules: quotedPhrase MUST appear verbatim in the description. No marketing language. Be honest about mismatches.`,
-      config: {
-        temperature: 0.2,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            quotedPhrase: { type: Type.STRING },
-            explanation: { type: Type.STRING },
-            mismatch: { type: Type.STRING, nullable: true },
-          },
-          required: ['quotedPhrase', 'explanation'],
+    config: {
+      temperature: 0.2,
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          quotedPhrase: { type: Type.STRING },
+          explanation: { type: Type.STRING },
+          mismatch: { type: Type.STRING, nullable: true },
         },
+        required: ['quotedPhrase', 'explanation'],
       },
-    });
+    },
+  });
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('Gemini timeout')), 10_000)
+  );
+
+  try {
+    console.log('[explain-rank] calling Gemini...');
+    const response = await Promise.race([geminiCall, timeoutPromise]);
 
     console.log('[explain-rank] Gemini OK in %dms', Date.now() - t0);
 
@@ -92,8 +106,13 @@ Rules: quotedPhrase MUST appear verbatim in the description. No marketing langua
 
     return NextResponse.json({ explanation: parts.join('\n\n') });
   } catch (err) {
+    geminiCall.catch(() => {}); // swallow orphaned promise after race loss
     console.error('[explain-rank] Gemini error after %dms:', Date.now() - t0, err);
-    return NextResponse.json({ explanation: makeFallback() });
+    const dir = delta > 0 ? 'up' : 'down';
+    const n = Math.abs(delta);
+    return NextResponse.json({
+      explanation: `Reranker v3 read the query and full description together with cross-attention — catching signals the bi-encoder missed when it collapsed everything into one vector.\n\nMoved ${dir} ${n} position${n !== 1 ? 's' : ''} after reranking.`,
+    });
   } finally {
     inFlight.delete(key);
   }

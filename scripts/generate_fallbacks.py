@@ -20,6 +20,22 @@ except ImportError:
     print("pip install requests python-dotenv")
     sys.exit(1)
 
+try:
+    from PIL import Image as PILImage
+    import io as _io
+    def resize_image_b64(path: Path, max_dim: int = 256) -> str:
+        import base64
+        img = PILImage.open(path).convert("RGB")
+        img.thumbnail((max_dim, max_dim))
+        buf = _io.BytesIO()
+        img.save(buf, format="JPEG", quality=85)
+        return base64.b64encode(buf.getvalue()).decode()
+except ImportError:
+    PILImage = None
+    def resize_image_b64(path: Path, max_dim: int = 256) -> str:
+        import base64
+        return base64.b64encode(path.read_bytes()).decode()
+
 PROJECT_ROOT = Path(__file__).parent.parent
 FALLBACKS_DIR = PROJECT_ROOT / "ui" / "public" / "fallbacks"
 FALLBACKS_DIR.mkdir(exist_ok=True)
@@ -28,7 +44,7 @@ for env_file in [PROJECT_ROOT / "ui" / ".env.local", PROJECT_ROOT / ".env"]:
     if env_file.exists():
         load_dotenv(env_file, override=False)
 
-BASE_URL = os.getenv("DEMO_APP_URL", "http://localhost:3000")
+BASE_URL = os.getenv("DEMO_APP_URL", "http://localhost:3000/horizon")
 
 DEMO_QUERIES = [
     "quiet hotel for focused remote work, no casino noise",
@@ -79,12 +95,9 @@ def capture_clip():
     if not img_path.exists():
         return None
 
-    import base64
-    with open(img_path, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode()
-
+    b64 = resize_image_b64(img_path)
     print(f"  Capturing CLIP with {first_image}...")
-    res = requests.post(f"{BASE_URL}/api/clip", json={"imageBase64": b64, "mimeType": "image/png", "demoMode": False})
+    res = requests.post(f"{BASE_URL}/api/clip", json={"imageBase64": b64, "mimeType": "image/jpeg", "demoMode": False})
     return res.json() if res.ok else None
 
 
@@ -119,14 +132,13 @@ def capture_omni():
         time.sleep(2)  # omni is slow — ~10s each, give server breathing room
 
     # Image demo — use the drone-frame hotel image
-    import base64
     hotels = json.loads(hotels_file.read_text()) if hotels_file.exists() else []
     first_image = next((h["image_paths"][0] for h in hotels if h.get("image_paths")), None)
     if first_image:
         img_path = PROJECT_ROOT / "ui" / "public" / first_image.lstrip("/")
         if img_path.exists():
             print(f"  Capturing omni (image_demo): {first_image}...")
-            b64 = base64.b64encode(img_path.read_bytes()).decode()
+            b64 = resize_image_b64(img_path)
             res = requests.post(f"{BASE_URL}/api/omni", json={"imageBase64": b64, "demoMode": False})
             if res.ok:
                 results["image_demo"] = res.json()

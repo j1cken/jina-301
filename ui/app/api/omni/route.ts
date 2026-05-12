@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { searchByClipVector } from '@/lib/elasticsearch';
+import { searchByClipVector, getOmniEmbeddingViaEIS } from '@/lib/elasticsearch';
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout';
 
 const JINA_EMBEDDINGS_URL = 'https://api.jina.ai/v1/embeddings';
 
@@ -9,7 +10,7 @@ async function getOmniEmbedding(
   apiKey: string,
   inputs: Array<{ text?: string; image?: string; audio?: string }>,
 ): Promise<number[]> {
-  const res = await fetch(JINA_EMBEDDINGS_URL, {
+  const res = await fetchWithTimeout(JINA_EMBEDDINGS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -62,11 +63,12 @@ export async function POST(req: NextRequest) {
   // Resolve imageUrl → base64 (SSRF allowlist: /images/ and /audio/ paths only)
   let imageBase64 = rawBase64;
   if (imageUrl) {
-    if (!imageUrl.startsWith('/images/') && !imageUrl.startsWith('/audio/')) {
+    if (!imageUrl.startsWith('/images/') && !imageUrl.startsWith('/horizon/images/')
+        && !imageUrl.startsWith('/audio/') && !imageUrl.startsWith('/horizon/audio/')) {
       return NextResponse.json({ error: 'Invalid imageUrl' }, { status: 400 });
     }
     const origin = new URL(req.url).origin;
-    const resp = await fetch(`${origin}${imageUrl}`);
+    const resp = await fetchWithTimeout(`${origin}${imageUrl}`);
     if (!resp.ok) return NextResponse.json({ error: 'Asset fetch failed' }, { status: 400 });
     const buf = await resp.arrayBuffer();
     imageBase64 = Buffer.from(buf).toString('base64');
@@ -77,19 +79,28 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const apiKey = process.env.JINA_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: 'JINA_API_KEY not configured' }, { status: 503 });
+    const start = Date.now();
+    let vector: number[];
+
+    if (process.env.OMNI_VIA_EIS === 'true' && !audioBase64) {
+      // EIS path: single string input — image (data URI) takes precedence over text
+      const eisInput = imageBase64
+        ? `data:image/jpeg;base64,${imageBase64}`
+        : query!;
+      vector = await getOmniEmbeddingViaEIS(eisInput);
+    } else {
+      // Direct Jina API path — used for audio and when OMNI_VIA_EIS is not set
+      const apiKey = process.env.JINA_API_KEY;
+      if (!apiKey) {
+        return NextResponse.json({ error: 'JINA_API_KEY not configured' }, { status: 503 });
+      }
+      const inputs: Array<{ text?: string; image?: string; audio?: string }> = [];
+      if (query) inputs.push({ text: query });
+      if (imageBase64) inputs.push({ image: imageBase64 });
+      if (audioBase64) inputs.push({ audio: audioBase64 });
+      vector = await getOmniEmbedding(apiKey, inputs);
     }
 
-    // Build input array — omni accepts mixed modality objects in one call
-    const inputs: Array<{ text?: string; image?: string; audio?: string }> = [];
-    if (query) inputs.push({ text: query });
-    if (imageBase64) inputs.push({ image: imageBase64 });
-    if (audioBase64) inputs.push({ audio: audioBase64 });
-
-    const start = Date.now();
-    const vector = await getOmniEmbedding(apiKey, inputs);
     const results = await searchByClipVector(vector);
     const took = Date.now() - start;
 

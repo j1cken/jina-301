@@ -25,12 +25,13 @@ export default function HotelCard({ hotel, index = 0, onClick, selected, showSco
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.07 }}
       onClick={() => onClick?.(hotel)}
-      className={`flex gap-4 rounded-xl overflow-hidden transition-colors${onClick ? ' cursor-pointer' : ''}`}
+      className={`flex gap-4 rounded-xl overflow-hidden transition-all${onClick ? ' cursor-pointer hover:shadow-md' : ''}`}
       style={{
         background: selected ? 'var(--bg-card-hover)' : 'var(--bg-card)',
         border: `1.5px solid ${selected ? 'var(--elastic-blue)' : 'var(--border)'}`,
         boxShadow: selected ? '0 0 0 1px var(--elastic-blue)' : 'none',
       }}
+      whileHover={onClick ? { scale: 1.005 } : undefined}
     >
       {/* Image — 40% width */}
       <div className="w-40 flex-shrink-0 relative" style={{ background: 'var(--bg-surface)' }}>

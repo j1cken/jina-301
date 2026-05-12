@@ -79,6 +79,12 @@ const SITUATIONS = [
     title: 'Knowledge base with docs, screenshots, and video tutorials',
     say: 'Stop building three separate pipelines. Omni finds the right asset regardless of format — one index, one inference_id.',
   },
+  {
+    icon: '📑',
+    icon2: '🔍',
+    title: 'Financial filings, contracts, and scanned reports',
+    say: 'Layout is signal. Omni embeds the page — tables, signatures, stamps — alongside the prose, so one query finds the right clause whether it\'s typed or scanned.',
+  },
 ];
 
 const NOT_CASES = [
@@ -115,7 +121,8 @@ function OmniResultCard({ hotel }: { hotel: Hotel }) {
     <div className="flex gap-3 rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
       {img && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={img} alt="" className="w-16 h-14 object-cover rounded-lg shrink-0" />
+        <img src={resolveImageUrl(img) ?? img} alt="" className="w-16 h-14 object-cover rounded-lg shrink-0"
+          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
       )}
       <div className="flex flex-col justify-center gap-0.5 min-w-0">
         <p className="text-sm font-semibold text-white truncate">{hotel.name}</p>
@@ -367,6 +374,21 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
 
   const SAMPLE_IMAGE = '/images/hotels/al-wadi-desert-ras-al-khaimah_1.png';
 
+  function resizeImageBase64(b64: string, maxDim = 256): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
+      };
+      img.src = `data:image/png;base64,${b64}`;
+    });
+  }
+
   async function runOmni(payload: Record<string, unknown>): Promise<Hotel[]> {
     const res = await fetch(apiUrl('/api/omni'), {
       method: 'POST',
@@ -397,7 +419,8 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
         const buf = await resp.arrayBuffer();
         const bytes = new Uint8Array(buf);
         const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''));
-        setImageResults(await runOmni({ imageBase64: b64, liveMode: true }));
+        const resized = await resizeImageBase64(b64);
+        setImageResults(await runOmni({ imageBase64: resized, liveMode: true }));
       }
     } catch (e) {
       setImageError((e as Error).message);
@@ -438,6 +461,10 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             <span className="text-xs font-bold px-3 py-1 rounded-full"
               style={{ background: ACCENT + '25', color: ACCENT, border: `1px solid ${ACCENT}50` }}>
               ✅ ON EIS
+            </span>
+            <span className="text-xs font-bold px-3 py-1 rounded-full"
+              style={{ background: BLUE + '25', color: BLUE, border: `1px solid ${BLUE}50` }}>
+              Drop-in for v5-text indices
             </span>
           </div>
           <h1 className="text-5xl font-black text-white leading-tight tracking-tight">
@@ -578,7 +605,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
           <strong className="text-white"> Reach for it when a customer&apos;s data has more than one modality,
           or when they&apos;re tired of maintaining three embedding pipelines.</strong>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {SITUATIONS.map((s, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
@@ -622,16 +649,14 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
       {/* Model comparison table */}
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl font-bold text-white">Model comparison</h2>
-        <p className="text-sm text-white/40">Screenshot this. Use it for the &ldquo;which model?&rdquo; conversation.</p>
+        <p className="text-sm text-white/40">Frontier-class performance in a compact footprint. Drops into existing v5-text pipelines without re-indexing. Screenshot this for the &ldquo;which model?&rdquo; conversation.</p>
         <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
           <table className="w-full">
             <thead>
               <tr style={{ background: 'rgba(255,255,255,0.08)', borderBottom: '2px solid rgba(255,255,255,0.15)' }}>
                 <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Model</th>
                 <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Modalities</th>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Context</th>
                 <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Dims</th>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">EIS</th>
                 <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Use when</th>
               </tr>
             </thead>
@@ -648,10 +673,8 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
                       style={{ background: ACCENT + '25', color: ACCENT }}>new</span>}
                   </td>
                   <td className="px-5 py-4 text-sm text-white/80">{m.modalities}</td>
-                  <td className="px-5 py-4 text-sm font-mono text-white/70">{m.context}</td>
                   <td className="px-5 py-4 text-sm font-mono text-white/70">{m.dims}</td>
-                  <td className="px-5 py-4 text-sm text-white/80">{m.eis}</td>
-                  <td className="px-5 py-4 text-sm text-white/65 leading-snug">{m.when}</td>
+                  <td className="px-5 py-4 text-sm text-white/80 leading-relaxed">{m.when}</td>
                 </tr>
               ))}
             </tbody>

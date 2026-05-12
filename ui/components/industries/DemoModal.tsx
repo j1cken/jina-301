@@ -26,6 +26,10 @@ const DEMOS: Record<string, React.ComponentType<any>> = {
   'olly-rca-log-search': OllyRCALogSearchDemo,
   'olly-metric-anomaly': OllyMetricAnomalyDemo,
   'security-cve-service': SecurityCVEServiceDemo,
+  // Travel & Hospitality info cards
+  'travel-hotel-search': CompactDemo,
+  'travel-visual-room': CompactDemo,
+  'travel-omni': CompactDemo,
   // Info card compact demos — all 9 use the data-driven CompactDemo
   'search-legal': CompactDemo,
   'search-video': CompactDemo,

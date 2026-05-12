@@ -187,6 +187,24 @@ export async function getClipEmbeddingViaEIS(imageBase64: string): Promise<numbe
   return vector;
 }
 
+export async function getOmniEmbeddingViaEIS(input: string): Promise<number[]> {
+  const url = `${process.env.ELASTICSEARCH_URL}/_inference/embedding/.jina-embeddings-v5-omni-small`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ input: [input] }),
+  });
+  if (!res.ok) throw new Error(`EIS Omni ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const data = await res.json();
+  const vector = data.embeddings?.[0]?.embedding;
+  if (!Array.isArray(vector) || vector.length !== 1024)
+    throw new Error(`Unexpected EIS Omni shape: ${JSON.stringify(data).slice(0, 200)}`);
+  return vector;
+}
+
 export async function getHotelById(id: string): Promise<Hotel | null> {
   const es = getClient();
   try {

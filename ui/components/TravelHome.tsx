@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useRef, useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useTypewriter } from '@/hooks/useTypewriter';
 import {
   Search, MapPin, Sparkles, X, Sun, Moon, Layers,
   Star, ArrowUpDown, Globe2, ChevronDown, SlidersHorizontal,
@@ -27,6 +28,11 @@ interface TravelHomeProps {
   onToggleDemo: () => void;
   cart: TripCartState;
   setCart: Dispatch<SetStateAction<TripCartState>>;
+  isFlowing?: boolean;
+  onStartFlow?: () => void;
+  onExitFlow?: () => void;
+  flowHeroQuery?: string | null;
+  onFlowHeroQueryConsumed?: () => void;
 }
 
 type SortKey = 'relevance' | 'price_asc' | 'price_desc' | 'rating';
@@ -168,8 +174,13 @@ function FeaturedCard({ hotel, onClick }: { hotel: typeof FEATURED[0]; onClick: 
   );
 }
 
-export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, theme, onToggleTheme, demoMode, onToggleDemo, cart, setCart }: TravelHomeProps) {
+export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, theme, onToggleTheme, demoMode, onToggleDemo, cart, setCart, isFlowing, onStartFlow, onExitFlow, flowHeroQuery, onFlowHeroQueryConsumed }: TravelHomeProps) {
   const [query, setQuery] = useState('');
+
+  const heroTyped = useTypewriter(flowHeroQuery ?? null, onFlowHeroQueryConsumed);
+  useEffect(() => {
+    if (flowHeroQuery != null) setQuery(heroTyped);
+  }, [heroTyped, flowHeroQuery]);
   const [results, setResults] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -291,6 +302,14 @@ export default function TravelHome({ onShowDemo, onSelectStation, onOpenAgent, t
               Fallback ON
             </button>
           )}
+          <button
+            onClick={isFlowing ? onExitFlow : onStartFlow}
+            className="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-sm"
+            style={{ background: isFlowing ? 'rgba(0,119,204,0.18)' : 'rgba(0,119,204,0.10)', border: '1.5px solid var(--elastic-blue)', color: 'var(--elastic-blue)' }}
+            title={isFlowing ? 'Exit flow' : 'Start demo flow'}
+          >
+            {isFlowing ? '■' : '▶'}
+          </button>
         </div>
       </header>
 

@@ -45,6 +45,51 @@
         "score": 0.7616677
       },
       {
+        "id": "the-roccafiore-spa-resort",
+        "name": "Roccapore Spa Resort",
+        "descriptions": [
+          "Roccapore Spa Resort, situated in the rolling hills of the Umbria region in Italy, offers a tranquil escape surrounded by vineyards and olive groves. The resort features elegant accommodations, a state-of-the-art spa, and a restaurant serving gourmet Italian cuisine. The air is filled with the scent of wildflowers and the earthy aroma of the countryside.",
+          "The hotel's spa offers a range of treatments designed to relax and rejuvenate the mind, body, and soul. Indulge in a massage, facial, or body wrap, using natural and organic products. The spa also features a sauna, steam room, and relaxation area.",
+          "Located in the heart of Umbria, Roccapore Spa Resort offers easy access to the region's many attractions. Explore the historic towns of Assisi and Perugia, visit the vineyards and olive groves, or simply relax and enjoy the beauty of the countryside. The hotel is a quiet distance from major roads.",
+          "Experience the tranquility of Umbria at Roccapore Spa Resort. The resort's serene atmosphere and attentive service create a truly memorable experience. Unwind by the pool, enjoy a massage at the spa, or simply soak up the beauty of the surrounding countryside. The sounds of nature fill the air, creating a peaceful and relaxing ambiance.",
+          "The standard rooms offer views of the vineyards or olive groves and feature comfortable furnishings and modern amenities. Rooms on the ground floor have small patios, while rooms on the upper floors offer better views. Soundproofing is above-average compared to local inns.",
+          "The suites offer spacious living areas, private balconies, and luxurious bathrooms. The thick walls ensure a peaceful and quiet retreat, blocking out any external noise.",
+          "This hotel room offers a luxurious and serene atmosphere with a modern design. The large windows provide breathtaking views of the ocean and mountains, creating a peaceful and relaxing environment. The room features a spacious pool area with a wooden deck, perfect for relaxation and enjoying the stunning scenery. The dining area is elegantly set with wooden tables and chairs, and the restaurant offers a romantic dining experience with a beautiful view of the ocean. The hotel also has a spa area with a relaxing pool and a variety of treatments available. Overall, this hotel room offers a unique and unforgettable experience for guests."
+        ],
+        "location": {
+          "lat": 42.916,
+          "lon": 12.568
+        },
+        "location_name": "Todi, Italy",
+        "country": "Italy",
+        "region": "Umbria",
+        "amenities": [
+          "pool",
+          "spa",
+          "restaurant",
+          "bar",
+          "concierge",
+          "gym"
+        ],
+        "style": [
+          "luxury",
+          "wellness",
+          "resort"
+        ],
+        "price_tier": "upscale",
+        "price_per_night_usd": 420,
+        "image_paths": [
+          "/images/hotels/the-roccafiore-spa-resort_1.png",
+          "/images/hotels/the-roccafiore-spa-resort_2.png"
+        ],
+        "rating": 4.6,
+        "nearby_landmarks": [
+          "Assisi",
+          "Perugia"
+        ],
+        "score": 0.756668
+      },
+      {
         "id": "el-cortez-hotel-casino",
         "name": "El Cortez Hotel & Casino",
         "descriptions": [
@@ -85,6 +130,44 @@
           "The Neon Museum"
         ],
         "score": 0.75001746
+      },
+      {
+        "id": "hotel-palazzo-zichy-budapest",
+        "name": "Hotel Palazzo Zichy",
+        "descriptions": [
+          "Hotel Palazzo Zichy, housed in a beautifully restored neo-Baroque palace in Budapest's Palace District, offers a luxurious and sophisticated experience. The hotel blends historical elegance with modern amenities, providing a comfortable and stylish stay. The scent of old books and polished wood permeates the air, creating a sense of timeless charm.",
+          "The hotel's lobby bar is a sophisticated space to unwind with a cocktail or a glass of wine. The bar features a selection of local and international wines, as well as a variety of spirits and cocktails. The bartenders are knowledgeable and passionate about their craft.",
+          "Located in the heart of Budapest's Palace District, Hotel Palazzo Zichy offers easy access to the city's many attractions. Explore the Hungarian National Museum, visit the Great Market Hall, or take a stroll along the Danube River. The hotel is also close to the city's vibrant nightlife and cultural scene.",
+          "Experience the elegance of Budapest at Hotel Palazzo Zichy. The hotel's refined atmosphere and attentive service create a truly memorable experience. Relax in the comfortable lobby, enjoy a delicious breakfast in the dining room, or simply soak up the atmosphere of this historic palace. The sounds of the city filter through the windows, creating a lively and vibrant ambiance.",
+          "The standard rooms feature modern amenities and comfortable furnishings. Rooms overlooking the courtyard are quieter, while those facing the street capture the sounds of the city.",
+          "The suites offer spacious living areas, luxurious bathrooms, and stunning views of the city. The thick walls ensure a peaceful and quiet retreat, blocking out most of the external noise."
+        ],
+        "location": {
+          "lat": 47.492,
+          "lon": 19.065
+        },
+        "location_name": "Budapest, Hungary",
+        "country": "Hungary",
+        "region": "Budapest",
+        "amenities": [
+          "bar",
+          "concierge",
+          "gym"
+        ],
+        "style": [
+          "luxury",
+          "heritage",
+          "business"
+        ],
+        "price_tier": "upscale",
+        "price_per_night_usd": 380,
+        "image_paths": [],
+        "rating": 4.3,
+        "nearby_landmarks": [
+          "Hungarian National Museum",
+          "Great Market Hall"
+        ],
+        "score": 0.745017
       },
       {
         "id": "harrahs-las-vegas",
@@ -128,7 +211,7 @@
           "High Roller Observation Wheel",
           "Caesars Palace"
         ],
-        "score": 0.7474643
+        "score": 0.742017
       },
       {
         "id": "the-d-las-vegas",
@@ -306,89 +389,6 @@
           "Miracle Mile Shops"
         ],
         "score": 0.7315629
-      },
-      {
-        "id": "the-roccafiore-spa-resort",
-        "name": "Roccapore Spa Resort",
-        "descriptions": [
-          "Roccapore Spa Resort, situated in the rolling hills of the Umbria region in Italy, offers a tranquil escape surrounded by vineyards and olive groves. The resort features elegant accommodations, a state-of-the-art spa, and a restaurant serving gourmet Italian cuisine. The air is filled with the scent of wildflowers and the earthy aroma of the countryside.",
-          "The hotel's spa offers a range of treatments designed to relax and rejuvenate the mind, body, and soul. Indulge in a massage, facial, or body wrap, using natural and organic products. The spa also features a sauna, steam room, and relaxation area.",
-          "Located in the heart of Umbria, Roccapore Spa Resort offers easy access to the region's many attractions. Explore the historic towns of Assisi and Perugia, visit the vineyards and olive groves, or simply relax and enjoy the beauty of the countryside. The hotel is a quiet distance from major roads.",
-          "Experience the tranquility of Umbria at Roccapore Spa Resort. The resort's serene atmosphere and attentive service create a truly memorable experience. Unwind by the pool, enjoy a massage at the spa, or simply soak up the beauty of the surrounding countryside. The sounds of nature fill the air, creating a peaceful and relaxing ambiance.",
-          "The standard rooms offer views of the vineyards or olive groves and feature comfortable furnishings and modern amenities. Rooms on the ground floor have small patios, while rooms on the upper floors offer better views. Soundproofing is above-average compared to local inns.",
-          "The suites offer spacious living areas, private balconies, and luxurious bathrooms. The thick walls ensure a peaceful and quiet retreat, blocking out any external noise.",
-          "This hotel room offers a luxurious and serene atmosphere with a modern design. The large windows provide breathtaking views of the ocean and mountains, creating a peaceful and relaxing environment. The room features a spacious pool area with a wooden deck, perfect for relaxation and enjoying the stunning scenery. The dining area is elegantly set with wooden tables and chairs, and the restaurant offers a romantic dining experience with a beautiful view of the ocean. The hotel also has a spa area with a relaxing pool and a variety of treatments available. Overall, this hotel room offers a unique and unforgettable experience for guests."
-        ],
-        "location": {
-          "lat": 42.916,
-          "lon": 12.568
-        },
-        "location_name": "Todi, Italy",
-        "country": "Italy",
-        "region": "Umbria",
-        "amenities": [
-          "pool",
-          "spa",
-          "restaurant",
-          "bar",
-          "concierge",
-          "gym"
-        ],
-        "style": [
-          "luxury",
-          "wellness",
-          "resort"
-        ],
-        "price_tier": "upscale",
-        "price_per_night_usd": 420,
-        "image_paths": [
-          "/images/hotels/the-roccafiore-spa-resort_1.png",
-          "/images/hotels/the-roccafiore-spa-resort_2.png"
-        ],
-        "rating": 4.6,
-        "nearby_landmarks": [
-          "Assisi",
-          "Perugia"
-        ],
-        "score": 0.7310828
-      },
-      {
-        "id": "hotel-palazzo-zichy-budapest",
-        "name": "Hotel Palazzo Zichy",
-        "descriptions": [
-          "Hotel Palazzo Zichy, housed in a beautifully restored neo-Baroque palace in Budapest's Palace District, offers a luxurious and sophisticated experience. The hotel blends historical elegance with modern amenities, providing a comfortable and stylish stay. The scent of old books and polished wood permeates the air, creating a sense of timeless charm.",
-          "The hotel's lobby bar is a sophisticated space to unwind with a cocktail or a glass of wine. The bar features a selection of local and international wines, as well as a variety of spirits and cocktails. The bartenders are knowledgeable and passionate about their craft.",
-          "Located in the heart of Budapest's Palace District, Hotel Palazzo Zichy offers easy access to the city's many attractions. Explore the Hungarian National Museum, visit the Great Market Hall, or take a stroll along the Danube River. The hotel is also close to the city's vibrant nightlife and cultural scene.",
-          "Experience the elegance of Budapest at Hotel Palazzo Zichy. The hotel's refined atmosphere and attentive service create a truly memorable experience. Relax in the comfortable lobby, enjoy a delicious breakfast in the dining room, or simply soak up the atmosphere of this historic palace. The sounds of the city filter through the windows, creating a lively and vibrant ambiance.",
-          "The standard rooms feature modern amenities and comfortable furnishings. Rooms overlooking the courtyard are quieter, while those facing the street capture the sounds of the city.",
-          "The suites offer spacious living areas, luxurious bathrooms, and stunning views of the city. The thick walls ensure a peaceful and quiet retreat, blocking out most of the external noise."
-        ],
-        "location": {
-          "lat": 47.492,
-          "lon": 19.065
-        },
-        "location_name": "Budapest, Hungary",
-        "country": "Hungary",
-        "region": "Budapest",
-        "amenities": [
-          "bar",
-          "concierge",
-          "gym"
-        ],
-        "style": [
-          "luxury",
-          "heritage",
-          "business"
-        ],
-        "price_tier": "upscale",
-        "price_per_night_usd": 380,
-        "image_paths": [],
-        "rating": 4.3,
-        "nearby_landmarks": [
-          "Hungarian National Museum",
-          "Great Market Hall"
-        ],
-        "score": 0.73019814
       },
       {
         "id": "caesars-palace-las-vegas",
@@ -615,6 +615,49 @@
         "score": 4.5651913
       },
       {
+        "id": "the-d-las-vegas",
+        "name": "The D Las Vegas",
+        "descriptions": [
+          "The D Las Vegas delivers a high-energy Downtown experience right on Fremont Street. Known for its vibrant atmosphere and two-level casino, this hotel offers a mix of classic Vegas charm and modern excitement. From dancing dealers to live music, The D provides a non-stop party atmosphere in the heart of Downtown Las Vegas. It's a great option for those seeking a lively and affordable Vegas getaway.",
+          "The D's pool area, while not as expansive as Strip resorts, offers a refreshing escape from the Fremont Street heat. Enjoy poolside cocktails and music in a relaxed setting. The pool area is a popular spot for socializing and soaking up the Downtown Vegas vibe. Cabana rentals provide a more private and luxurious experience, with dedicated service and amenities.",
+          "Located directly on Fremont Street, The D Las Vegas puts you in the center of the Fremont Street Experience. Step outside the hotel and immerse yourself in the dazzling light shows, live music, and street performers. The hotel is within walking distance of other Downtown attractions, including the Mob Museum and the Neon Museum. The Strip is a short taxi or rideshare away.",
+          "Expect a high-energy and fun-loving atmosphere at The D Las Vegas. The hotel caters to a younger and more adventurous crowd, with a focus on entertainment and nightlife. The casino floor is always buzzing with excitement, and the bars and lounges offer a lively setting for socializing. It's a great place to let loose and have a good time.",
+          "Standard rooms offer comfortable and functional accommodations with modern amenities. Enjoy views of Fremont Street or the Downtown skyline. Noise levels can be high, especially on lower floors facing Fremont Street. Request a higher floor or a room facing away from Fremont Street for a quieter experience. Soundproofing is average.",
+          "Opt for a suite for added space and luxury. Suites feature separate living areas, wet bars, and upgraded amenities. Many suites offer panoramic views of the Las Vegas Valley. The penthouse suites offer the ultimate in luxury, with private balconies and personalized service. Even suites experience some Fremont Street noise.",
+          "This hotel room interior is a luxurious blend of modern and classic design elements. The space is characterized by warm, inviting lighting that creates a cozy atmosphere. The room features a mix of wooden and marble accents, adding a touch of elegance and sophistication. The furniture is thoughtfully arranged, with comfortable seating options for guests to relax and enjoy their stay. The room also includes a private balcony with a stunning view of the city, offering a perfect spot for a romantic getaway or a quiet evening of reading. The overall ambiance is one of comfort, luxury, and tranquility, making it an ideal choice for travelers seeking a memorable and relaxing experience."
+        ],
+        "location": {
+          "lat": 36.17,
+          "lon": -115.142
+        },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Downtown Las Vegas",
+        "amenities": [
+          "pool",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "casino",
+          "business"
+        ],
+        "price_tier": "budget",
+        "price_per_night_usd": 79,
+        "image_paths": [
+          "/images/hotels/the-d-las-vegas_1.png",
+          "/images/hotels/the-d-las-vegas_2.png"
+        ],
+        "rating": 3.8,
+        "nearby_landmarks": [
+          "Fremont Street Experience",
+          "SlotZilla Zip Line"
+        ],
+        "score": 4.386647
+      },
+      {
         "id": "flamingo-las-vegas",
         "name": "Flamingo Las Vegas",
         "descriptions": [
@@ -656,6 +699,95 @@
           "High Roller Observation Wheel"
         ],
         "score": 4.273075
+      },
+      {
+        "id": "red-rock-casino-resort-spa",
+        "name": "Red Rock Casino Resort & Spa",
+        "descriptions": [
+          "Nestled against the stunning backdrop of Red Rock Canyon, Red Rock Casino Resort & Spa offers a luxurious escape from the Las Vegas Strip. This upscale resort features stylish accommodations, a vibrant casino, a rejuvenating spa, and a variety of dining options. Immerse yourself in the natural beauty of the surrounding landscape while enjoying world-class amenities and exceptional service. Red Rock is an ideal destination for those seeking a sophisticated and relaxing getaway.",
+          "The Red Rock Casino Resort & Spa's spa offers a sanctuary of serenity. Indulge in a range of treatments, from massages and facials to body wraps and hydrotherapy. The spa features 19 treatment rooms, a sauna, a steam room, and a relaxation lounge. Escape the city's energy and unwind in this tranquil oasis. The outdoor pool is designed with families in mind, offering a separate children's area and a playful atmosphere.",
+          "Located in Summerlin, Red Rock Casino Resort & Spa is approximately a 20-minute drive from the Las Vegas Strip. The resort offers stunning views of Red Rock Canyon and easy access to hiking trails and outdoor activities. The surrounding area features upscale shopping centers, restaurants, and entertainment venues. This location provides a perfect balance of city convenience and natural beauty.",
+          "Expect a sophisticated and relaxed atmosphere at Red Rock Casino Resort & Spa. The resort caters to a discerning clientele, offering a refined and elegant experience. The staff is attentive and professional, ensuring that every guest feels pampered and cared for. Whether you're seeking thrilling casino action or a rejuvenating spa retreat, Red Rock offers a memorable experience.",
+          "Standard rooms offer stylish accommodations with modern furnishings and comfortable amenities. Enjoy views of the Red Rock Canyon or the Las Vegas skyline. The rooms are well-insulated, providing a quiet and peaceful environment. Rooms facing the courtyard are especially quiet, offering a serene retreat.",
+          "Upgrade to a suite for added space and luxury. Suites feature separate living areas, wet bars, and oversized bathrooms. Many suites offer panoramic views of the surrounding landscape. The villas provide the ultimate in luxury, with private pools and personalized service.",
+          "This hotel room offers a luxurious and serene atmosphere with a large, inviting swimming pool that reflects the surrounding tropical foliage. The room features a mix of natural and modern elements, including wooden beams, stone accents, and large windows that provide a stunning view of the lush greenery outside. The space is well-lit with warm, ambient lighting that enhances the tranquil ambiance. Visible amenities include a gym area with exercise equipment, a spa-like relaxation area with comfortable seating, and a private balcony with a view of the pool. The overall experience is one of relaxation and indulgence, perfect for a getaway or a rejuvenating stay."
+        ],
+        "location": {
+          "lat": 36.144,
+          "lon": -115.339
+        },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Summerlin",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "resort",
+          "wellness"
+        ],
+        "price_tier": "upscale",
+        "price_per_night_usd": 249,
+        "image_paths": [
+          "/images/hotels/red-rock-casino-resort-spa_1.png",
+          "/images/hotels/red-rock-casino-resort-spa_2.png"
+        ],
+        "rating": 4.6,
+        "nearby_landmarks": [
+          "Red Rock Canyon National Conservation Area",
+          "Downtown Summerlin"
+        ],
+        "score": 4.271499
+      },
+      {
+        "id": "dwarikas-hotel-kathmandu",
+        "name": "Dwarika's Hotel Kathmandu",
+        "descriptions": [
+          "Dwarika's Hotel is a unique heritage hotel in Kathmandu, Nepal, showcasing traditional Newari architecture and craftsmanship. Each room is a work of art, adorned with intricate wood carvings and handcrafted details. Immerse yourself in the rich culture and history of Nepal, while enjoying modern comforts and personalized service. The hotel is a sanctuary of tranquility in the bustling city.",
+          "The hotel's Pancha Kosha Ayurvedic Wellness Centre offers a holistic approach to health and well-being. Experience traditional Ayurvedic treatments, yoga, and meditation sessions. The centre uses natural ingredients and ancient techniques to promote relaxation and rejuvenation. The scent of incense and herbal oils creates a soothing atmosphere.",
+          "Located in a peaceful neighborhood of Kathmandu, Dwarika's Hotel is a short distance from the city's major attractions. The hotel is surrounded by lush gardens and traditional courtyards. The nearby Pashupatinath Temple is a significant Hindu pilgrimage site. The air is filled with the sounds of prayer and chanting.",
+          "Dwarika's Hotel offers a serene and enriching experience. Guests can explore the hotel's museum, learn about Newari art and architecture, and participate in cultural activities. The hotel's attentive staff provides personalized service and ensures a memorable stay. Expect the sound of traditional music and the aroma of spices.",
+          "Our standard rooms are beautifully decorated with traditional Newari art and offer comfortable accommodations. The rooms feature handcrafted furniture and modern amenities. Rooms facing the courtyard are quiet, while street-facing rooms may experience some daytime noise from local traffic.",
+          "The Royal Suite at Dwarika's Hotel is a luxurious retreat with spacious living areas, a private balcony, and stunning views of the city. Featuring a separate living room, dining area, and bedroom, it offers an ideal setting for relaxation and entertainment. The suite is decorated with rare antiques and handcrafted details.",
+          "Le Jardin Spa & Wellness offre un havre de paix dans un sanctuaire de s\u00e9r\u00e9nit\u00e9. Les chambres sont d\u00e9cor\u00e9es avec des murs en pierre et des arches, cr\u00e9ant une atmosph\u00e8re chaleureuse et accueillante. Les clients peuvent profiter d'un bassin de piscine, d'un spa et d'un restaurant. Les tables sont dispos\u00e9es avec des verres de vin et des assiettes, offrant une exp\u00e9rience culinaire de haute qualit\u00e9. Les clients peuvent \u00e9galement profiter d'un massage et d'un traitement de bien-\u00eatre. Le Jardin Spa & Wellness est un lieu id\u00e9al pour ceux qui cherchent \u00e0 se d\u00e9tendre et \u00e0 se relaxer."
+        ],
+        "location": {
+          "lat": 27.708,
+          "lon": 85.344
+        },
+        "location_name": "Kathmandu, Nepal",
+        "country": "Nepal",
+        "region": "Kathmandu Valley",
+        "amenities": [
+          "pool",
+          "spa",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "heritage",
+          "wellness"
+        ],
+        "price_tier": "luxury",
+        "price_per_night_usd": 600,
+        "image_paths": [
+          "/images/hotels/dwarikas-hotel-kathmandu_1.png",
+          "/images/hotels/dwarikas-hotel-kathmandu_2.png"
+        ],
+        "rating": 4.8,
+        "nearby_landmarks": [
+          "Pashupatinath Temple",
+          "Boudhanath Stupa"
+        ],
+        "score": 4.269158
       },
       {
         "id": "green-valley-ranch-resort-spa-casino",
@@ -703,49 +835,6 @@
         "score": 4.26385
       },
       {
-        "id": "the-d-las-vegas",
-        "name": "The D Las Vegas",
-        "descriptions": [
-          "The D Las Vegas delivers a high-energy Downtown experience right on Fremont Street. Known for its vibrant atmosphere and two-level casino, this hotel offers a mix of classic Vegas charm and modern excitement. From dancing dealers to live music, The D provides a non-stop party atmosphere in the heart of Downtown Las Vegas. It's a great option for those seeking a lively and affordable Vegas getaway.",
-          "The D's pool area, while not as expansive as Strip resorts, offers a refreshing escape from the Fremont Street heat. Enjoy poolside cocktails and music in a relaxed setting. The pool area is a popular spot for socializing and soaking up the Downtown Vegas vibe. Cabana rentals provide a more private and luxurious experience, with dedicated service and amenities.",
-          "Located directly on Fremont Street, The D Las Vegas puts you in the center of the Fremont Street Experience. Step outside the hotel and immerse yourself in the dazzling light shows, live music, and street performers. The hotel is within walking distance of other Downtown attractions, including the Mob Museum and the Neon Museum. The Strip is a short taxi or rideshare away.",
-          "Expect a high-energy and fun-loving atmosphere at The D Las Vegas. The hotel caters to a younger and more adventurous crowd, with a focus on entertainment and nightlife. The casino floor is always buzzing with excitement, and the bars and lounges offer a lively setting for socializing. It's a great place to let loose and have a good time.",
-          "Standard rooms offer comfortable and functional accommodations with modern amenities. Enjoy views of Fremont Street or the Downtown skyline. Noise levels can be high, especially on lower floors facing Fremont Street. Request a higher floor or a room facing away from Fremont Street for a quieter experience. Soundproofing is average.",
-          "Opt for a suite for added space and luxury. Suites feature separate living areas, wet bars, and upgraded amenities. Many suites offer panoramic views of the Las Vegas Valley. The penthouse suites offer the ultimate in luxury, with private balconies and personalized service. Even suites experience some Fremont Street noise.",
-          "This hotel room interior is a luxurious blend of modern and classic design elements. The space is characterized by warm, inviting lighting that creates a cozy atmosphere. The room features a mix of wooden and marble accents, adding a touch of elegance and sophistication. The furniture is thoughtfully arranged, with comfortable seating options for guests to relax and enjoy their stay. The room also includes a private balcony with a stunning view of the city, offering a perfect spot for a romantic getaway or a quiet evening of reading. The overall ambiance is one of comfort, luxury, and tranquility, making it an ideal choice for travelers seeking a memorable and relaxing experience."
-        ],
-        "location": {
-          "lat": 36.17,
-          "lon": -115.142
-        },
-        "location_name": "Las Vegas, USA",
-        "country": "USA",
-        "region": "Downtown Las Vegas",
-        "amenities": [
-          "pool",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "casino",
-          "business"
-        ],
-        "price_tier": "budget",
-        "price_per_night_usd": 79,
-        "image_paths": [
-          "/images/hotels/the-d-las-vegas_1.png",
-          "/images/hotels/the-d-las-vegas_2.png"
-        ],
-        "rating": 3.8,
-        "nearby_landmarks": [
-          "Fremont Street Experience",
-          "SlotZilla Zip Line"
-        ],
-        "score": 4.2510853
-      },
-      {
         "id": "harrahs-las-vegas",
         "name": "Harrah's Las Vegas",
         "descriptions": [
@@ -788,95 +877,6 @@
           "Caesars Palace"
         ],
         "score": 4.244617
-      },
-      {
-        "id": "dwarikas-hotel-kathmandu",
-        "name": "Dwarika's Hotel Kathmandu",
-        "descriptions": [
-          "Dwarika's Hotel is a unique heritage hotel in Kathmandu, Nepal, showcasing traditional Newari architecture and craftsmanship. Each room is a work of art, adorned with intricate wood carvings and handcrafted details. Immerse yourself in the rich culture and history of Nepal, while enjoying modern comforts and personalized service. The hotel is a sanctuary of tranquility in the bustling city.",
-          "The hotel's Pancha Kosha Ayurvedic Wellness Centre offers a holistic approach to health and well-being. Experience traditional Ayurvedic treatments, yoga, and meditation sessions. The centre uses natural ingredients and ancient techniques to promote relaxation and rejuvenation. The scent of incense and herbal oils creates a soothing atmosphere.",
-          "Located in a peaceful neighborhood of Kathmandu, Dwarika's Hotel is a short distance from the city's major attractions. The hotel is surrounded by lush gardens and traditional courtyards. The nearby Pashupatinath Temple is a significant Hindu pilgrimage site. The air is filled with the sounds of prayer and chanting.",
-          "Dwarika's Hotel offers a serene and enriching experience. Guests can explore the hotel's museum, learn about Newari art and architecture, and participate in cultural activities. The hotel's attentive staff provides personalized service and ensures a memorable stay. Expect the sound of traditional music and the aroma of spices.",
-          "Our standard rooms are beautifully decorated with traditional Newari art and offer comfortable accommodations. The rooms feature handcrafted furniture and modern amenities. Rooms facing the courtyard are quiet, while street-facing rooms may experience some daytime noise from local traffic.",
-          "The Royal Suite at Dwarika's Hotel is a luxurious retreat with spacious living areas, a private balcony, and stunning views of the city. Featuring a separate living room, dining area, and bedroom, it offers an ideal setting for relaxation and entertainment. The suite is decorated with rare antiques and handcrafted details.",
-          "Le Jardin Spa & Wellness offre un havre de paix dans un sanctuaire de s\u00e9r\u00e9nit\u00e9. Les chambres sont d\u00e9cor\u00e9es avec des murs en pierre et des arches, cr\u00e9ant une atmosph\u00e8re chaleureuse et accueillante. Les clients peuvent profiter d'un bassin de piscine, d'un spa et d'un restaurant. Les tables sont dispos\u00e9es avec des verres de vin et des assiettes, offrant une exp\u00e9rience culinaire de haute qualit\u00e9. Les clients peuvent \u00e9galement profiter d'un massage et d'un traitement de bien-\u00eatre. Le Jardin Spa & Wellness est un lieu id\u00e9al pour ceux qui cherchent \u00e0 se d\u00e9tendre et \u00e0 se relaxer."
-        ],
-        "location": {
-          "lat": 27.708,
-          "lon": 85.344
-        },
-        "location_name": "Kathmandu, Nepal",
-        "country": "Nepal",
-        "region": "Kathmandu Valley",
-        "amenities": [
-          "pool",
-          "spa",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "heritage",
-          "wellness"
-        ],
-        "price_tier": "luxury",
-        "price_per_night_usd": 600,
-        "image_paths": [
-          "/images/hotels/dwarikas-hotel-kathmandu_1.png",
-          "/images/hotels/dwarikas-hotel-kathmandu_2.png"
-        ],
-        "rating": 4.8,
-        "nearby_landmarks": [
-          "Pashupatinath Temple",
-          "Boudhanath Stupa"
-        ],
-        "score": 4.182795
-      },
-      {
-        "id": "red-rock-casino-resort-spa",
-        "name": "Red Rock Casino Resort & Spa",
-        "descriptions": [
-          "Nestled against the stunning backdrop of Red Rock Canyon, Red Rock Casino Resort & Spa offers a luxurious escape from the Las Vegas Strip. This upscale resort features stylish accommodations, a vibrant casino, a rejuvenating spa, and a variety of dining options. Immerse yourself in the natural beauty of the surrounding landscape while enjoying world-class amenities and exceptional service. Red Rock is an ideal destination for those seeking a sophisticated and relaxing getaway.",
-          "The Red Rock Casino Resort & Spa's spa offers a sanctuary of serenity. Indulge in a range of treatments, from massages and facials to body wraps and hydrotherapy. The spa features 19 treatment rooms, a sauna, a steam room, and a relaxation lounge. Escape the city's energy and unwind in this tranquil oasis. The outdoor pool is designed with families in mind, offering a separate children's area and a playful atmosphere.",
-          "Located in Summerlin, Red Rock Casino Resort & Spa is approximately a 20-minute drive from the Las Vegas Strip. The resort offers stunning views of Red Rock Canyon and easy access to hiking trails and outdoor activities. The surrounding area features upscale shopping centers, restaurants, and entertainment venues. This location provides a perfect balance of city convenience and natural beauty.",
-          "Expect a sophisticated and relaxed atmosphere at Red Rock Casino Resort & Spa. The resort caters to a discerning clientele, offering a refined and elegant experience. The staff is attentive and professional, ensuring that every guest feels pampered and cared for. Whether you're seeking thrilling casino action or a rejuvenating spa retreat, Red Rock offers a memorable experience.",
-          "Standard rooms offer stylish accommodations with modern furnishings and comfortable amenities. Enjoy views of the Red Rock Canyon or the Las Vegas skyline. The rooms are well-insulated, providing a quiet and peaceful environment. Rooms facing the courtyard are especially quiet, offering a serene retreat.",
-          "Upgrade to a suite for added space and luxury. Suites feature separate living areas, wet bars, and oversized bathrooms. Many suites offer panoramic views of the surrounding landscape. The villas provide the ultimate in luxury, with private pools and personalized service.",
-          "This hotel room offers a luxurious and serene atmosphere with a large, inviting swimming pool that reflects the surrounding tropical foliage. The room features a mix of natural and modern elements, including wooden beams, stone accents, and large windows that provide a stunning view of the lush greenery outside. The space is well-lit with warm, ambient lighting that enhances the tranquil ambiance. Visible amenities include a gym area with exercise equipment, a spa-like relaxation area with comfortable seating, and a private balcony with a view of the pool. The overall experience is one of relaxation and indulgence, perfect for a getaway or a rejuvenating stay."
-        ],
-        "location": {
-          "lat": 36.144,
-          "lon": -115.339
-        },
-        "location_name": "Las Vegas, USA",
-        "country": "USA",
-        "region": "Summerlin",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "resort",
-          "wellness"
-        ],
-        "price_tier": "upscale",
-        "price_per_night_usd": 249,
-        "image_paths": [
-          "/images/hotels/red-rock-casino-resort-spa_1.png",
-          "/images/hotels/red-rock-casino-resort-spa_2.png"
-        ],
-        "rating": 4.6,
-        "nearby_landmarks": [
-          "Red Rock Canyon National Conservation Area",
-          "Downtown Summerlin"
-        ],
-        "score": 4.0926423
       }
     ],
     "hybrid": [
@@ -968,50 +968,6 @@
         "score": 5.638917
       },
       {
-        "id": "harrahs-las-vegas",
-        "name": "Harrah's Las Vegas",
-        "descriptions": [
-          "Harrah's Las Vegas, located in the heart of the Las Vegas Strip, offers a fun and affordable stay. With its lively casino, diverse dining options, and central location, Harrah's is a great choice for budget-conscious travelers. The property is known for its Mardi Gras theme and friendly atmosphere. It provides direct access to the LINQ Promenade.",
-          "The Spa at Harrah's offers a relaxing escape from the excitement of the Strip. Indulge in a customized massage, a revitalizing facial, or a body wrap. The spa's serene atmosphere, coupled with expert therapists, ensures a truly refreshing experience.",
-          "Located directly on the Las Vegas Strip, Harrah's offers a prime location. Its central location provides easy access to other iconic landmarks, including Caesars Palace and The LINQ Promenade. Immerse yourself in the vibrant energy of the Strip while enjoying Harrah's lively ambiance.",
-          "Harrah's exudes a fun and casual vibe. Guests can expect a lively atmosphere, diverse entertainment options, and a sense of camaraderie. Whether you're trying your luck at the casino, catching a show, or exploring the Strip, you'll be surrounded by an atmosphere of non-stop excitement.",
-          "Standard rooms at Harrah's offer comfortable accommodations and basic amenities. Enjoy views of the Las Vegas Strip or the surrounding area. Rooms closer to the casino and entertainment venues can experience higher noise levels, while those further away are generally quieter. Soundproofing is minimal in some rooms.",
-          "Harrah's renovated Valley Tower rooms offer a more modern and stylish experience, with updated d\u00e9cor and enhanced amenities. Enjoy plush bedding, high-end toiletries, and views of the Las Vegas Strip or the surrounding area. These rooms provide a more comfortable and contemporary stay.",
-          "This hotel room offers a luxurious and inviting atmosphere with a warm wooden interior and a stunning ocean view. The room features a spacious bar with a selection of drinks and a comfortable seating area for guests to relax and enjoy their time. The dining area is furnished with elegant tables and chairs, perfect for enjoying a meal or a cocktail. The room also includes a private balcony with a large pool, providing a serene and relaxing space for guests to unwind. The overall experience is one of comfort, luxury, and natural beauty, making it an ideal destination for travelers seeking a memorable stay."
-        ],
-        "location": {
-          "lat": 36.118,
-          "lon": -115.172
-        },
-        "location_name": "Las Vegas, USA",
-        "country": "USA",
-        "region": "Las Vegas Strip",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "resort"
-        ],
-        "price_tier": "mid",
-        "price_per_night_usd": 120,
-        "image_paths": [
-          "/images/hotels/harrahs-las-vegas_1.png",
-          "/images/hotels/harrahs-las-vegas_2.png"
-        ],
-        "rating": 3.7,
-        "nearby_landmarks": [
-          "The LINQ Promenade",
-          "High Roller Observation Wheel",
-          "Caesars Palace"
-        ],
-        "score": 4.244617
-      },
-      {
         "id": "the-d-las-vegas",
         "name": "The D Las Vegas",
         "descriptions": [
@@ -1052,7 +1008,7 @@
           "Fremont Street Experience",
           "SlotZilla Zip Line"
         ],
-        "score": 4.2510853
+        "score": 4.386647
       },
       {
         "id": "planet-hollywood-resort-casino",
@@ -1097,6 +1053,50 @@
           "Miracle Mile Shops"
         ],
         "score": 4.5651913
+      },
+      {
+        "id": "harrahs-las-vegas",
+        "name": "Harrah's Las Vegas",
+        "descriptions": [
+          "Harrah's Las Vegas, located in the heart of the Las Vegas Strip, offers a fun and affordable stay. With its lively casino, diverse dining options, and central location, Harrah's is a great choice for budget-conscious travelers. The property is known for its Mardi Gras theme and friendly atmosphere. It provides direct access to the LINQ Promenade.",
+          "The Spa at Harrah's offers a relaxing escape from the excitement of the Strip. Indulge in a customized massage, a revitalizing facial, or a body wrap. The spa's serene atmosphere, coupled with expert therapists, ensures a truly refreshing experience.",
+          "Located directly on the Las Vegas Strip, Harrah's offers a prime location. Its central location provides easy access to other iconic landmarks, including Caesars Palace and The LINQ Promenade. Immerse yourself in the vibrant energy of the Strip while enjoying Harrah's lively ambiance.",
+          "Harrah's exudes a fun and casual vibe. Guests can expect a lively atmosphere, diverse entertainment options, and a sense of camaraderie. Whether you're trying your luck at the casino, catching a show, or exploring the Strip, you'll be surrounded by an atmosphere of non-stop excitement.",
+          "Standard rooms at Harrah's offer comfortable accommodations and basic amenities. Enjoy views of the Las Vegas Strip or the surrounding area. Rooms closer to the casino and entertainment venues can experience higher noise levels, while those further away are generally quieter. Soundproofing is minimal in some rooms.",
+          "Harrah's renovated Valley Tower rooms offer a more modern and stylish experience, with updated d\u00e9cor and enhanced amenities. Enjoy plush bedding, high-end toiletries, and views of the Las Vegas Strip or the surrounding area. These rooms provide a more comfortable and contemporary stay.",
+          "This hotel room offers a luxurious and inviting atmosphere with a warm wooden interior and a stunning ocean view. The room features a spacious bar with a selection of drinks and a comfortable seating area for guests to relax and enjoy their time. The dining area is furnished with elegant tables and chairs, perfect for enjoying a meal or a cocktail. The room also includes a private balcony with a large pool, providing a serene and relaxing space for guests to unwind. The overall experience is one of comfort, luxury, and natural beauty, making it an ideal destination for travelers seeking a memorable stay."
+        ],
+        "location": {
+          "lat": 36.118,
+          "lon": -115.172
+        },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "resort"
+        ],
+        "price_tier": "mid",
+        "price_per_night_usd": 120,
+        "image_paths": [
+          "/images/hotels/harrahs-las-vegas_1.png",
+          "/images/hotels/harrahs-las-vegas_2.png"
+        ],
+        "rating": 3.7,
+        "nearby_landmarks": [
+          "The LINQ Promenade",
+          "High Roller Observation Wheel",
+          "Caesars Palace"
+        ],
+        "score": 4.244617
       },
       {
         "id": "renaissance-las-vegas-hotel",
@@ -1275,24 +1275,24 @@
         "score": 4.273075
       },
       {
-        "id": "green-valley-ranch-resort-spa-casino",
-        "name": "Green Valley Ranch Resort Spa & Casino",
+        "id": "red-rock-casino-resort-spa",
+        "name": "Red Rock Casino Resort & Spa",
         "descriptions": [
-          "Experience a luxurious escape at Green Valley Ranch Resort Spa & Casino, an upscale resort located in Henderson, Nevada. This elegant property offers stylish accommodations, a rejuvenating spa, a sparkling pool complex, and a variety of dining options. Immerse yourself in the tranquil surroundings while enjoying world-class amenities and exceptional service. Green Valley Ranch is a perfect destination for those seeking a relaxing and sophisticated getaway away from the Strip, about a 20-minute drive.",
-          "Indulge in relaxation and rejuvenation at the Green Valley Ranch Spa. Choose from a variety of massage therapies, facial treatments, and body wraps. Unwind in the sauna and steam room, or take a dip in the hydrotherapy pools. The spa offers a tranquil escape from the excitement of the casino, providing a perfect opportunity to pamper yourself. The resort-style pool is complete with sand and beach entry.",
-          "Located in Henderson, Nevada, Green Valley Ranch Resort Spa & Casino is approximately a 20-minute drive from the Las Vegas Strip. The resort offers easy access to shopping centers, restaurants, and entertainment venues in the Green Valley Ranch area. The surrounding area features beautiful parks and golf courses. This location provides a perfect balance of city convenience and suburban tranquility. It is not located on the Strip.",
-          "Expect a sophisticated and relaxed atmosphere at Green Valley Ranch Resort Spa & Casino. The resort caters to a discerning clientele, offering a refined and elegant experience. The staff is attentive and professional, ensuring that every guest feels pampered and cared for. Whether you're seeking thrilling casino action or a rejuvenating spa retreat, Green Valley Ranch offers a memorable experience.",
-          "Standard rooms offer stylish accommodations with modern furnishings and comfortable amenities. Enjoy views of the Green Valley Ranch area or the surrounding mountains. The rooms are well-insulated, providing a quiet and peaceful environment. Rooms facing the courtyard are particularly quiet, offering a serene retreat.",
-          "Upgrade to a suite for added space and luxury. Suites feature separate living areas, wet bars, and oversized bathrooms. Many suites offer panoramic views of the Las Vegas Valley. The villas provide the ultimate in luxury, with private pools and personalized service.",
-          "This hotel room offers a luxurious and inviting atmosphere with a high ceiling and large windows that flood the space with natural light. The room features a large swimming pool with a wooden deck and lounge chairs, perfect for relaxation and exercise. The gym area is equipped with state-of-the-art equipment and is surrounded by a glass wall that provides a stunning view of the surrounding landscape. The room also includes a spa area with a hot tub and a relaxing atmosphere. Overall, this hotel room offers a comfortable and luxurious experience for guests."
+          "Nestled against the stunning backdrop of Red Rock Canyon, Red Rock Casino Resort & Spa offers a luxurious escape from the Las Vegas Strip. This upscale resort features stylish accommodations, a vibrant casino, a rejuvenating spa, and a variety of dining options. Immerse yourself in the natural beauty of the surrounding landscape while enjoying world-class amenities and exceptional service. Red Rock is an ideal destination for those seeking a sophisticated and relaxing getaway.",
+          "The Red Rock Casino Resort & Spa's spa offers a sanctuary of serenity. Indulge in a range of treatments, from massages and facials to body wraps and hydrotherapy. The spa features 19 treatment rooms, a sauna, a steam room, and a relaxation lounge. Escape the city's energy and unwind in this tranquil oasis. The outdoor pool is designed with families in mind, offering a separate children's area and a playful atmosphere.",
+          "Located in Summerlin, Red Rock Casino Resort & Spa is approximately a 20-minute drive from the Las Vegas Strip. The resort offers stunning views of Red Rock Canyon and easy access to hiking trails and outdoor activities. The surrounding area features upscale shopping centers, restaurants, and entertainment venues. This location provides a perfect balance of city convenience and natural beauty.",
+          "Expect a sophisticated and relaxed atmosphere at Red Rock Casino Resort & Spa. The resort caters to a discerning clientele, offering a refined and elegant experience. The staff is attentive and professional, ensuring that every guest feels pampered and cared for. Whether you're seeking thrilling casino action or a rejuvenating spa retreat, Red Rock offers a memorable experience.",
+          "Standard rooms offer stylish accommodations with modern furnishings and comfortable amenities. Enjoy views of the Red Rock Canyon or the Las Vegas skyline. The rooms are well-insulated, providing a quiet and peaceful environment. Rooms facing the courtyard are especially quiet, offering a serene retreat.",
+          "Upgrade to a suite for added space and luxury. Suites feature separate living areas, wet bars, and oversized bathrooms. Many suites offer panoramic views of the surrounding landscape. The villas provide the ultimate in luxury, with private pools and personalized service.",
+          "This hotel room offers a luxurious and serene atmosphere with a large, inviting swimming pool that reflects the surrounding tropical foliage. The room features a mix of natural and modern elements, including wooden beams, stone accents, and large windows that provide a stunning view of the lush greenery outside. The space is well-lit with warm, ambient lighting that enhances the tranquil ambiance. Visible amenities include a gym area with exercise equipment, a spa-like relaxation area with comfortable seating, and a private balcony with a view of the pool. The overall experience is one of relaxation and indulgence, perfect for a getaway or a rejuvenating stay."
         ],
         "location": {
-          "lat": 36.031,
-          "lon": -115.07
+          "lat": 36.144,
+          "lon": -115.339
         },
-        "location_name": "Henderson, USA",
+        "location_name": "Las Vegas, USA",
         "country": "USA",
-        "region": "Henderson",
+        "region": "Summerlin",
         "amenities": [
           "pool",
           "spa",
@@ -1307,20 +1307,20 @@
           "wellness"
         ],
         "price_tier": "upscale",
-        "price_per_night_usd": 219,
+        "price_per_night_usd": 249,
         "image_paths": [
-          "/images/hotels/green-valley-ranch-resort-spa-casino_1.png",
-          "/images/hotels/green-valley-ranch-resort-spa-casino_2.png"
+          "/images/hotels/red-rock-casino-resort-spa_1.png",
+          "/images/hotels/red-rock-casino-resort-spa_2.png"
         ],
-        "rating": 4.7,
+        "rating": 4.6,
         "nearby_landmarks": [
-          "Green Valley Ranch District",
-          "The District at Green Valley Ranch"
+          "Red Rock Canyon National Conservation Area",
+          "Downtown Summerlin"
         ],
-        "score": 4.26385
+        "score": 4.271499
       }
     ],
-    "took": 174
+    "took": 741
   },
   "romantic beachfront with private pool villa and spa": {
     "semantic": [
@@ -1820,7 +1820,52 @@
           "Mount Otemanu",
           "Bora Bora Lagoon"
         ],
-        "score": 7.920367
+        "score": 8.264863
+      },
+      {
+        "id": "four-seasons-resort-bali-at-sayan",
+        "name": "Four Seasons Resort Bali at Sayan",
+        "descriptions": [
+          "Nestled amidst the lush Ayung River valley, the Four Seasons Resort Bali at Sayan offers a serene escape into nature. This stunning resort features luxurious villas and suites, exquisite dining experiences, and a holistic spa. Immerse yourself in Balinese culture with traditional ceremonies and activities, or simply relax by the infinity pool overlooking the verdant landscape. An unforgettable retreat in the heart of Bali.",
+          "The Sacred River Spa offers a transformative wellness experience with traditional Balinese treatments and holistic therapies. Indulge in a rejuvenating massage or a cleansing ritual while listening to the soothing sounds of the Ayung River. The spa's serene setting and skilled therapists create a haven of peace and well-being.",
+          "Located in the central highlands of Bali, the Four Seasons Resort Bali at Sayan is surrounded by verdant rice paddies and lush rainforest. Explore the nearby Ubud Monkey Forest, a sacred sanctuary home to playful primates, or visit the local art markets for unique souvenirs.",
+          "The Four Seasons Resort Bali at Sayan exudes an atmosphere of tranquility and serenity. Guests are treated to impeccable service and personalized attention, creating a sense of connection and well-being. The resort fosters a deep appreciation for Balinese culture and traditions.",
+          "Standard villas offer stunning views of the Ayung River and the surrounding jungle. The sound of the river provides a constant sense of peace and tranquility. The villas are designed with traditional Balinese architecture and feature luxurious amenities for a comfortable and relaxing stay. North-facing villas are especially quiet.",
+          "The Royal Villa offers unparalleled luxury and privacy with its own private pool, garden, and dedicated butler service. This spacious villa features a separate living area, dining area, and a luxurious bathroom with a soaking tub. Enjoy breathtaking views of the Ayung River and the surrounding landscape.",
+          "This luxurious hotel room offers a serene and inviting atmosphere with a large, rectangular swimming pool that reflects the warm lighting. The room features a high ceiling with exposed wooden beams and stone walls, creating a rustic yet elegant ambiance. On the left side of the room, there's a balcony with a glass railing, providing a stunning view of the pool and surrounding greenery. The balcony is furnished with comfortable lounge chairs and a small table, perfect for relaxation. On the right side, there's a small hot tub with a gentle current, ideal for unwinding. The room is well-lit with soft, warm lighting that enhances the tranquil setting. The overall experience is one of luxury, comfort, and natural beauty, making it an ideal retreat for travelers seeking a peaceful getaway."
+        ],
+        "location": {
+          "lat": -8.498,
+          "lon": 115.259
+        },
+        "location_name": "Ubud, Bali",
+        "country": "Indonesia",
+        "region": "Asia Pacific",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "wellness",
+          "resort"
+        ],
+        "price_tier": "luxury",
+        "price_per_night_usd": 750,
+        "image_paths": [
+          "/images/hotels/four-seasons-resort-bali-at-sayan_1.png",
+          "/images/hotels/four-seasons-resort-bali-at-sayan_2.png"
+        ],
+        "rating": 4.9,
+        "nearby_landmarks": [
+          "Ubud Monkey Forest",
+          "Ayung River"
+        ],
+        "score": 6.017838
       },
       {
         "id": "mandapa-a-ritz-carlton-reserve-ubud",
@@ -1868,24 +1913,23 @@
         "score": 5.904127
       },
       {
-        "id": "four-seasons-resort-bali-at-sayan",
-        "name": "Four Seasons Resort Bali at Sayan",
+        "id": "the-brando-tetiaroa-french-polynesia",
+        "name": "The Brando, Tetiaroa, French Polynesia",
         "descriptions": [
-          "Nestled amidst the lush Ayung River valley, the Four Seasons Resort Bali at Sayan offers a serene escape into nature. This stunning resort features luxurious villas and suites, exquisite dining experiences, and a holistic spa. Immerse yourself in Balinese culture with traditional ceremonies and activities, or simply relax by the infinity pool overlooking the verdant landscape. An unforgettable retreat in the heart of Bali.",
-          "The Sacred River Spa offers a transformative wellness experience with traditional Balinese treatments and holistic therapies. Indulge in a rejuvenating massage or a cleansing ritual while listening to the soothing sounds of the Ayung River. The spa's serene setting and skilled therapists create a haven of peace and well-being.",
-          "Located in the central highlands of Bali, the Four Seasons Resort Bali at Sayan is surrounded by verdant rice paddies and lush rainforest. Explore the nearby Ubud Monkey Forest, a sacred sanctuary home to playful primates, or visit the local art markets for unique souvenirs.",
-          "The Four Seasons Resort Bali at Sayan exudes an atmosphere of tranquility and serenity. Guests are treated to impeccable service and personalized attention, creating a sense of connection and well-being. The resort fosters a deep appreciation for Balinese culture and traditions.",
-          "Standard villas offer stunning views of the Ayung River and the surrounding jungle. The sound of the river provides a constant sense of peace and tranquility. The villas are designed with traditional Balinese architecture and feature luxurious amenities for a comfortable and relaxing stay. North-facing villas are especially quiet.",
-          "The Royal Villa offers unparalleled luxury and privacy with its own private pool, garden, and dedicated butler service. This spacious villa features a separate living area, dining area, and a luxurious bathroom with a soaking tub. Enjoy breathtaking views of the Ayung River and the surrounding landscape.",
-          "This luxurious hotel room offers a serene and inviting atmosphere with a large, rectangular swimming pool that reflects the warm lighting. The room features a high ceiling with exposed wooden beams and stone walls, creating a rustic yet elegant ambiance. On the left side of the room, there's a balcony with a glass railing, providing a stunning view of the pool and surrounding greenery. The balcony is furnished with comfortable lounge chairs and a small table, perfect for relaxation. On the right side, there's a small hot tub with a gentle current, ideal for unwinding. The room is well-lit with soft, warm lighting that enhances the tranquil setting. The overall experience is one of luxury, comfort, and natural beauty, making it an ideal retreat for travelers seeking a peaceful getaway."
+          "The Brando is a unique luxury resort on Tetiaroa, a breathtaking atoll composed of a dozen idyllic islands encircling a sparkling lagoon. With a focus on sustainability and preserving the natural beauty, The Brando offers an all-inclusive experience that combines unparalleled luxury with environmental responsibility. Guests can enjoy pristine beaches, vibrant coral reefs, and world-class dining, all while contributing to the preservation of this Polynesian paradise.",
+          "Varua Polynesian Spa offers a holistic approach to wellness, drawing on ancient Polynesian traditions and natural ingredients. Indulge in a rejuvenating massage with fragrant monoi oil, or experience a traditional Taurumi treatment. The spa's tranquil setting, with its thatched-roof pavilions and serene lagoon views, creates a sanctuary for relaxation and renewal.",
+          "Located on the private atoll of Tetiaroa, The Brando offers a secluded setting surrounded by pristine beaches and crystal-clear waters. The atoll's remote location ensures privacy and tranquility, while still being easily accessible by private plane from Papeete, Tahiti.",
+          "Experience a blend of Polynesian culture and sustainable luxury. The resort's atmosphere is sophisticated yet relaxed, encouraging guests to connect with nature and embrace the spirit of Tetiaroa. Impeccable service and a commitment to environmental responsibility create a truly unique and unforgettable stay.",
+          "Our one-bedroom villas feature private plunge pools and direct access to the white-sand beach. Enjoy the gentle sound of the waves and the rustling of palm trees. The villas are designed for ultimate comfort and privacy, offering a serene escape from the outside world. Villas facing the ocean have some ambient noise from the waves and some stronger breezes.",
+          "The three-bedroom villa offers unparalleled luxury with its private beach, spacious living area, and panoramic ocean views. Relax on your private deck and watch the sunset over the lagoon, or indulge in a romantic dinner under the stars. The villa is designed for ultimate indulgence and relaxation."
         ],
         "location": {
-          "lat": -8.498,
-          "lon": 115.259
+          "lat": -17.045,
+          "lon": -149.568
         },
-        "location_name": "Ubud, Bali",
-        "country": "Indonesia",
-        "region": "Asia Pacific",
+        "location_name": "Tetiaroa, French Polynesia",
+        "country": "French Polynesia",
+        "region": "Pacific Islands",
         "amenities": [
           "pool",
           "spa",
@@ -1897,20 +1941,20 @@
         "style": [
           "luxury",
           "wellness",
-          "resort"
+          "resort",
+          "boutique"
         ],
-        "price_tier": "luxury",
-        "price_per_night_usd": 750,
+        "price_tier": "ultra",
+        "price_per_night_usd": 3500,
         "image_paths": [
-          "/images/hotels/four-seasons-resort-bali-at-sayan_1.png",
-          "/images/hotels/four-seasons-resort-bali-at-sayan_2.png"
+          "/images/hotels/the-brando-tetiaroa-french-polynesia_1.png"
         ],
         "rating": 4.9,
         "nearby_landmarks": [
-          "Ubud Monkey Forest",
-          "Ayung River"
+          "Tetiaroa Atoll",
+          "Bird Island"
         ],
-        "score": 5.8357973
+        "score": 5.408226
       },
       {
         "id": "the-venetian-resort-las-vegas",
@@ -1958,50 +2002,6 @@
         "score": 5.3710437
       },
       {
-        "id": "the-brando-tetiaroa-french-polynesia",
-        "name": "The Brando, Tetiaroa, French Polynesia",
-        "descriptions": [
-          "The Brando is a unique luxury resort on Tetiaroa, a breathtaking atoll composed of a dozen idyllic islands encircling a sparkling lagoon. With a focus on sustainability and preserving the natural beauty, The Brando offers an all-inclusive experience that combines unparalleled luxury with environmental responsibility. Guests can enjoy pristine beaches, vibrant coral reefs, and world-class dining, all while contributing to the preservation of this Polynesian paradise.",
-          "Varua Polynesian Spa offers a holistic approach to wellness, drawing on ancient Polynesian traditions and natural ingredients. Indulge in a rejuvenating massage with fragrant monoi oil, or experience a traditional Taurumi treatment. The spa's tranquil setting, with its thatched-roof pavilions and serene lagoon views, creates a sanctuary for relaxation and renewal.",
-          "Located on the private atoll of Tetiaroa, The Brando offers a secluded setting surrounded by pristine beaches and crystal-clear waters. The atoll's remote location ensures privacy and tranquility, while still being easily accessible by private plane from Papeete, Tahiti.",
-          "Experience a blend of Polynesian culture and sustainable luxury. The resort's atmosphere is sophisticated yet relaxed, encouraging guests to connect with nature and embrace the spirit of Tetiaroa. Impeccable service and a commitment to environmental responsibility create a truly unique and unforgettable stay.",
-          "Our one-bedroom villas feature private plunge pools and direct access to the white-sand beach. Enjoy the gentle sound of the waves and the rustling of palm trees. The villas are designed for ultimate comfort and privacy, offering a serene escape from the outside world. Villas facing the ocean have some ambient noise from the waves and some stronger breezes.",
-          "The three-bedroom villa offers unparalleled luxury with its private beach, spacious living area, and panoramic ocean views. Relax on your private deck and watch the sunset over the lagoon, or indulge in a romantic dinner under the stars. The villa is designed for ultimate indulgence and relaxation."
-        ],
-        "location": {
-          "lat": -17.045,
-          "lon": -149.568
-        },
-        "location_name": "Tetiaroa, French Polynesia",
-        "country": "French Polynesia",
-        "region": "Pacific Islands",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "wellness",
-          "resort",
-          "boutique"
-        ],
-        "price_tier": "ultra",
-        "price_per_night_usd": 3500,
-        "image_paths": [
-          "/images/hotels/the-brando-tetiaroa-french-polynesia_1.png"
-        ],
-        "rating": 4.9,
-        "nearby_landmarks": [
-          "Tetiaroa Atoll",
-          "Bird Island"
-        ],
-        "score": 5.1346283
-      },
-      {
         "id": "sheraton-fiji-golf-beach-resort",
         "name": "Sheraton Fiji Golf & Beach Resort",
         "descriptions": [
@@ -2044,7 +2044,52 @@
           "Denarau Golf and Racquet Club",
           "Port Denarau Marina"
         ],
-        "score": 5.066059
+        "score": 5.254422
+      },
+      {
+        "id": "sandals-royal-caribbean",
+        "name": "Sandals Royal Caribbean",
+        "descriptions": [
+          "An over-the-water bungalow paradise in Montego Bay, Jamaica. Sandals Royal Caribbean offers an adults-only, all-inclusive experience with unparalleled luxury and romance. Escape to a world of turquoise waters, white-sand beaches, and impeccable service.",
+          "The Red Lane\u00ae Spa provides a tranquil oasis where you can unwind and rejuvenate. Indulge in a couples massage on the beach, the gentle sound of waves washing ashore. Skilled therapists use natural ingredients to create a truly unforgettable spa experience.",
+          "Located on a private island off the coast of Montego Bay, Sandals Royal Caribbean offers a secluded and romantic escape. Explore the island's pristine beaches, snorkel in the crystal-clear waters, or simply relax and soak up the sun.",
+          "Sandals Royal Caribbean caters to couples seeking a romantic and luxurious getaway. The resort's intimate atmosphere, over-the-water bungalows, and impeccable service create a truly unforgettable experience.",
+          "Our Luxury Rooms offer comfortable accommodations with views of the gardens or the sea. Garden-view rooms offer a quiet retreat surrounded by lush greenery, while sea-view rooms offer breathtaking views of the Caribbean Sea. The gentle hum of island life is ever-present.",
+          "The Over-the-Water Bungalows offer the ultimate in luxury and privacy, featuring private plunge pools, hammocks over the water, and personalized butler service. Enjoy breathtaking sunsets, romantic dinners, and an unforgettable experience.",
+          "This luxurious hotel room offers a serene and inviting atmosphere with a blend of modern and rustic design elements. The room features a large, rectangular swimming pool with a glass edge, surrounded by comfortable lounge chairs and a plush couch. The pool area is illuminated by warm, ambient lighting that enhances the tranquil ambiance. \n\nIn the background, a gym area with treadmills and exercise equipment is visible, providing guests with a space for fitness and relaxation. The gym is well-equipped and appears to be well-maintained. \n\nThe room's ceiling is high and arched, with exposed wooden beams that add a touch of elegance and warmth. The walls are adorned with large windows that offer stunning views of the surrounding landscape, including mountains and trees. The natural light streaming in through the windows brightens the room and creates a sense of openness.\n\nThe floor is covered with large, rectangular tiles that complement the room's modern aesthetic. The overall design of the room is carefully curated to provide a comfortable and luxurious experience for guests, with attention to detail in every aspect of the space."
+        ],
+        "location": {
+          "lat": 18.492,
+          "lon": -77.905
+        },
+        "location_name": "Montego Bay, Jamaica",
+        "country": "Jamaica",
+        "region": "Caribbean",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "resort",
+          "wellness"
+        ],
+        "price_tier": "luxury",
+        "price_per_night_usd": 800,
+        "image_paths": [
+          "/images/hotels/sandals-royal-caribbean_1.png",
+          "/images/hotels/sandals-royal-caribbean_2.png"
+        ],
+        "rating": 4.9,
+        "nearby_landmarks": [
+          "Rose Hall Great House",
+          "Doctor's Cave Beach"
+        ],
+        "score": 4.9455466
       },
       {
         "id": "st-regis-vommuli-resort-maldives",
@@ -2092,6 +2137,50 @@
         "score": 4.9296927
       },
       {
+        "id": "durban-beachfront-hotel",
+        "name": "Durban Beachfront Hotel",
+        "descriptions": [
+          "Located directly on Durban's Golden Mile, this hotel offers stunning ocean views and easy access to the city's vibrant beachfront. Enjoy a range of amenities, including multiple swimming pools, restaurants, and bars. Experience the excitement of Durban, where sun, sea, and sand combine to create an unforgettable vacation.",
+          "Relax and rejuvenate at the hotel's spa, offering a range of treatments designed to restore balance and harmony. Indulge in a massage, facial, or body wrap, and leave feeling refreshed and revitalized. The spa's ocean views add to the tranquil atmosphere.",
+          "Situated on Durban's Golden Mile, the hotel provides easy access to the city's top attractions. Explore the uShaka Marine World, visit the Moses Mabhida Stadium, or stroll along the beach. The hotel's central location makes it the perfect base for exploring the wonders of Durban.",
+          "Durban Beachfront Hotel exudes a lively and energetic atmosphere, where guests can enjoy the excitement of the city. Relax by the pool, savor delicious cuisine, and immerse yourself in the vibrant culture of Durban. The hotel's beachfront location makes it a popular choice for families and couples.",
+          "Our standard rooms offer a comfortable and stylish retreat, featuring plush bedding, en-suite bathrooms, and private balconies overlooking the ocean or the city. Rooms facing the ocean can experience some street noise, while city-facing rooms are typically quieter.",
+          "The Penthouse Suite offers unparalleled luxury with a separate living area, a private plunge pool, and panoramic views of the Durban coastline. Enjoy personalized butler service and exclusive access to the hotel's amenities. The suite's spacious layout is perfect for entertaining or simply relaxing in style.",
+          "This luxurious hotel room offers a serene and inviting atmosphere with a high ceiling and warm lighting. The room features a large, rectangular swimming pool with a glass edge, surrounded by comfortable lounge chairs and a cozy sofa. A glass door leads to a spa area, where a woman is providing a massage. The room also includes a gym with treadmills and weight machines, as well as a fitness center with a rowing machine. The hotel's design incorporates natural elements, such as palm trees and potted plants, and the overall experience is one of relaxation and indulgence."
+        ],
+        "location": {
+          "lat": -29.857,
+          "lon": 31.043
+        },
+        "location_name": "Durban, South Africa",
+        "country": "South Africa",
+        "region": "Durban",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "resort",
+          "business"
+        ],
+        "price_tier": "mid",
+        "price_per_night_usd": 220,
+        "image_paths": [
+          "/images/hotels/durban-beachfront-hotel_1.png",
+          "/images/hotels/durban-beachfront-hotel_2.png"
+        ],
+        "rating": 4.2,
+        "nearby_landmarks": [
+          "uShaka Marine World",
+          "Moses Mabhida Stadium"
+        ],
+        "score": 4.8876967
+      },
+      {
         "id": "outrigger-reef-waikiki-beach-resort",
         "name": "Outrigger Reef Waikiki Beach Resort",
         "descriptions": [
@@ -2135,95 +2224,6 @@
           "Diamond Head"
         ],
         "score": 4.7545185
-      },
-      {
-        "id": "sandals-royal-caribbean",
-        "name": "Sandals Royal Caribbean",
-        "descriptions": [
-          "An over-the-water bungalow paradise in Montego Bay, Jamaica. Sandals Royal Caribbean offers an adults-only, all-inclusive experience with unparalleled luxury and romance. Escape to a world of turquoise waters, white-sand beaches, and impeccable service.",
-          "The Red Lane\u00ae Spa provides a tranquil oasis where you can unwind and rejuvenate. Indulge in a couples massage on the beach, the gentle sound of waves washing ashore. Skilled therapists use natural ingredients to create a truly unforgettable spa experience.",
-          "Located on a private island off the coast of Montego Bay, Sandals Royal Caribbean offers a secluded and romantic escape. Explore the island's pristine beaches, snorkel in the crystal-clear waters, or simply relax and soak up the sun.",
-          "Sandals Royal Caribbean caters to couples seeking a romantic and luxurious getaway. The resort's intimate atmosphere, over-the-water bungalows, and impeccable service create a truly unforgettable experience.",
-          "Our Luxury Rooms offer comfortable accommodations with views of the gardens or the sea. Garden-view rooms offer a quiet retreat surrounded by lush greenery, while sea-view rooms offer breathtaking views of the Caribbean Sea. The gentle hum of island life is ever-present.",
-          "The Over-the-Water Bungalows offer the ultimate in luxury and privacy, featuring private plunge pools, hammocks over the water, and personalized butler service. Enjoy breathtaking sunsets, romantic dinners, and an unforgettable experience.",
-          "This luxurious hotel room offers a serene and inviting atmosphere with a blend of modern and rustic design elements. The room features a large, rectangular swimming pool with a glass edge, surrounded by comfortable lounge chairs and a plush couch. The pool area is illuminated by warm, ambient lighting that enhances the tranquil ambiance. \n\nIn the background, a gym area with treadmills and exercise equipment is visible, providing guests with a space for fitness and relaxation. The gym is well-equipped and appears to be well-maintained. \n\nThe room's ceiling is high and arched, with exposed wooden beams that add a touch of elegance and warmth. The walls are adorned with large windows that offer stunning views of the surrounding landscape, including mountains and trees. The natural light streaming in through the windows brightens the room and creates a sense of openness.\n\nThe floor is covered with large, rectangular tiles that complement the room's modern aesthetic. The overall design of the room is carefully curated to provide a comfortable and luxurious experience for guests, with attention to detail in every aspect of the space."
-        ],
-        "location": {
-          "lat": 18.492,
-          "lon": -77.905
-        },
-        "location_name": "Montego Bay, Jamaica",
-        "country": "Jamaica",
-        "region": "Caribbean",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "resort",
-          "wellness"
-        ],
-        "price_tier": "luxury",
-        "price_per_night_usd": 800,
-        "image_paths": [
-          "/images/hotels/sandals-royal-caribbean_1.png",
-          "/images/hotels/sandals-royal-caribbean_2.png"
-        ],
-        "rating": 4.9,
-        "nearby_landmarks": [
-          "Rose Hall Great House",
-          "Doctor's Cave Beach"
-        ],
-        "score": 4.748309
-      },
-      {
-        "id": "durban-beachfront-hotel",
-        "name": "Durban Beachfront Hotel",
-        "descriptions": [
-          "Located directly on Durban's Golden Mile, this hotel offers stunning ocean views and easy access to the city's vibrant beachfront. Enjoy a range of amenities, including multiple swimming pools, restaurants, and bars. Experience the excitement of Durban, where sun, sea, and sand combine to create an unforgettable vacation.",
-          "Relax and rejuvenate at the hotel's spa, offering a range of treatments designed to restore balance and harmony. Indulge in a massage, facial, or body wrap, and leave feeling refreshed and revitalized. The spa's ocean views add to the tranquil atmosphere.",
-          "Situated on Durban's Golden Mile, the hotel provides easy access to the city's top attractions. Explore the uShaka Marine World, visit the Moses Mabhida Stadium, or stroll along the beach. The hotel's central location makes it the perfect base for exploring the wonders of Durban.",
-          "Durban Beachfront Hotel exudes a lively and energetic atmosphere, where guests can enjoy the excitement of the city. Relax by the pool, savor delicious cuisine, and immerse yourself in the vibrant culture of Durban. The hotel's beachfront location makes it a popular choice for families and couples.",
-          "Our standard rooms offer a comfortable and stylish retreat, featuring plush bedding, en-suite bathrooms, and private balconies overlooking the ocean or the city. Rooms facing the ocean can experience some street noise, while city-facing rooms are typically quieter.",
-          "The Penthouse Suite offers unparalleled luxury with a separate living area, a private plunge pool, and panoramic views of the Durban coastline. Enjoy personalized butler service and exclusive access to the hotel's amenities. The suite's spacious layout is perfect for entertaining or simply relaxing in style.",
-          "This luxurious hotel room offers a serene and inviting atmosphere with a high ceiling and warm lighting. The room features a large, rectangular swimming pool with a glass edge, surrounded by comfortable lounge chairs and a cozy sofa. A glass door leads to a spa area, where a woman is providing a massage. The room also includes a gym with treadmills and weight machines, as well as a fitness center with a rowing machine. The hotel's design incorporates natural elements, such as palm trees and potted plants, and the overall experience is one of relaxation and indulgence."
-        ],
-        "location": {
-          "lat": -29.857,
-          "lon": 31.043
-        },
-        "location_name": "Durban, South Africa",
-        "country": "South Africa",
-        "region": "Durban",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "resort",
-          "business"
-        ],
-        "price_tier": "mid",
-        "price_per_night_usd": 220,
-        "image_paths": [
-          "/images/hotels/durban-beachfront-hotel_1.png",
-          "/images/hotels/durban-beachfront-hotel_2.png"
-        ],
-        "rating": 4.2,
-        "nearby_landmarks": [
-          "uShaka Marine World",
-          "Moses Mabhida Stadium"
-        ],
-        "score": 4.678977
       }
     ],
     "hybrid": [
@@ -2270,7 +2270,7 @@
           "Mount Otemanu",
           "Bora Bora Lagoon"
         ],
-        "score": 7.920367
+        "score": 8.264863
       },
       {
         "id": "the-brando-tetiaroa-french-polynesia",
@@ -2314,7 +2314,52 @@
           "Tetiaroa Atoll",
           "Bird Island"
         ],
-        "score": 5.1346283
+        "score": 5.408226
+      },
+      {
+        "id": "four-seasons-resort-bali-at-sayan",
+        "name": "Four Seasons Resort Bali at Sayan",
+        "descriptions": [
+          "Nestled amidst the lush Ayung River valley, the Four Seasons Resort Bali at Sayan offers a serene escape into nature. This stunning resort features luxurious villas and suites, exquisite dining experiences, and a holistic spa. Immerse yourself in Balinese culture with traditional ceremonies and activities, or simply relax by the infinity pool overlooking the verdant landscape. An unforgettable retreat in the heart of Bali.",
+          "The Sacred River Spa offers a transformative wellness experience with traditional Balinese treatments and holistic therapies. Indulge in a rejuvenating massage or a cleansing ritual while listening to the soothing sounds of the Ayung River. The spa's serene setting and skilled therapists create a haven of peace and well-being.",
+          "Located in the central highlands of Bali, the Four Seasons Resort Bali at Sayan is surrounded by verdant rice paddies and lush rainforest. Explore the nearby Ubud Monkey Forest, a sacred sanctuary home to playful primates, or visit the local art markets for unique souvenirs.",
+          "The Four Seasons Resort Bali at Sayan exudes an atmosphere of tranquility and serenity. Guests are treated to impeccable service and personalized attention, creating a sense of connection and well-being. The resort fosters a deep appreciation for Balinese culture and traditions.",
+          "Standard villas offer stunning views of the Ayung River and the surrounding jungle. The sound of the river provides a constant sense of peace and tranquility. The villas are designed with traditional Balinese architecture and feature luxurious amenities for a comfortable and relaxing stay. North-facing villas are especially quiet.",
+          "The Royal Villa offers unparalleled luxury and privacy with its own private pool, garden, and dedicated butler service. This spacious villa features a separate living area, dining area, and a luxurious bathroom with a soaking tub. Enjoy breathtaking views of the Ayung River and the surrounding landscape.",
+          "This luxurious hotel room offers a serene and inviting atmosphere with a large, rectangular swimming pool that reflects the warm lighting. The room features a high ceiling with exposed wooden beams and stone walls, creating a rustic yet elegant ambiance. On the left side of the room, there's a balcony with a glass railing, providing a stunning view of the pool and surrounding greenery. The balcony is furnished with comfortable lounge chairs and a small table, perfect for relaxation. On the right side, there's a small hot tub with a gentle current, ideal for unwinding. The room is well-lit with soft, warm lighting that enhances the tranquil setting. The overall experience is one of luxury, comfort, and natural beauty, making it an ideal retreat for travelers seeking a peaceful getaway."
+        ],
+        "location": {
+          "lat": -8.498,
+          "lon": 115.259
+        },
+        "location_name": "Ubud, Bali",
+        "country": "Indonesia",
+        "region": "Asia Pacific",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "wellness",
+          "resort"
+        ],
+        "price_tier": "luxury",
+        "price_per_night_usd": 750,
+        "image_paths": [
+          "/images/hotels/four-seasons-resort-bali-at-sayan_1.png",
+          "/images/hotels/four-seasons-resort-bali-at-sayan_2.png"
+        ],
+        "rating": 4.9,
+        "nearby_landmarks": [
+          "Ubud Monkey Forest",
+          "Ayung River"
+        ],
+        "score": 6.017838
       },
       {
         "id": "mandapa-a-ritz-carlton-reserve-ubud",
@@ -2360,51 +2405,6 @@
           "Ubud Monkey Forest"
         ],
         "score": 5.904127
-      },
-      {
-        "id": "four-seasons-resort-bali-at-sayan",
-        "name": "Four Seasons Resort Bali at Sayan",
-        "descriptions": [
-          "Nestled amidst the lush Ayung River valley, the Four Seasons Resort Bali at Sayan offers a serene escape into nature. This stunning resort features luxurious villas and suites, exquisite dining experiences, and a holistic spa. Immerse yourself in Balinese culture with traditional ceremonies and activities, or simply relax by the infinity pool overlooking the verdant landscape. An unforgettable retreat in the heart of Bali.",
-          "The Sacred River Spa offers a transformative wellness experience with traditional Balinese treatments and holistic therapies. Indulge in a rejuvenating massage or a cleansing ritual while listening to the soothing sounds of the Ayung River. The spa's serene setting and skilled therapists create a haven of peace and well-being.",
-          "Located in the central highlands of Bali, the Four Seasons Resort Bali at Sayan is surrounded by verdant rice paddies and lush rainforest. Explore the nearby Ubud Monkey Forest, a sacred sanctuary home to playful primates, or visit the local art markets for unique souvenirs.",
-          "The Four Seasons Resort Bali at Sayan exudes an atmosphere of tranquility and serenity. Guests are treated to impeccable service and personalized attention, creating a sense of connection and well-being. The resort fosters a deep appreciation for Balinese culture and traditions.",
-          "Standard villas offer stunning views of the Ayung River and the surrounding jungle. The sound of the river provides a constant sense of peace and tranquility. The villas are designed with traditional Balinese architecture and feature luxurious amenities for a comfortable and relaxing stay. North-facing villas are especially quiet.",
-          "The Royal Villa offers unparalleled luxury and privacy with its own private pool, garden, and dedicated butler service. This spacious villa features a separate living area, dining area, and a luxurious bathroom with a soaking tub. Enjoy breathtaking views of the Ayung River and the surrounding landscape.",
-          "This luxurious hotel room offers a serene and inviting atmosphere with a large, rectangular swimming pool that reflects the warm lighting. The room features a high ceiling with exposed wooden beams and stone walls, creating a rustic yet elegant ambiance. On the left side of the room, there's a balcony with a glass railing, providing a stunning view of the pool and surrounding greenery. The balcony is furnished with comfortable lounge chairs and a small table, perfect for relaxation. On the right side, there's a small hot tub with a gentle current, ideal for unwinding. The room is well-lit with soft, warm lighting that enhances the tranquil setting. The overall experience is one of luxury, comfort, and natural beauty, making it an ideal retreat for travelers seeking a peaceful getaway."
-        ],
-        "location": {
-          "lat": -8.498,
-          "lon": 115.259
-        },
-        "location_name": "Ubud, Bali",
-        "country": "Indonesia",
-        "region": "Asia Pacific",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "wellness",
-          "resort"
-        ],
-        "price_tier": "luxury",
-        "price_per_night_usd": 750,
-        "image_paths": [
-          "/images/hotels/four-seasons-resort-bali-at-sayan_1.png",
-          "/images/hotels/four-seasons-resort-bali-at-sayan_2.png"
-        ],
-        "rating": 4.9,
-        "nearby_landmarks": [
-          "Ubud Monkey Forest",
-          "Ayung River"
-        ],
-        "score": 5.8357973
       },
       {
         "id": "park-hyatt-maldives-hadahaa",
@@ -2499,51 +2499,6 @@
         "score": 0.82753
       },
       {
-        "id": "the-venetian-resort-las-vegas",
-        "name": "The Venetian Resort Las Vegas",
-        "descriptions": [
-          "The Venetian transports you to the romantic canals of Venice, Italy, right on the Las Vegas Strip. Experience gondola rides, stunning architecture, and world-class entertainment. Indulge in gourmet dining, upscale shopping, and thrilling casino action. With its luxurious suites and impeccable service, The Venetian offers an unforgettable escape to a world of Italian splendor. The resort also features multiple pools and a state-of-the-art spa.",
-          "Canyon Ranch SpaClub at The Venetian is a sprawling wellness oasis, offering a wide range of treatments and fitness programs. Rejuvenate with a customized massage, a revitalizing facial, or a body wrap. Take advantage of the spa's extensive fitness facilities, including a rock-climbing wall and a cycling studio. The spa's holistic approach to wellness ensures a truly transformative experience.",
-          "Located directly on the Las Vegas Strip, The Venetian boasts a prime location. Its central location provides easy access to other iconic landmarks, including The Palazzo and Madame Tussauds Las Vegas. Immerse yourself in the vibrant energy of the Strip while enjoying The Venetian's unique ambiance.",
-          "The Venetian exudes a romantic and sophisticated vibe. Guests can expect impeccable service, stunning aesthetics, and a sense of escape. Whether you're enjoying a gondola ride, dining at a gourmet restaurant, or trying your luck at the casino, you'll be surrounded by an atmosphere of Italian elegance.",
-          "Standard suites at The Venetian offer spacious accommodations and luxurious amenities. Enjoy separate living areas, plush bedding, and stunning views of the Las Vegas Strip. Upper floor suites facing the strip can experience some ambient noise, while lower floors and courtyard-facing rooms are quieter.",
-          "The Venetian's Luxury Suites offer an elevated level of comfort and style, with even more space and premium amenities. Enjoy personalized service, breathtaking views, and an unforgettable experience in these opulent accommodations. Many suites feature multiple bedrooms, dining areas, and even private balconies.",
-          "The hotel room at Ananda Spa & Wellness is a luxurious oasis of relaxation and rejuvenation. The room features a large, curved infinity pool that seamlessly blends with the surrounding landscape, offering breathtaking views of the ocean and lush greenery. The pool area is adorned with comfortable lounge chairs and a wooden deck, perfect for unwinding and soaking up the sun. The room's interior is designed with a warm, earthy color palette, with stone walls and wooden accents that create a cozy and inviting atmosphere. The large windows allow natural light to flood the room, enhancing the sense of tranquility and serenity. The spa area is just a short walk away, offering a range of treatments and therapies to help guests relax and rejuvenate. Overall, the room at Ananda Spa & Wellness is a perfect blend of luxury, comfort, and natural beauty, making it the perfect destination for a relaxing getaway."
-        ],
-        "location": {
-          "lat": 36.121,
-          "lon": -115.17
-        },
-        "location_name": "Las Vegas, USA",
-        "country": "USA",
-        "region": "Las Vegas Strip",
-        "amenities": [
-          "pool",
-          "spa",
-          "gym",
-          "restaurant",
-          "bar",
-          "concierge"
-        ],
-        "style": [
-          "luxury",
-          "resort"
-        ],
-        "price_tier": "luxury",
-        "price_per_night_usd": 400,
-        "image_paths": [
-          "/images/hotels/the-venetian-resort-las-vegas_1.png",
-          "/images/hotels/the-venetian-resort-las-vegas_2.png"
-        ],
-        "rating": 4.6,
-        "nearby_landmarks": [
-          "The Palazzo",
-          "Madame Tussauds Las Vegas",
-          "Grand Canal Shoppes"
-        ],
-        "score": 5.3710437
-      },
-      {
         "id": "four-seasons-bora-bora",
         "name": "Four Seasons Resort Bora Bora",
         "descriptions": [
@@ -2588,6 +2543,51 @@
           "Bora Bora Lagoon"
         ],
         "score": 0.8271851
+      },
+      {
+        "id": "the-venetian-resort-las-vegas",
+        "name": "The Venetian Resort Las Vegas",
+        "descriptions": [
+          "The Venetian transports you to the romantic canals of Venice, Italy, right on the Las Vegas Strip. Experience gondola rides, stunning architecture, and world-class entertainment. Indulge in gourmet dining, upscale shopping, and thrilling casino action. With its luxurious suites and impeccable service, The Venetian offers an unforgettable escape to a world of Italian splendor. The resort also features multiple pools and a state-of-the-art spa.",
+          "Canyon Ranch SpaClub at The Venetian is a sprawling wellness oasis, offering a wide range of treatments and fitness programs. Rejuvenate with a customized massage, a revitalizing facial, or a body wrap. Take advantage of the spa's extensive fitness facilities, including a rock-climbing wall and a cycling studio. The spa's holistic approach to wellness ensures a truly transformative experience.",
+          "Located directly on the Las Vegas Strip, The Venetian boasts a prime location. Its central location provides easy access to other iconic landmarks, including The Palazzo and Madame Tussauds Las Vegas. Immerse yourself in the vibrant energy of the Strip while enjoying The Venetian's unique ambiance.",
+          "The Venetian exudes a romantic and sophisticated vibe. Guests can expect impeccable service, stunning aesthetics, and a sense of escape. Whether you're enjoying a gondola ride, dining at a gourmet restaurant, or trying your luck at the casino, you'll be surrounded by an atmosphere of Italian elegance.",
+          "Standard suites at The Venetian offer spacious accommodations and luxurious amenities. Enjoy separate living areas, plush bedding, and stunning views of the Las Vegas Strip. Upper floor suites facing the strip can experience some ambient noise, while lower floors and courtyard-facing rooms are quieter.",
+          "The Venetian's Luxury Suites offer an elevated level of comfort and style, with even more space and premium amenities. Enjoy personalized service, breathtaking views, and an unforgettable experience in these opulent accommodations. Many suites feature multiple bedrooms, dining areas, and even private balconies.",
+          "The hotel room at Ananda Spa & Wellness is a luxurious oasis of relaxation and rejuvenation. The room features a large, curved infinity pool that seamlessly blends with the surrounding landscape, offering breathtaking views of the ocean and lush greenery. The pool area is adorned with comfortable lounge chairs and a wooden deck, perfect for unwinding and soaking up the sun. The room's interior is designed with a warm, earthy color palette, with stone walls and wooden accents that create a cozy and inviting atmosphere. The large windows allow natural light to flood the room, enhancing the sense of tranquility and serenity. The spa area is just a short walk away, offering a range of treatments and therapies to help guests relax and rejuvenate. Overall, the room at Ananda Spa & Wellness is a perfect blend of luxury, comfort, and natural beauty, making it the perfect destination for a relaxing getaway."
+        ],
+        "location": {
+          "lat": 36.121,
+          "lon": -115.17
+        },
+        "location_name": "Las Vegas, USA",
+        "country": "USA",
+        "region": "Las Vegas Strip",
+        "amenities": [
+          "pool",
+          "spa",
+          "gym",
+          "restaurant",
+          "bar",
+          "concierge"
+        ],
+        "style": [
+          "luxury",
+          "resort"
+        ],
+        "price_tier": "luxury",
+        "price_per_night_usd": 400,
+        "image_paths": [
+          "/images/hotels/the-venetian-resort-las-vegas_1.png",
+          "/images/hotels/the-venetian-resort-las-vegas_2.png"
+        ],
+        "rating": 4.6,
+        "nearby_landmarks": [
+          "The Palazzo",
+          "Madame Tussauds Las Vegas",
+          "Grand Canal Shoppes"
+        ],
+        "score": 5.3710437
       },
       {
         "id": "como-uma-ubud",
@@ -2675,10 +2675,10 @@
           "Denarau Golf and Racquet Club",
           "Port Denarau Marina"
         ],
-        "score": 5.066059
+        "score": 5.254422
       }
     ],
-    "took": 190
+    "took": 429
   },
   "boutique heritage hotel with authentic local architecture": {
     "semantic": [
@@ -3136,7 +3136,7 @@
           "Pashupatinath Temple",
           "Boudhanath Stupa"
         ],
-        "score": 7.2692423
+        "score": 7.3735743
       },
       {
         "id": "hotel-condesa-df",
@@ -3177,7 +3177,7 @@
           "Chapultepec Park",
           "Museo Nacional de Antropolog\u00eda"
         ],
-        "score": 6.4090033
+        "score": 6.4981723
       },
       {
         "id": "botswana-safari-camp",
@@ -3220,7 +3220,7 @@
           "Okavango Delta",
           "Moremi Game Reserve"
         ],
-        "score": 6.0561004
+        "score": 6.2122307
       },
       {
         "id": "al-wadi-hotel-doha",
@@ -3565,7 +3565,7 @@
           "Pashupatinath Temple",
           "Boudhanath Stupa"
         ],
-        "score": 7.2692423
+        "score": 7.3735743
       },
       {
         "id": "botswana-safari-camp",
@@ -3608,7 +3608,7 @@
           "Okavango Delta",
           "Moremi Game Reserve"
         ],
-        "score": 6.0561004
+        "score": 6.2122307
       },
       {
         "id": "hotel-des-grands-boulevards-paris",
@@ -3769,7 +3769,7 @@
           "Chapultepec Park",
           "Museo Nacional de Antropolog\u00eda"
         ],
-        "score": 6.4090033
+        "score": 6.4981723
       },
       {
         "id": "hotel-v-federico-fellini-rome",
@@ -3941,7 +3941,7 @@
         "score": 5.753694
       }
     ],
-    "took": 178
+    "took": 363
   },
   "eco-lodge for wildlife photography safaris": {
     "semantic": [
@@ -4458,7 +4458,7 @@
           "Torres del Paine",
           "Lake Peho\u00e9"
         ],
-        "score": 7.908345
+        "score": 7.9854727
       },
       {
         "id": "huemules-mountain-lodge",
@@ -4498,7 +4498,7 @@
           "Mount Fitz Roy",
           "Los Glaciares National Park"
         ],
-        "score": 6.93562
+        "score": 7.0147295
       },
       {
         "id": "eco-camp-patagonia",
@@ -4753,7 +4753,7 @@
           "Okavango Delta",
           "Moremi Game Reserve"
         ],
-        "score": 3.2735732
+        "score": 3.3809824
       },
       {
         "id": "mount-kenya-safari-club",
@@ -4797,7 +4797,7 @@
           "Mount Kenya",
           "Lewa Wildlife Conservancy"
         ],
-        "score": 3.0765738
+        "score": 3.1858835
       }
     ],
     "hybrid": [
@@ -4970,7 +4970,7 @@
           "Torres del Paine",
           "Lake Peho\u00e9"
         ],
-        "score": 7.908345
+        "score": 7.9854727
       },
       {
         "id": "botswana-safari-camp",
@@ -5013,7 +5013,7 @@
           "Okavango Delta",
           "Moremi Game Reserve"
         ],
-        "score": 3.2735732
+        "score": 3.3809824
       },
       {
         "id": "kruger-bush-camp",
@@ -5136,7 +5136,7 @@
           "Mount Fitz Roy",
           "Los Glaciares National Park"
         ],
-        "score": 6.93562
+        "score": 7.0147295
       },
       {
         "id": "mount-kenya-safari-club",
@@ -5180,7 +5180,7 @@
           "Mount Kenya",
           "Lewa Wildlife Conservancy"
         ],
-        "score": 3.0765738
+        "score": 3.1858835
       },
       {
         "id": "parkroyal-collection-marinabay",
@@ -5228,7 +5228,7 @@
         "score": 3.7095292
       }
     ],
-    "took": 175
+    "took": 471
   },
   "quiet hotel near convention center, good for remote work": {
     "semantic": [
@@ -5790,7 +5790,7 @@
           "Esplanade - Theatres on the Bay",
           "Merlion"
         ],
-        "score": 5.3273787
+        "score": 5.4369297
       },
       {
         "id": "the-st-regis-bangkok",
@@ -5834,7 +5834,7 @@
           "Erawan Shrine",
           "Siam Paragon"
         ],
-        "score": 5.038479
+        "score": 5.187379
       },
       {
         "id": "circus-circus-las-vegas",
@@ -5876,7 +5876,7 @@
           "Las Vegas Convention Center",
           "Stratosphere Tower"
         ],
-        "score": 5.025031
+        "score": 5.168952
       },
       {
         "id": "serengeti-wilderness-camp",
@@ -5962,7 +5962,7 @@
           "Fremont Street Experience",
           "SlotZilla Zip Line"
         ],
-        "score": 4.849039
+        "score": 4.950987
       },
       {
         "id": "jw-marriott-marquis-hotel-dubai",
@@ -6006,7 +6006,7 @@
           "Burj Khalifa",
           "Dubai Mall"
         ],
-        "score": 4.267295
+        "score": 4.3590446
       },
       {
         "id": "the-hotel-telluride",
@@ -6182,7 +6182,7 @@
           "Fremont Street Experience",
           "SlotZilla Zip Line"
         ],
-        "score": 4.849039
+        "score": 4.950987
       },
       {
         "id": "hotel-de-russie-rome",
@@ -6361,7 +6361,7 @@
           "Esplanade - Theatres on the Bay",
           "Merlion"
         ],
-        "score": 5.3273787
+        "score": 5.4369297
       },
       {
         "id": "hotel-du-louvre-paris",
@@ -6447,7 +6447,7 @@
           "Erawan Shrine",
           "Siam Paragon"
         ],
-        "score": 5.038479
+        "score": 5.187379
       },
       {
         "id": "hotel-granvia-kyoto",
@@ -6529,9 +6529,9 @@
           "Las Vegas Convention Center",
           "Stratosphere Tower"
         ],
-        "score": 5.025031
+        "score": 5.168952
       }
     ],
-    "took": 171
+    "took": 396
   }
 }

@@ -40,7 +40,7 @@ export default function UseCaseCard({ card, index, accentColor, onClick }: UseCa
       </div>
 
       {/* Hook */}
-      <p className="text-xs leading-relaxed text-white/60 group-hover:text-white/80 transition-colors">{card.hook}</p>
+      <p className="text-xs leading-relaxed transition-colors" style={{ color: 'var(--text-secondary)' }}>{card.hook}</p>
 
       {/* Models + CTA */}
       <div className="flex items-center justify-between">

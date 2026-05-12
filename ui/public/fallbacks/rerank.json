@@ -903,8 +903,8 @@
         "rankDelta": -1
       }
     ],
-    "naiveTook": 2635,
-    "rerankTook": 2635
+    "naiveTook": 2764,
+    "rerankTook": 2764
   },
   "romantic beachfront with private pool villa and spa": {
     "naive": [
@@ -1851,8 +1851,8 @@
         "rankDelta": 89
       }
     ],
-    "naiveTook": 2791,
-    "rerankTook": 2791
+    "naiveTook": 2914,
+    "rerankTook": 2914
   },
   "boutique heritage hotel with authentic local architecture": {
     "naive": [
@@ -2739,8 +2739,8 @@
         "rankDelta": 89
       }
     ],
-    "naiveTook": 2505,
-    "rerankTook": 2505
+    "naiveTook": 2692,
+    "rerankTook": 2692
   },
   "eco-lodge for wildlife photography safaris": {
     "naive": [
@@ -3667,8 +3667,8 @@
         "rankDelta": -8
       }
     ],
-    "naiveTook": 2877,
-    "rerankTook": 2877
+    "naiveTook": 3180,
+    "rerankTook": 3180
   },
   "quiet hotel near convention center, good for remote work": {
     "naive": [
@@ -4568,7 +4568,7 @@
         "rankDelta": -7
       }
     ],
-    "naiveTook": 2975,
-    "rerankTook": 2975
+    "naiveTook": 2635,
+    "rerankTook": 2635
   }
 }

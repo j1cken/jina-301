@@ -57,6 +57,7 @@ export interface SectorData {
 const EMB: ModelTag = { label: 'Embeddings v5', color: '#0077CC' };
 const RERANK: ModelTag = { label: 'Reranker v3', color: '#F04E98' };
 const CLIP: ModelTag = { label: 'CLIP v2', color: '#00BFB3' };
+const OMNI: ModelTag = { label: 'Omni v5', color: '#7C3AED' };
 
 export const SECTORS: SectorData[] = [
   {
@@ -668,6 +669,163 @@ export const SECTORS: SectorData[] = [
               'Service catalog is sparse (just service names, no descriptions)',
               'Customer already has SBOM with exact CPE/version mapping to CVE advisories',
               'Advisory volume is low enough that manual review is practical',
+            ],
+          },
+        },
+      },
+    ],
+  },
+  {
+    id: 'travel',
+    label: 'Travel',
+    icon: '✈️',
+    accentColor: '#F59E0B',
+    description: 'The same stack that powers Horizon — semantic hotel search, visual room matching, multilingual guests — applies to every hospitality property.',
+    interactiveCards: [],
+    infoCards: [
+      {
+        id: 'travel-hotel-search',
+        sector: 'Travel & Hospitality',
+        sectorIcon: '🏨',
+        title: 'Hotel Semantic Search',
+        hook: '"Quiet Vegas hotel near coffee for 9am calls" — no tags, no filters. Embeddings v5 returns the right property.',
+        bullets: [
+          'Understands intent across 89 languages — no tag taxonomy required',
+          'Reranker v3 re-scores by nuance: soundproofing vs. "quiet" lobby',
+          'Powers Horizon: the demo you just watched',
+        ],
+        models: [EMB, RERANK],
+        compactDemo: {
+          steps: [
+            {
+              label: 'query',
+              tag: 'User query',
+              heading: '"Quiet Vegas hotel near coffee for 9am calls"',
+              body: 'No star rating filter. No neighborhood tag. No keyword "soundproof." BM25 returns 0 results — no literal keyword match.',
+            },
+            {
+              label: 'embed',
+              tag: 'Embeddings v5',
+              heading: 'Query embedded alongside 150 hotel descriptions.',
+              body: 'Embeddings v5 encodes "near a good coffee scene" into the same vector space as "steps from a Starbucks Reserve." Semantic proximity, not string match.',
+            },
+            {
+              label: 'rerank',
+              tag: 'Reranker v3',
+              heading: 'Reranker catches the nuance vectors miss.',
+              body: 'Vector recall surfaces 10 candidates. Reranker v3 reads query + full description together — moves the hotel with in-room soundproofing and lobby café to #1.',
+              highlight: 'Wynn Las Vegas ranked #1 — soundproofed suites, espresso bar on-site',
+            },
+          ],
+          summaryData: {
+            businessProblem: 'Hotel booking apps rely on tag-based filters that miss nuanced traveler intent. "Quiet for remote work" doesn\'t match keyword "business center."',
+            technicalSolution: 'Jina Embeddings v5 on EIS encodes intent semantically. Reranker v3 refines recall with cross-attention. Horizon is the reference implementation.',
+            positionWhen: [
+              'Customer has unstructured property descriptions (hotels, rentals, venues)',
+              'Users express nuanced preference, not exact filter criteria',
+              'Travel, hospitality, or real-estate vertical',
+            ],
+            dontPositionWhen: [
+              'Customer only needs exact attribute filtering (3-star, pet-friendly)',
+              'Catalog is <100 items — simple BM25 is sufficient',
+            ],
+          },
+        },
+      },
+      {
+        id: 'travel-visual-room',
+        sector: 'Travel & Hospitality',
+        sectorIcon: '📷',
+        title: 'Visual Room Search',
+        hook: 'Guest uploads a photo of the aesthetic they want. CLIP finds matching hotel rooms across 150 properties. No keywords.',
+        bullets: [
+          'CLIP v2 encodes text and images in the same 1024-dim vector space',
+          'Same kNN index — no separate image pipeline',
+          'Works cross-modal: text query also retrieves matching room images',
+        ],
+        models: [CLIP],
+        compactDemo: {
+          steps: [
+            {
+              label: 'upload',
+              tag: 'Image query',
+              heading: 'Guest uploads a photo: bright modern room, floor-to-ceiling windows.',
+              body: 'No text. No tags. Just a JPEG. Traditional search has nothing to work with — returns a "please use the search bar" error.',
+            },
+            {
+              label: 'embed',
+              tag: 'CLIP v2',
+              heading: 'CLIP encodes the image and every room photo in the same vector space.',
+              body: 'At index time, CLIP embedded all hotel room images alongside text descriptions — one index. The query image is embedded with the same model at search time.',
+            },
+            {
+              label: 'result',
+              tag: 'kNN match',
+              heading: 'Visually similar rooms returned — no keywords required.',
+              body: 'Top 5 results share the same aesthetic: floor-to-ceiling windows, light color palette. Users can also type "bright modern room" and get the same results.',
+              highlight: '5 visually matching properties — same index as text search',
+            },
+          ],
+          summaryData: {
+            businessProblem: 'Travelers often know what they want visually but can\'t express it in words. Existing image search requires separate pipelines and custom ML.',
+            technicalSolution: 'CLIP v2 on EIS encodes images and text into the same vector space. One Elasticsearch index handles both modalities — same kNN query syntax.',
+            positionWhen: [
+              'Customer has product/property image catalogs',
+              'Users browse visually (fashion, real estate, hospitality, e-commerce)',
+              'Customer wants to add image search without a separate ML pipeline',
+            ],
+            dontPositionWhen: [
+              'Customer only has text data — CLIP adds no value without images',
+              'Privacy requirements prevent storing or encoding user-uploaded images',
+            ],
+          },
+        },
+      },
+      {
+        id: 'travel-omni',
+        sector: 'Travel & Hospitality',
+        sectorIcon: '🌐',
+        title: 'Omni Property Discovery',
+        hook: 'One kNN query covers text descriptions, room photos, and virtual tour audio. Single Elasticsearch index.',
+        bullets: [
+          'Omni v5 embeds text, image, audio, and video — same vector space',
+          'No modality-specific pipelines or separate indices',
+          'Same search syntax regardless of what the user uploads',
+        ],
+        models: [OMNI],
+        compactDemo: {
+          steps: [
+            {
+              label: 'problem',
+              tag: 'Traditional stack',
+              heading: 'Three modalities → three pipelines → three indices.',
+              body: 'Text search index. Separate image similarity service. Separate audio-tour recommendation engine. Three teams, three maintenance burdens, three query paths.',
+            },
+            {
+              label: 'embed',
+              tag: 'Omni v5',
+              heading: 'Omni v5 encodes everything into one shared vector space.',
+              body: 'Hotel description text, room photos, and 3-minute virtual tour audio — all embedded by the same model. One Elasticsearch index. One kNN query covers all three.',
+            },
+            {
+              label: 'result',
+              tag: 'One index',
+              heading: 'Guest query returns results from all modalities at once.',
+              body: 'User types "oceanfront suite with a jazz vibe." Results include text matches, room photos with ocean-view framing, and audio tours with smooth jazz background.',
+              highlight: 'One query — text, image, and audio results from the same index',
+            },
+          ],
+          summaryData: {
+            businessProblem: 'Multimodal search requires separate embedding pipelines, indices, and merge logic per modality — multiplicative complexity.',
+            technicalSolution: 'Jina Omni v5 is a single model that encodes text, image, audio, and video into one shared vector space. One Elasticsearch index, one kNN query.',
+            positionWhen: [
+              'Customer has multiple media types (text + images + audio/video)',
+              'Customer wants to avoid building modality-specific pipelines',
+              'New Elastic customer evaluating Jina for multimodal search',
+            ],
+            dontPositionWhen: [
+              'Customer only has text data — Embeddings v5 is simpler and sufficient',
+              'Customer needs Omni on EIS now — Coming to EIS, not live yet',
             ],
           },
         },

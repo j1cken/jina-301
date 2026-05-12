@@ -198,15 +198,15 @@ function applyEvent(
 
 // Fallback: canned stream for demo mode — uses exact hotel names from hotels.json
 const FALLBACK: Array<{ delay: number; type: string; data: Record<string, unknown> }> = [
-  { delay: 200,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
-  { delay: 600,  type: 'tool_call',         data: { tool_id: 'tc-1', tool_name: 'hotel_search', tool_input: { query: 'baller room vegas strip view' } } },
-  { delay: 1400, type: 'tool_result',       data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
-  { delay: 1600, type: 'thinking_complete', data: {} },
-  { delay: 1900, type: 'message_chunk',     data: { text_chunk: 'For a true baller Vegas experience with Strip views, the Bellagio is the gold standard — iconic fountain views, a world-class spa, and celebrity chef dining steps from the casino floor. ' } },
-  { delay: 2400, type: 'message_chunk',     data: { text_chunk: 'If you want grand Italian opulence, the Venetian delivers massive suites with sweeping Strip panoramas right from the heart of the Boulevard. ' } },
-  { delay: 2900, type: 'message_chunk',     data: { text_chunk: 'For refined elegance and a quieter perch, the Wynn offers private pool access and one of the best spas in Nevada.' } },
-  { delay: 3300, type: 'message_chunk',     data: { text_chunk: ' Would you like to narrow by price or a specific amenity like a rooftop pool or high-limit casino?' } },
-  { delay: 3500, type: 'message_complete',  data: { message_content: null } },
+  { delay: 150,  type: 'reasoning',         data: { reasoning: 'Searching horizon-hotels index using Jina Embeddings v5 for semantic matching...' } },
+  { delay: 350,  type: 'tool_call',         data: { tool_id: 'tc-1', tool_name: 'hotel_search', tool_input: { query: 'quiet hotel Las Vegas coffee scene remote work 9am calls' } } },
+  { delay: 700,  type: 'tool_result',       data: { tool_id: 'tc-1', tool_result: '5 hotels matched' } },
+  { delay: 850,  type: 'thinking_complete', data: {} },
+  { delay: 1000, type: 'message_chunk',     data: { text_chunk: 'For a quiet, coffee-friendly stay where you can take 9am calls without distractions, the Wynn stands out — dedicated workspaces, exceptional in-room soundproofing, and one of the best espresso bars on the Strip steps away. ' } },
+  { delay: 1300, type: 'message_chunk',     data: { text_chunk: 'The Venetian is another strong match — their Inspired Living suites have full work desks, conference-grade WiFi, and a Starbucks Reserve right in the property. ' } },
+  { delay: 1600, type: 'message_chunk',     data: { text_chunk: 'For the quietest environment away from the gaming floor, Park MGM puts you in a calm, casino-free wing with great natural light and solid acoustics for calls.' } },
+  { delay: 1850, type: 'message_chunk',     data: { text_chunk: ' Want me to narrow by price range or check availability for specific dates?' } },
+  { delay: 2000, type: 'message_complete',  data: { message_content: null } },
 ];
 
 async function replayFallback(assistantId: string, set: Dispatch<SetStateAction<Message[]>>) {

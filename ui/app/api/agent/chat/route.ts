@@ -44,7 +44,42 @@ export async function POST(req: NextRequest) {
     return new NextResponse(errEvent, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' } });
   }
 
-  return new NextResponse(upstream.body, {
+  // 2-minute streaming timeout — if Kibana hangs while client stays connected, inject an error and close
+  const timeoutController = new AbortController();
+  const timeoutTimer = setTimeout(() => timeoutController.abort(), 120_000);
+  const encoder = new TextEncoder();
+
+  const readable = new ReadableStream({
+    async start(controller) {
+      const reader = upstream.body!.getReader();
+      // Cancel the reader when the timeout fires so the in-flight read() resolves
+      timeoutController.signal.addEventListener('abort', () => {
+        reader.cancel('timeout').catch(() => {});
+      }, { once: true });
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          controller.enqueue(value);
+        }
+        if (timeoutController.signal.aborted) {
+          const errMsg = `event: error\ndata: ${JSON.stringify({ message: 'Agent timed out after 2 minutes' })}\n\ndata: [DONE]\n\n`;
+          controller.enqueue(encoder.encode(errMsg));
+        }
+        controller.close();
+      } catch {
+        controller.close();
+      } finally {
+        clearTimeout(timeoutTimer);
+      }
+    },
+    cancel() {
+      clearTimeout(timeoutTimer);
+    },
+  });
+
+  return new NextResponse(readable, {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',

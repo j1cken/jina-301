@@ -95,6 +95,8 @@ const RAW_HTML_SAMPLE = `<!DOCTYPE html>
 
 interface IngestStationProps {
   demoMode: boolean;
+  flowTriggerRun?: boolean;
+  onFlowTriggerRunConsumed?: () => void;
 }
 
 type TransformTab = 'raw' | 'reader' | 'indexed';
@@ -105,7 +107,7 @@ const TAB_LABELS: { id: TransformTab; label: string }[] = [
   { id: 'indexed', label: '🗃️ Indexed Fields' },
 ];
 
-export default function IngestStation({ demoMode }: IngestStationProps) {
+export default function IngestStation({ demoMode, flowTriggerRun, onFlowTriggerRunConsumed }: IngestStationProps) {
   const [url, setUrl] = useState(DEMO_URLS[0]);
   const [steps, setSteps] = useState<IngestStep[]>([]);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
@@ -183,6 +185,13 @@ export default function IngestStation({ demoMode }: IngestStationProps) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!flowTriggerRun) return;
+    run();
+    onFlowTriggerRunConsumed?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowTriggerRun]);
 
   const clearIndex = async () => {
     setClearConfirm(false);

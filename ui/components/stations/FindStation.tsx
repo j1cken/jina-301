@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTypewriter } from '@/hooks/useTypewriter';
 import dynamic from 'next/dynamic';
 import { Maximize2, Minimize2, Camera, X as XIcon } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
 import { apiUrl } from '@/lib/api';
+import { resolveImageUrl } from '@/lib/images';
 import HotelCard from '@/components/HotelCard';
 import SearchBar from '@/components/shared/SearchBar';
 import ModelBadge from '@/components/shared/ModelBadge';
@@ -14,13 +16,13 @@ import type { Hotel, SearchResponse, GeoFilter } from '@/lib/types';
 const MapPanel = dynamic(() => import('@/components/MapPanel'), { ssr: false });
 
 const DEMO_QUERIES = [
-  'quiet hotel near convention center, good for remote work',
-  'romantic beachfront with ocean view',
-  'luxury spa resort with mountain views',
-  'boutique city hotel near historic district',
-  'ruhiges Hotel mit Bergblick und Wellnessbereich',      // German: quiet hotel with mountain view and wellness
-  'hôtel de luxe avec piscine privée et vue sur mer',    // French: luxury hotel with private pool and sea view
-  '静かな温泉旅館、伝統的な日本建築',                              // Japanese: quiet hot spring inn, traditional architecture
+  'quiet hotel for focused remote work, no casino noise',
+  'boutique hotel near the arts district, local Vegas vibe',
+  'family resort with pool close to the Strip',
+  'luxury suite with Strip views and spa access',
+  'ruhiges Hotel in Las Vegas, fernab vom Casinolärm',
+  'hôtel boutique calme à Las Vegas, loin du bruit des casinos',
+  'ラスベガスで静かなリモートワーク向けホテル',
 ];
 
 const VENETIAN = { lat: 36.1214, lon: -115.1699 };
@@ -42,6 +44,13 @@ interface FindStationProps {
   onResultsChange?: (hotels: Hotel[]) => void;
   pendingQuery?: string | null;
   onPendingQueryConsumed?: () => void;
+  // Flow player props
+  flowQuery?: string | null;
+  onFlowQueryConsumed?: () => void;
+  flowTriggerImageSearch?: boolean;
+  onFlowImageSearchConsumed?: () => void;
+  flowGeoFilter?: boolean | null;
+  onFlowGeoFilterConsumed?: () => void;
 }
 
 interface ExplainResult {
@@ -54,7 +63,7 @@ interface ExplainResult {
 type SearchMode = 'semantic' | 'bm25' | 'hybrid';
 type ViewMode = 'single' | 'sidebyside' | 'map';
 
-export default function FindStation({ demoMode, onResultsChange, pendingQuery, onPendingQueryConsumed }: FindStationProps) {
+export default function FindStation({ demoMode, onResultsChange, pendingQuery, onPendingQueryConsumed, flowQuery, onFlowQueryConsumed, flowTriggerImageSearch, onFlowImageSearchConsumed, flowGeoFilter, onFlowGeoFilterConsumed }: FindStationProps) {
   const [query, setQuery] = useState('');
   const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<SearchResponse | null>(null);
@@ -74,7 +83,9 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   const [clipResults, setClipResults] = useState<Hotel[] | null>(null);
   const [clipLoading, setClipLoading] = useState(false);
   const [clipPreviewUrl, setClipPreviewUrl] = useState<string | null>(null);
+  const [clipPreviewOpen, setClipPreviewOpen] = useState(false);
   const [clipError, setClipError] = useState<string | null>(null);
+  const [clipFile, setClipFile] = useState<File | null>(null);
   const clipPreviewRef = useRef<string | null>(null);
 
   // Revoke object URLs on unmount or when preview changes
@@ -109,7 +120,41 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingQuery]);
 
-  const search = async (q = query) => {
+  // Flow player: typewriter query injection
+  const handleFlowQueryComplete = useCallback(() => {
+    if (flowQuery) {
+      search(flowQuery);
+      onFlowQueryConsumed?.();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowQuery]);
+
+  const flowTyped = useTypewriter(flowQuery ?? null, handleFlowQueryComplete);
+
+  useEffect(() => {
+    if (flowQuery !== null && flowQuery !== undefined) {
+      setQuery(flowTyped);
+    }
+  }, [flowTyped, flowQuery]);
+
+  // Flow player: trigger sample image search
+  useEffect(() => {
+    if (!flowTriggerImageSearch) return;
+    handleSampleImage();
+    onFlowImageSearchConsumed?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowTriggerImageSearch]);
+
+  // Flow player: apply/reset geo filter and re-run search
+  useEffect(() => {
+    if (flowGeoFilter === null || flowGeoFilter === undefined) return;
+    setUseGeo(flowGeoFilter);
+    search(query, flowGeoFilter); // pass override directly — bypasses stale closure
+    onFlowGeoFilterConsumed?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowGeoFilter]);
+
+  const search = async (q = query, geoOverride?: boolean) => {
     if (!q.trim()) return;
     setLoading(true);
     setResults(null);
@@ -118,7 +163,8 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
     setMapExpanded(false);
     setSearchError(null);
 
-    const geo: GeoFilter | undefined = useGeo
+    const useGeoNow = geoOverride !== undefined ? geoOverride : useGeo;
+    const geo: GeoFilter | undefined = useGeoNow
       ? { ...VENETIAN, radiusMiles: 0.5 }
       : undefined;
 
@@ -170,6 +216,7 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
   const handleImageSearch = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) { setClipError('Image too large — please use an image under 5MB'); return; }
     if (!file.type.startsWith('image/')) return;
+    setClipFile(file);
 
     const preview = URL.createObjectURL(file);
     const base64: string = await new Promise((resolve, reject) => {
@@ -181,14 +228,17 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
     await runClipSearch({ imageBase64: base64, mimeType: file.type }, preview, true);
   };
 
-  const handleSampleImage = () =>
-    runClipSearch({ imageUrl: '/images/sample-hotel-room.png' }, '/images/sample-hotel-room.png', false);
+  const handleSampleImage = () => {
+    const resolvedUrl = resolveImageUrl('/images/sample-hotel-room.png') ?? '/images/sample-hotel-room.png';
+    runClipSearch({ imageUrl: resolvedUrl }, resolvedUrl, false);
+  };
 
   const clearClip = () => {
     if (clipPreviewRef.current) { URL.revokeObjectURL(clipPreviewRef.current); clipPreviewRef.current = null; }
     setClipResults(null);
     setClipPreviewUrl(null);
     setClipError(null);
+    setClipFile(null);
   };
 
   const fetchExplain = async (hotel: Hotel, mode: SearchMode) => {
@@ -435,8 +485,14 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
           <div className="flex items-center gap-3 px-3 py-2 rounded-xl"
             style={{ background: 'rgba(0,191,179,0.08)', border: '1px solid rgba(0,191,179,0.25)' }}>
             {clipPreviewUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={clipPreviewUrl} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+              <button
+                onClick={() => setClipPreviewOpen(true)}
+                title="Click to enlarge"
+                className="flex-shrink-0 rounded-lg overflow-hidden hover:ring-2 hover:ring-teal-400 transition-all"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={clipPreviewUrl} alt="Query image" className="w-8 h-8 object-cover" />
+              </button>
             )}
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <Camera className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--elastic-teal)' }} />
@@ -456,8 +512,18 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
           </div>
 
           {clipError && (
-            <div className="p-3 rounded-lg text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
-              {clipError}
+            <div className="p-3 rounded-lg text-sm flex items-center justify-between gap-3"
+              style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+              <span>{clipError}</span>
+              {clipFile && (
+                <button
+                  onClick={() => handleImageSearch(clipFile)}
+                  className="flex-shrink-0 px-3 py-1 rounded-lg text-xs font-semibold"
+                  style={{ background: 'var(--elastic-pink)', color: '#fff' }}
+                >
+                  Retry
+                </button>
+              )}
             </div>
           )}
 
@@ -480,6 +546,29 @@ export default function FindStation({ demoMode, onResultsChange, pendingQuery, o
           {clipResults && clipResults.length === 0 && (
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No visual matches found.</p>
           )}
+        </div>
+      )}
+
+      {/* Click-to-enlarge image preview overlay */}
+      {clipPreviewOpen && clipPreviewUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.85)' }}
+          onClick={() => setClipPreviewOpen(false)}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={clipPreviewUrl}
+            alt="Query image"
+            className="max-w-[80vw] max-h-[80vh] rounded-2xl shadow-2xl object-contain"
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-6 right-6 text-white/70 hover:text-white text-3xl leading-none"
+            onClick={() => setClipPreviewOpen(false)}
+          >
+            ×
+          </button>
         </div>
       )}
 

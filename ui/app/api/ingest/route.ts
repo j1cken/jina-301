@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getClient } from '@/lib/elasticsearch';
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout';
 
 const INDEX = 'horizon-hotels';
 const EMBEDDING_ID = '.jina-embeddings-v5-text-small';
@@ -17,7 +18,7 @@ function sse(event: ProgressEvent): string {
 }
 
 async function fetchViaReader(url: string, apiKey: string): Promise<string> {
-  const res = await fetch(`https://r.jina.ai/${url}`, {
+  const res = await fetchWithTimeout(`https://r.jina.ai/${url}`, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'X-Respond-With': 'markdown',
@@ -171,7 +172,8 @@ export async function POST(req: NextRequest) {
 
         emit({ step: 'complete', status: 'done', message: 'Hotel ready for search', detail: hotel });
       } catch (err) {
-        emit({ step: 'fetch', status: 'error', message: (err as Error).message });
+        const isTimeout = (err as Error).name === 'AbortError';
+        emit({ step: 'fetch', status: 'error', message: isTimeout ? 'Jina Reader timed out after 30s — check network' : (err as Error).message });
       } finally {
         controller.close();
       }

@@ -9,6 +9,7 @@ import AgentChat from '@/components/AgentChat';
 import TripCart, { type TripCartState } from '@/components/TripCart';
 import HotelDetailModal from '@/components/HotelDetailModal';
 import { generatePNR } from '@/components/BookingConfirmation';
+import { chatHotelToHotel } from '@/lib/chatHotelUtils';
 
 interface TravelSplitViewProps {
   initialMessage?: string;
@@ -16,9 +17,10 @@ interface TravelSplitViewProps {
   onClose: () => void;
   cart: TripCartState;
   setCart: Dispatch<SetStateAction<TripCartState>>;
+  addFirstHotelSignal?: number;
 }
 
-export default function TravelSplitView({ initialMessage, initialImageFile, onClose, cart, setCart }: TravelSplitViewProps) {
+export default function TravelSplitView({ initialMessage, initialImageFile, onClose, cart, setCart, addFirstHotelSignal }: TravelSplitViewProps) {
   const [tripContext, setTripContext] = useState('');
   const [agentHotels, setAgentHotels] = useState<ChatHotel[]>([]);
   const [visible, setVisible] = useState(false);
@@ -35,6 +37,13 @@ export default function TravelSplitView({ initialMessage, initialImageFile, onCl
   const addHotelToTrip = useCallback((hotel: Hotel) => {
     setTripHotels(prev => prev.some(h => h.id === hotel.id) ? prev : [...prev, hotel]);
   }, []);
+
+  useEffect(() => {
+    if (!addFirstHotelSignal) return;
+    const first = agentHotels[0];
+    if (!first) return;
+    addHotelToTrip(chatHotelToHotel(first));
+  }, [addFirstHotelSignal]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const removeHotelFromTrip = useCallback((id: string) => {
     setTripHotels(prev => prev.filter(h => h.id !== id));

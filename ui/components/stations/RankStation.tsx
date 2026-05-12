@@ -25,6 +25,9 @@ const DEMO_QUERIES = [
 interface RankStationProps {
   demoMode: boolean;
   onTopRanked?: (hotel: RankedHotel) => void;
+  // Flow player props
+  flowRankReveal?: boolean | null;
+  onFlowRankRevealConsumed?: () => void;
 }
 
 function RankDelta({ delta }: { delta: number }) {
@@ -43,7 +46,7 @@ function RankDelta({ delta }: { delta: number }) {
   return <div className="flex items-center gap-1 rank-same text-sm"><Minus className="w-4 h-4" /></div>;
 }
 
-function RankedCard({ hotel, rank, showExplanation, query }: { hotel: RankedHotel; rank: number; showExplanation?: boolean; query?: string }) {
+function RankedCard({ hotel, rank, showExplanation, query, demoMode }: { hotel: RankedHotel; rank: number; showExplanation?: boolean; query?: string; demoMode?: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const [loadingLlm, setLoadingLlm] = useState(false);
   const [llmExplanation, setLlmExplanation] = useState<string | null>(null);
@@ -63,7 +66,7 @@ function RankedCard({ hotel, rank, showExplanation, query }: { hotel: RankedHote
       const res = await fetch(apiUrl('/api/explain-rank'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, hotelId: hotel.id, delta: hotel.rankDelta }),
+        body: JSON.stringify({ query, hotelId: hotel.id, delta: hotel.rankDelta, demoMode }),
       });
       const data = await res.json();
       setLlmExplanation(data.explanation ?? null);
@@ -151,13 +154,22 @@ function RankedCard({ hotel, rank, showExplanation, query }: { hotel: RankedHote
   );
 }
 
-export default function RankStation({ demoMode, onTopRanked }: RankStationProps) {
+export default function RankStation({ demoMode, onTopRanked, flowRankReveal, onFlowRankRevealConsumed }: RankStationProps) {
   const [query, setQuery] = useState(DEMO_QUERIES[0]);
   const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<RerankResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasLoaded = useRef(false);
+  // Flow player: controls whether the "After Reranking" column is revealed
+  const [revealReranked, setRevealReranked] = useState(false);
+
+  useEffect(() => {
+    if (flowRankReveal === null || flowRankReveal === undefined) return;
+    setRevealReranked(flowRankReveal);
+    onFlowRankRevealConsumed?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowRankReveal]);
 
   const search = async (q = query) => {
     if (!q.trim()) return;
@@ -250,7 +262,7 @@ export default function RankStation({ demoMode, onTopRanked }: RankStationProps)
 
       {results && (
         <LayoutGroup>
-          <div className="grid grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${revealReranked ? 'grid-cols-2' : 'grid-cols-1 max-w-xl'}`}>
             {/* Before column */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 pb-1" style={{ borderBottom: '2px solid var(--elastic-blue)' }}>
@@ -266,22 +278,29 @@ export default function RankStation({ demoMode, onTopRanked }: RankStationProps)
               </div>
             </div>
 
-            {/* After column */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 pb-1" style={{ borderBottom: '2px solid var(--elastic-pink)' }}>
-                <span className="text-sm font-bold" style={{ color: 'var(--elastic-pink)' }}>
-                  ⚡ After Reranking
-                </span>
-                <span className="text-xs ml-auto" style={{ color: 'var(--text-muted)' }}>
-                  {results.rerankTook}ms · Jina v3
-                </span>
-              </div>
-              <div className="space-y-2">
-                {(results.reranked as RankedHotel[] ?? []).slice(0, 8).map((hotel, i) => (
-                  <RankedCard key={hotel.id} hotel={hotel} rank={i + 1} showExplanation query={query} />
-                ))}
-              </div>
-            </div>
+            {/* After column — hidden until flow reveals it */}
+            {revealReranked && (
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="flex items-center gap-2 pb-1" style={{ borderBottom: '2px solid var(--elastic-pink)' }}>
+                  <span className="text-sm font-bold" style={{ color: 'var(--elastic-pink)' }}>
+                    ⚡ After Reranking
+                  </span>
+                  <span className="text-xs ml-auto" style={{ color: 'var(--text-muted)' }}>
+                    {results.rerankTook}ms · Jina v3
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {(results.reranked as RankedHotel[] ?? []).slice(0, 8).map((hotel, i) => (
+                    <RankedCard key={hotel.id} hotel={hotel} rank={i + 1} showExplanation query={query} demoMode={demoMode} />
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </div>
         </LayoutGroup>
       )}

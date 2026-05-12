@@ -9,9 +9,12 @@ interface HeaderProps {
   onToggleTheme: () => void;
   viewMode: 'travel' | 'demo';
   onToggleView: () => void;
+  isFlowing?: boolean;
+  onStartFlow?: () => void;
+  onExitFlow?: () => void;
 }
 
-export default function Header({ demoMode, onToggleDemo, theme, onToggleTheme, viewMode, onToggleView }: HeaderProps) {
+export default function Header({ demoMode, onToggleDemo, theme, onToggleTheme, viewMode, onToggleView, isFlowing, onStartFlow, onExitFlow }: HeaderProps) {
   return (
     <header
       className="flex items-center justify-between px-6 py-4 border-b"
@@ -74,6 +77,21 @@ export default function Header({ demoMode, onToggleDemo, theme, onToggleTheme, v
         >
           {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
+
+        {/* Flow mode button — only in demoMode */}
+        {demoMode && (
+          <button
+            onClick={isFlowing ? onExitFlow : onStartFlow}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all"
+            style={{
+              background: isFlowing ? 'rgba(0,119,204,0.18)' : 'rgba(0,119,204,0.10)',
+              border: `1.5px solid var(--elastic-blue)`,
+              color: 'var(--elastic-blue)',
+            }}
+          >
+            {isFlowing ? '■ EXIT' : '▶ FLOW'}
+          </button>
+        )}
 
         {/* Demo mode toggle */}
         <button

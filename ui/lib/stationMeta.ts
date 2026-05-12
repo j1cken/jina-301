@@ -189,8 +189,8 @@ export const STATION_META: StationMeta[] = [
     lede: 'One embedding model for text, images, audio, and video — the net that catches everything.',
     flow: [],
     wiringNotes: [
-      'jina-embeddings-v5-omni is live on the Jina API — coming to EIS soon',
-      'Same inference_id pattern as other Jina models; existing semantic_text mappings keep working',
+      'Live on EIS as .jina-embeddings-v5-omni-small (1024d cosine) — enable with OMNI_VIA_EIS=true',
+      'EIS input: plain text string OR "data:image/jpeg;base64,..." data URI — not {text/image} objects',
       'Architecture: SigLIP2 (vision) + Whisper-large-v3 (audio) → trained projectors → unchanged v5-text backbone',
     ],
   },
@@ -208,6 +208,17 @@ export const STATION_META: StationMeta[] = [
       'O11y and Security demos simulate the Kibana UI to ground field engineers in familiar tools',
       'Use cases sourced from production deployments: Dynatrace, CrowdStrike, Moogsoft, Elastic Security Labs',
     ],
+  },
+  {
+    id: 'wrapup',
+    label: 'Wrap Up',
+    model: '5 Models',
+    modelFull: 'Reader · Embeddings v5 · Reranker v3 · CLIP v2 · Omni',
+    icon: '🎯',
+    color: '#0077CC',
+    lede: 'The Jina AI + Elastic stack in one view.',
+    flow: [],
+    wiringNotes: [],
   },
 ];
 

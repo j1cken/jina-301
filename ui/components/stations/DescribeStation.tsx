@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, ChevronDown, ChevronUp, Edit2, Check, Upload } from 'lucide-react';
 import JinaCallout from '@/components/JinaCallout';
@@ -248,7 +248,44 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
   const [editing, setEditing] = useState(false);
   const [editDraft, setEditDraft] = useState(DEFAULT_PROMPT);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [coldStartCountdown, setColdStartCountdown] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const coldStartRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const coldStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pendingRetryFnRef = useRef<(() => void) | null>(null);
+
+  const clearColdStartRetry = () => {
+    if (coldStartRetryRef.current) { clearTimeout(coldStartRetryRef.current); coldStartRetryRef.current = null; }
+    if (coldStartIntervalRef.current) { clearInterval(coldStartIntervalRef.current); coldStartIntervalRef.current = null; }
+    setColdStartCountdown(null);
+    pendingRetryFnRef.current = null;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => () => clearColdStartRetry(), []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const scheduleColdStartRetry = (retryFn: () => void) => {
+    clearColdStartRetry();
+    const DELAY = 36;
+    pendingRetryFnRef.current = retryFn;
+    setColdStartCountdown(DELAY);
+    coldStartIntervalRef.current = setInterval(() => {
+      setColdStartCountdown(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(coldStartIntervalRef.current!);
+          coldStartIntervalRef.current = null;
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    coldStartRetryRef.current = setTimeout(() => {
+      coldStartRetryRef.current = null;
+      pendingRetryFnRef.current = null;
+      setColdStart(false);
+      retryFn();
+    }, DELAY * 1000);
+  };
 
   const rawHotels = hotels?.length ? hotels : SAMPLE_HOTELS;
   const seen = new Set<string>();
@@ -260,6 +297,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
   const analyze = async (hotel: Hotel) => {
     if (loading) return;
+    clearColdStartRetry();
     const imageUrl = resolveImageUrl(hotel.image_paths?.[1] ?? hotel.image_paths?.[0]);
     if (!imageUrl) return;
 
@@ -278,6 +316,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
       if (res.status === 502 && data.coldStart) {
         setColdStart(true);
+        scheduleColdStartRetry(() => analyze(hotel));
         return;
       }
 
@@ -307,6 +346,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
       image_paths: [], rating: 0, nearby_landmarks: [],
     };
 
+    clearColdStartRetry();
     setLoading('__upload');
     setColdStart(false);
     setError(null);
@@ -321,6 +361,7 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
 
       if (res.status === 502 && data.coldStart) {
         setColdStart(true);
+        scheduleColdStartRetry(() => analyzeUpload(base64, mime, dataUrl));
         return;
       }
 
@@ -477,8 +518,24 @@ export default function DescribeStation({ demoMode, hotels, onSelectStation, onF
       </div>
 
       {coldStart && (
-        <div data-bp-card="pink" className="p-4 rounded-xl text-sm" style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
-          VLM is warming up (cold start). Retrying in ~30s... or try a different hotel while waiting.
+        <div data-bp-card="pink" className="p-4 rounded-xl text-sm flex items-center justify-between gap-3"
+          style={{ background: 'rgba(240,78,152,0.1)', border: '1px solid rgba(240,78,152,0.3)', color: 'var(--elastic-pink)' }}>
+          <span>
+            VLM warming up (cold start).
+            {coldStartCountdown !== null ? ` Auto-retrying in ${coldStartCountdown}s…` : ' Retrying…'}
+          </span>
+          <button
+            onClick={() => {
+              const fn = pendingRetryFnRef.current;
+              clearColdStartRetry();
+              setColdStart(false);
+              fn?.();
+            }}
+            className="flex-shrink-0 px-3 py-1 rounded-lg text-xs font-semibold"
+            style={{ background: 'var(--elastic-pink)', color: '#fff' }}
+          >
+            Retry now
+          </button>
         </div>
       )}
 
