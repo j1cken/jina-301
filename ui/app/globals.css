@@ -203,6 +203,33 @@ mark {
   -webkit-backdrop-filter: none !important;
 }
 
+/* === OmniStation: always dark, always light text — overrides blueprint === */
+.omni-dark {
+  background: #07101F;
+  color: #F0F4F8;
+  border-radius: 12px;
+  padding: 8px;
+}
+/* Specificity 0,2,1 beats blueprint's 0,1,1 for headings */
+.demo-blueprint .omni-dark h1,
+.demo-blueprint .omni-dark h2,
+.demo-blueprint .omni-dark h3,
+.demo-blueprint .omni-dark h4 {
+  color: inherit !important;
+}
+/* Restore Inter font — blueprint forces IBM Plex Mono on everything */
+.demo-blueprint .omni-dark,
+.demo-blueprint .omni-dark * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+/* Restore border-radius, box-shadow, backdrop-filter killed by blueprint's universal !important */
+.demo-blueprint .omni-dark * {
+  border-radius: revert !important;
+  box-shadow: revert !important;
+  backdrop-filter: revert !important;
+  -webkit-backdrop-filter: revert !important;
+}
+
 /* Force IBM Plex Mono on everything */
 .demo-blueprint,
 .demo-blueprint * {
