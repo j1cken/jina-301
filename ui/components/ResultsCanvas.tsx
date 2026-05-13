@@ -12,7 +12,7 @@ interface ResultsCanvasProps {
   agentHotels?: ChatHotel[];
 }
 
-function SkeletonCard() {
+function _SkeletonCard() {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <div style={{ aspectRatio: '16/9', background: 'var(--bg-surface)' }} className="animate-pulse" />
