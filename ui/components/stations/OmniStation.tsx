@@ -372,7 +372,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   const [audioError, setAudioError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const SAMPLE_IMAGE = '/images/hotels/al-wadi-desert-ras-al-khaimah_1.png';
+  const SAMPLE_IMAGE = '/images/samples/al-wadi-desert-ras-al-khaimah_1.png';
 
   function resizeImageBase64(b64: string, maxDim = 256): Promise<string> {
     return new Promise((resolve) => {
@@ -415,7 +415,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
       if (!imageLive) {
         setImageResults(await runOmni({ query: 'image_demo', liveMode: false }));
       } else {
-        const resp = await fetch(resolveImageUrl(SAMPLE_IMAGE) as string);
+        const resp = await fetch(apiUrl(SAMPLE_IMAGE));
         const buf = await resp.arrayBuffer();
         const bytes = new Uint8Array(buf);
         const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''));
@@ -486,7 +486,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
         <div className="w-[42%] shrink-0 rounded-2xl overflow-hidden" style={{ maxHeight: 320 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={resolveImageUrl('/images/omni/omni-hero.png')}
+            src={apiUrl('/images/omni/omni-hero.png')}
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: '20% 65%' }}

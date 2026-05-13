@@ -41,7 +41,7 @@ const MODELS = [
     api: 'jina-embeddings-v5-omni',
     purpose: 'Text + image + audio + video — one index. Same kNN query, every modality.',
     color: '#10B981',
-    badge: 'Coming to EIS',
+    badge: 'On EIS',
   },
 ];
 
@@ -154,7 +154,7 @@ export default function WrapUpStation() {
           </div>
           <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
             <span style={{ color: '#F04E98' }}>●</span>
-            <span>This app: Horizon demo (ask your SE)</span>
+            <span>This app: Horizon demo — coming to Eden soon</span>
           </div>
         </div>
       </div>

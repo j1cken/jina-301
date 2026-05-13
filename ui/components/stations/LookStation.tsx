@@ -9,10 +9,10 @@ import { resolveImageUrl } from '@/lib/images';
 import { apiUrl } from '@/lib/api';
 
 const EXAMPLE_IMAGES = [
-  { src: '/images/hotels/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
-  { src: '/images/hotels/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
-  { src: '/images/hotels/alpenruh-mountain-lodge-grindelwald_1.png', label: 'Mountain Lodge' },
-  { src: '/images/hotels/durban-beachfront-hotel_1.png', label: 'Beachfront' },
+  { src: '/images/samples/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
+  { src: '/images/samples/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
+  { src: '/images/samples/alpenruh-mountain-lodge-grindelwald_1.png', label: 'Mountain Lodge' },
+  { src: '/images/samples/durban-beachfront-hotel_1.png', label: 'Beachfront' },
 ];
 
 interface LookStationProps {
