@@ -256,7 +256,7 @@ function ModalitySwitcher() {
 }
 
 
-export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
+export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolean }) {
   // Demo card state — each card tracks its own loading/results
   const [textQuery, setTextQuery] = useState('romantic beachfront with private pool villa and spa');
   const [textLoading, setTextLoading] = useState(false);
