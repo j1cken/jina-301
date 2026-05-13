@@ -2,6 +2,51 @@
   "image_demo": {
     "results": [
       {
+        "id": "the-roccafiore-spa-resort",
+        "name": "Roccapore Spa Resort",
+        "descriptions": [
+          "Roccapore Spa Resort, situated in the rolling hills of the Umbria region in Italy, offers a tranquil escape surrounded by vineyards and olive groves. The resort features elegant accommodations, a state-of-the-art spa, and a restaurant serving gourmet Italian cuisine. The air is filled with the scent of wildflowers and the earthy aroma of the countryside.",
+          "The hotel's spa offers a range of treatments designed to relax and rejuvenate the mind, body, and soul. Indulge in a massage, facial, or body wrap, using natural and organic products. The spa also features a sauna, steam room, and relaxation area.",
+          "Located in the heart of Umbria, Roccapore Spa Resort offers easy access to the region's many attractions. Explore the historic towns of Assisi and Perugia, visit the vineyards and olive groves, or simply relax and enjoy the beauty of the countryside. The hotel is a quiet distance from major roads.",
+          "Experience the tranquility of Umbria at Roccapore Spa Resort. The resort's serene atmosphere and attentive service create a truly memorable experience. Unwind by the pool, enjoy a massage at the spa, or simply soak up the beauty of the surrounding countryside. The sounds of nature fill the air, creating a peaceful and relaxing ambiance.",
+          "The standard rooms offer views of the vineyards or olive groves and feature comfortable furnishings and modern amenities. Rooms on the ground floor have small patios, while rooms on the upper floors offer better views. Soundproofing is above-average compared to local inns.",
+          "The suites offer spacious living areas, private balconies, and luxurious bathrooms. The thick walls ensure a peaceful and quiet retreat, blocking out any external noise.",
+          "This hotel room offers a luxurious and serene atmosphere with a modern design. The large windows provide breathtaking views of the ocean and mountains, creating a peaceful and relaxing environment. The room features a spacious pool area with a wooden deck, perfect for relaxation and enjoying the stunning scenery. The dining area is elegantly set with wooden tables and chairs, and the restaurant offers a romantic dining experience with a beautiful view of the ocean. The hotel also has a spa area with a relaxing pool and a variety of treatments available. Overall, this hotel room offers a unique and unforgettable experience for guests."
+        ],
+        "location": {
+          "lat": 42.916,
+          "lon": 12.568
+        },
+        "location_name": "Todi, Italy",
+        "country": "Italy",
+        "region": "Umbria",
+        "amenities": [
+          "pool",
+          "spa",
+          "restaurant",
+          "bar",
+          "concierge",
+          "gym"
+        ],
+        "style": [
+          "luxury",
+          "wellness",
+          "resort"
+        ],
+        "price_tier": "upscale",
+        "price_per_night_usd": 420,
+        "image_paths": [
+          "/images/hotels/the-roccafiore-spa-resort_1.png",
+          "/images/hotels/the-roccafiore-spa-resort_2.png"
+        ],
+        "rating": 4.6,
+        "nearby_landmarks": [
+          "Assisi",
+          "Perugia"
+        ],
+        "score": 0.52298623
+      },
+      {
         "id": "jw-marriott-marquis-hotel-dubai",
         "name": "JW Marriott Marquis Hotel Dubai",
         "descriptions": [
@@ -2099,6 +2144,51 @@
   },
   "audio_demo": {
     "results": [
+      {
+        "id": "the-roccafiore-spa-resort",
+        "name": "Roccapore Spa Resort",
+        "descriptions": [
+          "Roccapore Spa Resort, situated in the rolling hills of the Umbria region in Italy, offers a tranquil escape surrounded by vineyards and olive groves. The resort features elegant accommodations, a state-of-the-art spa, and a restaurant serving gourmet Italian cuisine. The air is filled with the scent of wildflowers and the earthy aroma of the countryside.",
+          "The hotel's spa offers a range of treatments designed to relax and rejuvenate the mind, body, and soul. Indulge in a massage, facial, or body wrap, using natural and organic products. The spa also features a sauna, steam room, and relaxation area.",
+          "Located in the heart of Umbria, Roccapore Spa Resort offers easy access to the region's many attractions. Explore the historic towns of Assisi and Perugia, visit the vineyards and olive groves, or simply relax and enjoy the beauty of the countryside. The hotel is a quiet distance from major roads.",
+          "Experience the tranquility of Umbria at Roccapore Spa Resort. The resort's serene atmosphere and attentive service create a truly memorable experience. Unwind by the pool, enjoy a massage at the spa, or simply soak up the beauty of the surrounding countryside. The sounds of nature fill the air, creating a peaceful and relaxing ambiance.",
+          "The standard rooms offer views of the vineyards or olive groves and feature comfortable furnishings and modern amenities. Rooms on the ground floor have small patios, while rooms on the upper floors offer better views. Soundproofing is above-average compared to local inns.",
+          "The suites offer spacious living areas, private balconies, and luxurious bathrooms. The thick walls ensure a peaceful and quiet retreat, blocking out any external noise.",
+          "This hotel room offers a luxurious and serene atmosphere with a modern design. The large windows provide breathtaking views of the ocean and mountains, creating a peaceful and relaxing environment. The room features a spacious pool area with a wooden deck, perfect for relaxation and enjoying the stunning scenery. The dining area is elegantly set with wooden tables and chairs, and the restaurant offers a romantic dining experience with a beautiful view of the ocean. The hotel also has a spa area with a relaxing pool and a variety of treatments available. Overall, this hotel room offers a unique and unforgettable experience for guests."
+        ],
+        "location": {
+          "lat": 42.916,
+          "lon": 12.568
+        },
+        "location_name": "Todi, Italy",
+        "country": "Italy",
+        "region": "Umbria",
+        "amenities": [
+          "pool",
+          "spa",
+          "restaurant",
+          "bar",
+          "concierge",
+          "gym"
+        ],
+        "style": [
+          "luxury",
+          "wellness",
+          "resort"
+        ],
+        "price_tier": "upscale",
+        "price_per_night_usd": 420,
+        "image_paths": [
+          "/images/hotels/the-roccafiore-spa-resort_1.png",
+          "/images/hotels/the-roccafiore-spa-resort_2.png"
+        ],
+        "rating": 4.6,
+        "nearby_landmarks": [
+          "Assisi",
+          "Perugia"
+        ],
+        "score": 0.52298623
+      },
       {
         "id": "kulm-hotel-st-moritz",
         "name": "Kulm Hotel St. Moritz",

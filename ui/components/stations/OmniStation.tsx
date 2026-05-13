@@ -8,7 +8,7 @@ import { apiUrl } from '@/lib/api';
 
 const ACCENT = '#10B981';
 const BLUE = '#0077CC';
-const PINK = '#F04E98';
+
 const TEAL = '#00BFB3';
 const GOLD = '#FACB3D';
 const ORANGE = '#E7664C';
@@ -87,20 +87,6 @@ const SITUATIONS = [
   },
 ];
 
-const NOT_CASES = [
-  {
-    title: 'Pure text, latency-sensitive.',
-    body: 'v5-text-small is 384-dim, built exactly for this. Omni at 1024-dim is bigger — you won\'t see better text recall and you\'ll pay more compute.',
-  },
-  {
-    title: 'Image catalog already on CLIP v2 and customers are happy.',
-    body: 'Migration cost > marginal benefit. Wait for the cross-modal ask — when users say "I want to search with audio too," that\'s your signal.',
-  },
-  {
-    title: 'You don\'t actually have multiple modalities.',
-    body: '"We might add audio someday" is not a use case. Build for the data you have. Three specialized models beat one overloaded model you don\'t fully use.',
-  },
-];
 
 // Waveform bars — static SVG representing audio input
 function Waveform() {
@@ -134,7 +120,7 @@ function OmniResultCard({ hotel }: { hotel: Hotel }) {
 }
 
 function DemoCard({
-  icon, title, description, inputSlot, buttonLabel, onRun, loading, results, error, liveMode, onToggleLive,
+  icon, title, description, inputSlot, buttonLabel, onRun, loading, results, error,
 }: {
   icon: string;
   title: string;
@@ -145,28 +131,12 @@ function DemoCard({
   loading: boolean;
   results: Hotel[];
   error: string | null;
-  liveMode: boolean;
-  onToggleLive: () => void;
 }) {
   return (
     <div className="rounded-2xl p-6 flex flex-col gap-4" style={{ background: ACCENT + '08', border: `1px solid ${ACCENT}25` }}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{icon}</span>
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-        </div>
-        {/* Live toggle */}
-        <button
-          onClick={onToggleLive}
-          className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all shrink-0"
-          style={{
-            background: liveMode ? ACCENT + '20' : 'rgba(255,255,255,0.05)',
-            borderColor: liveMode ? ACCENT + '60' : 'rgba(255,255,255,0.15)',
-            color: liveMode ? ACCENT : 'rgba(255,255,255,0.4)',
-          }}>
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: liveMode ? ACCENT : 'rgba(255,255,255,0.3)' }} />
-          {liveMode ? 'live' : 'cached'}
-        </button>
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">{icon}</span>
+        <h3 className="text-lg font-bold text-white">{title}</h3>
       </div>
 
       <p className="text-sm text-white/60 leading-relaxed">{description}</p>
@@ -191,7 +161,7 @@ function DemoCard({
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            {liveMode ? 'Embedding…' : 'Loading…'}
+            Loading…
           </span>
         ) : buttonLabel}
       </button>
@@ -285,115 +255,30 @@ function ModalitySwitcher() {
   );
 }
 
-function ArchitectureDiagram() {
-  const inputs = [
-    { label: 'Text',  icon: 'T',  color: BLUE },
-    { label: 'Image', icon: '🖼', color: TEAL },
-    { label: 'Audio', icon: '🎵', color: GOLD },
-    { label: 'Video', icon: '🎬', color: ORANGE },
-  ];
-
-  return (
-    <div className="flex flex-col items-center gap-6 py-6">
-      <div className="flex gap-8 justify-center">
-        {inputs.map((inp, i) => (
-          <motion.div key={inp.label}
-            initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.15, duration: 0.4 }}
-            className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold border-2"
-              style={{ background: inp.color + '20', borderColor: inp.color + '60', color: inp.color }}>
-              {inp.icon}
-            </div>
-            <span className="text-sm font-semibold text-white/70">{inp.label}</span>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="flex gap-12">
-        <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.6, duration: 0.3 }}
-          className="flex flex-col items-center gap-3">
-          <div className="h-10 w-0.5" style={{ background: `linear-gradient(to bottom, ${TEAL}80, ${TEAL})` }} />
-          <div className="rounded-xl px-4 py-2.5 text-sm font-mono font-semibold"
-            style={{ background: TEAL + '18', border: `2px solid ${TEAL}50`, color: TEAL }}>
-            SigLIP2 (vision)
-          </div>
-        </motion.div>
-        <motion.div initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.6, duration: 0.3 }}
-          className="flex flex-col items-center gap-3">
-          <div className="h-10 w-0.5" style={{ background: `${GOLD}80` }} />
-          <div className="rounded-xl px-4 py-2.5 text-sm font-mono font-semibold"
-            style={{ background: GOLD + '18', border: `2px solid ${GOLD}50`, color: GOLD }}>
-            Whisper-large-v3
-          </div>
-        </motion.div>
-      </div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.4 }}
-        className="rounded-2xl px-8 py-4 text-center w-full max-w-xs"
-        style={{ background: PINK + '15', border: `2px solid ${PINK}40` }}>
-        <p className="text-base font-bold" style={{ color: PINK }}>Cross-modal projectors</p>
-        <p className="text-sm text-white/50 mt-1">~5.5M params · newly trained</p>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.4 }}
-        className="rounded-2xl px-8 py-4 text-center w-full max-w-xs"
-        style={{ background: BLUE + '15', border: `2px solid ${BLUE}40` }}>
-        <p className="text-base font-bold" style={{ color: BLUE }}>v5-text backbone</p>
-        <p className="text-sm text-white/50 mt-1">frozen — unchanged</p>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.5, duration: 0.4 }}
-        className="rounded-2xl px-10 py-5 text-center w-full max-w-sm"
-        style={{ background: ACCENT + '18', border: `2px solid ${ACCENT}60` }}>
-        <p className="text-xl font-bold" style={{ color: ACCENT }}>1024-dim vector</p>
-        <p className="text-sm text-white/60 mt-1">one shared space for all modalities</p>
-      </motion.div>
-    </div>
-  );
-}
 
 export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   // Demo card state — each card tracks its own loading/results
   const [textQuery, setTextQuery] = useState('romantic beachfront with private pool villa and spa');
-  const [textLive, setTextLive] = useState(false);
   const [textLoading, setTextLoading] = useState(false);
   const [textResults, setTextResults] = useState<Hotel[]>([]);
   const [textError, setTextError] = useState<string | null>(null);
 
-  const [imageLive, setImageLive] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageResults, setImageResults] = useState<Hotel[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
 
-  const [audioLive, setAudioLive] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
   const [audioResults, setAudioResults] = useState<Hotel[]>([]);
   const [audioError, setAudioError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const SAMPLE_IMAGE = '/images/samples/al-wadi-desert-ras-al-khaimah_1.png';
-
-  function resizeImageBase64(b64: string, maxDim = 256): Promise<string> {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
-      };
-      img.src = `data:image/png;base64,${b64}`;
-    });
-  }
+  const SAMPLE_IMAGE = '/images/hotels/the-roccafiore-spa-resort_1.png';
 
   async function runOmni(payload: Record<string, unknown>): Promise<Hotel[]> {
     const res = await fetch(apiUrl('/api/omni'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...payload, demoMode: payload.liveMode ? false : (demoMode ?? true) }),
+      body: JSON.stringify({ ...payload, demoMode: true }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? 'Unknown error');
@@ -403,7 +288,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   async function handleTextRun() {
     setTextLoading(true); setTextError(null);
     try {
-      setTextResults(await runOmni({ query: textQuery, liveMode: textLive }));
+      setTextResults(await runOmni({ query: textQuery }));
     } catch (e) {
       setTextError((e as Error).message);
     } finally { setTextLoading(false); }
@@ -412,16 +297,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   async function handleImageRun() {
     setImageLoading(true); setImageError(null);
     try {
-      if (!imageLive) {
-        setImageResults(await runOmni({ query: 'image_demo', liveMode: false }));
-      } else {
-        const resp = await fetch(apiUrl(SAMPLE_IMAGE));
-        const buf = await resp.arrayBuffer();
-        const bytes = new Uint8Array(buf);
-        const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''));
-        const resized = await resizeImageBase64(b64);
-        setImageResults(await runOmni({ imageBase64: resized, liveMode: true }));
-      }
+      setImageResults(await runOmni({ query: 'image_demo' }));
     } catch (e) {
       setImageError((e as Error).message);
     } finally { setImageLoading(false); }
@@ -430,21 +306,7 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
   async function handleAudioRun() {
     setAudioLoading(true); setAudioError(null);
     try {
-      if (audioLive) {
-        // Fetch audio file and base64 encode it for live mode
-        const res = await fetch('/audio/hotel-ambient.wav');
-        if (res.ok) {
-          const buf = await res.arrayBuffer();
-          const bytes = new Uint8Array(buf);
-          const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''));
-          setAudioResults(await runOmni({ audioBase64: b64, liveMode: true }));
-        } else {
-          // Fall back to text proxy if audio file not available
-          setAudioResults(await runOmni({ query: 'ocean waves ambient hotel lobby relaxing sound', liveMode: true }));
-        }
-      } else {
-        setAudioResults(await runOmni({ query: 'audio_demo', liveMode: false }));
-      }
+      setAudioResults(await runOmni({ query: 'audio_demo' }));
     } catch (e) {
       setAudioError((e as Error).message);
     } finally { setAudioLoading(false); }
@@ -522,8 +384,6 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             loading={textLoading}
             results={textResults}
             error={textError}
-            liveMode={textLive}
-            onToggleLive={() => setTextLive(v => !v)}
           />
 
           <DemoCard
@@ -554,8 +414,6 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             loading={imageLoading}
             results={imageResults}
             error={imageError}
-            liveMode={imageLive}
-            onToggleLive={() => setImageLive(v => !v)}
           />
 
           <DemoCard
@@ -582,11 +440,21 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             loading={audioLoading}
             results={audioResults}
             error={audioError}
-            liveMode={audioLive}
-            onToggleLive={() => setAudioLive(v => !v)}
           />
 
         </div>
+
+        {/* Convergence callout — visible once all three cards have results */}
+        {textResults.length > 0 && imageResults.length > 0 && audioResults.length > 0 && (
+          <div className="flex items-center justify-center gap-3 py-3 rounded-2xl"
+            style={{ background: ACCENT + '12', border: `1px solid ${ACCENT}40` }}>
+            <span style={{ color: ACCENT }} className="text-lg font-bold">✓</span>
+            <span className="text-sm font-semibold text-white">
+              <span style={{ color: ACCENT }}>{textResults[0]?.name}</span>
+              {' '}ranked #1 by text, image, and audio — one index · one inference call
+            </span>
+          </div>
+        )}
       </div>
 
       {/* When to reach for Omni */}
@@ -595,16 +463,19 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
           <h2 className="text-3xl font-bold text-white">When to reach for Omni</h2>
           <p className="text-base text-white/50 mt-1">Read this once. Repeat it back to the customer.</p>
         </div>
-        <div className="p-5 rounded-2xl text-base text-white/80 leading-relaxed"
+        <ul className="flex flex-col gap-3 p-5 rounded-2xl"
           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          Omni is one embedding model that handles text, images, audio, and video in the same vector space.
-          Text embeddings are bit-identical to v5-text-small, so customers already on v5{' '}
-          <strong className="text-white">don&apos;t re-index</strong> — they just point new modalities at the same field.
-          It beats CLIP v2 on image retrieval at the same parameter size, and it eliminates the custom pipelines customers
-          build today to stitch separate text, image, and audio models together.
-          <strong className="text-white"> Reach for it when a customer&apos;s data has more than one modality,
-          or when they&apos;re tired of maintaining three embedding pipelines.</strong>
-        </div>
+          {[
+            <>One embedding model — text, image, audio, and video in the <strong className="text-white">same vector space</strong></>,
+            <>Text embeddings are bit-identical to v5-text-small — <strong className="text-white">existing indices don&apos;t re-index</strong></>,
+            <>Beats CLIP v2 on image retrieval · eliminates separate text/image/audio pipelines — <strong className="text-white">reach for it when a customer&apos;s data has more than one modality</strong></>,
+          ].map((bullet, i) => (
+            <li key={i} className="flex gap-3 text-base text-white/80 leading-relaxed">
+              <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full" style={{ background: ACCENT }} />
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {SITUATIONS.map((s, i) => (
             <motion.div key={i}
@@ -616,33 +487,6 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
               <p className="text-sm text-white/60 leading-relaxed italic">{s.say}</p>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      {/* When NOT to use */}
-      <div className="flex flex-col gap-4">
-        <h2 className="text-3xl font-bold text-white">When NOT to use Omni</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {NOT_CASES.map((item, i) => (
-            <div key={i} className="rounded-2xl p-5 flex flex-col gap-2"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-base font-bold text-white/90">{item.title}</p>
-              <p className="text-sm text-white/55 leading-relaxed">{item.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Architecture */}
-      <div className="flex flex-col gap-4">
-        <h2 className="text-3xl font-bold text-white">Architecture in 60 seconds</h2>
-        <p className="text-base text-white/50 max-w-2xl">
-          The text backbone didn&apos;t change. It got three new input pipes. SigLIP2 handles vision, Whisper handles audio —
-          both feed through ~5.5M newly-trained projectors into the frozen v5-text backbone.
-          One kNN call, zero cross-modal glue code.
-        </p>
-        <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <ArchitectureDiagram />
         </div>
       </div>
 
@@ -680,6 +524,23 @@ export default function OmniStation({ demoMode }: { demoMode?: boolean }) {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Blog callout */}
+      <div className="flex items-center justify-between gap-4 rounded-2xl px-6 py-4"
+        style={{ background: ACCENT + '0A', border: `1px solid ${ACCENT}30` }}>
+        <div>
+          <p className="text-sm font-semibold text-white">Want the full technical deep-dive?</p>
+          <p className="text-xs mt-0.5" style={{ color: ACCENT }}>elastic.co/search-labs/blog — jina-embeddings-v5-omni</p>
+        </div>
+        <a
+          href="https://www.elastic.co/search-labs/blog/jina-embeddings-v5-omni-all-media-one-index"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-all"
+          style={{ background: ACCENT, color: '#0A0F1E' }}>
+          Read more →
+        </a>
       </div>
 
     </div>

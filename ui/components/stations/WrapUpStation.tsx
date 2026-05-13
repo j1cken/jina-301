@@ -7,7 +7,7 @@ const MODELS = [
     icon: '🌐',
     name: 'Jina Reader',
     api: 'r.jina.ai',
-    purpose: 'Fetches any URL → clean markdown. Feeds Elasticsearch at index time — zero parsing code.',
+    bullets: ['URL → clean markdown', 'Zero parse code'],
     color: '#FEC514',
     badge: 'Direct API',
   },
@@ -15,7 +15,7 @@ const MODELS = [
     icon: '🔍',
     name: 'Embeddings v5',
     api: '.jina-embeddings-v5-text-small',
-    purpose: 'Default inference endpoint for semantic_text. Dense semantic vectors powering kNN search. Multilingual. 8 192-token context. 384 dims.',
+    bullets: ['Default semantic_text endpoint', 'kNN · multilingual · 384 dims'],
     color: '#0077CC',
     badge: 'On EIS',
   },
@@ -23,7 +23,7 @@ const MODELS = [
     icon: '⚡',
     name: 'Reranker v3',
     api: '.jina-reranker-v3',
-    purpose: 'Reads query + full document together. Catches nuance vectors miss — promotions show it.',
+    bullets: ['Cross-attention precision', 'Catches what vectors miss'],
     color: '#F04E98',
     badge: 'On EIS',
   },
@@ -31,7 +31,7 @@ const MODELS = [
     icon: '📷',
     name: 'CLIP v2',
     api: '.jina-clip-v2',
-    purpose: 'Text ↔ image in one vector space. Upload a photo, find hotels that look like it.',
+    bullets: ['Text + image, one space', 'Search by photo'],
     color: '#00BFB3',
     badge: 'On EIS',
   },
@@ -39,7 +39,7 @@ const MODELS = [
     icon: '🌐',
     name: 'Omni v5',
     api: 'jina-embeddings-v5-omni',
-    purpose: 'Text + image + audio + video — one index. Same kNN query, every modality.',
+    bullets: ['All 4 modalities, one index', 'No re-indexing needed', 'Beats CLIP v2 on images'],
     color: '#10B981',
     badge: 'On EIS',
   },
@@ -49,19 +49,19 @@ const TAKEAWAYS = [
   {
     num: '01',
     headline: 'Jina on EIS — new defaults',
-    body: 'Five specialized models, one Inference Service. Embeddings v5 is the default endpoint for semantic_text. Reranker v3 adds cross-attention precision. Neither requires custom ML work.',
+    bullets: ['5 models · one Inference Service', 'v5 = default semantic_text', 'v3 = cross-attention precision'],
     color: '#0077CC',
   },
   {
     num: '02',
-    headline: 'Omni — one model, every modality',
-    body: 'One kNN query covers text, images, audio, and video. Same index, same pipeline, same search syntax. No separate embedding pipeline per modality.',
+    headline: 'Omni — one index, every modality',
+    bullets: ['Text vectors = v5-text-small (zero re-index)', 'Audio + image + video → same EIS endpoint', 'Outperforms CLIP v2 on images'],
     color: '#00BFB3',
   },
   {
     num: '03',
     headline: 'Agent-ready from day one',
-    body: 'Every Jina model on EIS is a tool the Elastic Agent Builder can call. Semantic search becomes an agentic skill.',
+    bullets: ['Every model is an Agent tool', 'Search becomes an agentic skill'],
     color: '#F04E98',
   },
 ];
@@ -92,7 +92,7 @@ export default function WrapUpStation() {
 
       {/* Model cards */}
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)', letterSpacing: '0.14em' }}>
+        <p className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)', letterSpacing: '0.14em' }}>
           The Stack
         </p>
         <div className="grid gap-3 md:grid-cols-5">
@@ -101,16 +101,22 @@ export default function WrapUpStation() {
               style={{ background: 'var(--bg-card)', border: `1.5px solid ${m.color}30` }}>
               <div className="flex items-start justify-between gap-1">
                 <span className="text-2xl">{m.icon}</span>
-                <span className="text-xs px-1.5 py-0.5 rounded font-semibold"
+                <span className="text-sm px-1.5 py-0.5 rounded font-semibold"
                   style={{ background: m.color + '18', color: m.color }}>
                   {m.badge}
                 </span>
               </div>
               <div>
-                <p className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>{m.name}</p>
-                <p className="text-xs font-mono mt-0.5" style={{ color: m.color }}>{m.api}</p>
+                <p className="font-bold text-xl" style={{ color: 'var(--text-primary)' }}>{m.name}</p>
+                <p className="text-sm font-mono mt-0.5" style={{ color: m.color }}>{m.api}</p>
               </div>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{m.purpose}</p>
+              <ul className="flex flex-col gap-1">
+                {m.bullets.map((b, i) => (
+                  <li key={i} className="text-base leading-snug flex gap-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    <span style={{ color: m.color }}>·</span>{b}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -118,16 +124,22 @@ export default function WrapUpStation() {
 
       {/* Takeaways */}
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)', letterSpacing: '0.14em' }}>
+        <p className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)', letterSpacing: '0.14em' }}>
           Three Things to Remember
         </p>
         <div className="grid gap-4 md:grid-cols-3">
           {TAKEAWAYS.map(t => (
             <div key={t.num} className="rounded-xl p-5 flex flex-col gap-3"
               style={{ background: 'var(--bg-card)', border: `1.5px solid ${t.color}30`, borderLeft: `4px solid ${t.color}` }}>
-              <span className="text-3xl font-black" style={{ color: t.color + '50' }}>{t.num}</span>
-              <h3 className="text-base font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>{t.headline}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t.body}</p>
+              <span className="text-4xl font-black" style={{ color: t.color + '50' }}>{t.num}</span>
+              <h3 className="text-2xl font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>{t.headline}</h3>
+              <ul className="flex flex-col gap-2">
+                {t.bullets.map((b, i) => (
+                  <li key={i} className="text-lg leading-snug flex gap-2" style={{ color: 'var(--text-secondary)' }}>
+                    <span style={{ color: t.color }}>·</span>{b}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -143,7 +155,7 @@ export default function WrapUpStation() {
             Search for <code className="px-1 rounded text-xs" style={{ background: 'var(--bg-surface)' }}>jina</code> in the Elastic documentation or visit <strong>jina.ai</strong> for model benchmarks.
           </p>
         </div>
-        <div className="flex flex-col gap-2 text-sm flex-shrink-0">
+        <div className="flex flex-col gap-2 text-base flex-shrink-0">
           <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
             <span style={{ color: '#0077CC' }}>●</span>
             <span>elastic.co/docs — Inference API</span>
@@ -152,6 +164,15 @@ export default function WrapUpStation() {
             <span style={{ color: '#10B981' }}>●</span>
             <span>jina.ai — Embeddings v5 + Omni</span>
           </div>
+          <a
+            href="https://www.elastic.co/search-labs/blog/jina-embeddings-v5-omni-all-media-one-index"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--text-secondary)' }}>
+            <span style={{ color: '#10B981' }}>●</span>
+            <span>Search Labs blog — jina-embeddings-v5-omni deep dive</span>
+          </a>
           <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
             <span style={{ color: '#F04E98' }}>●</span>
             <span>This app: Horizon demo — coming to Eden soon</span>
