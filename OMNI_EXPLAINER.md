@@ -12,6 +12,27 @@ Most approaches solve this by training all encoders jointly from scratch — whi
 
 ---
 
+### What "projectors" actually are
+
+A **projector** (or projection head) is a small neural network — usually just a few linear layers — that maps one embedding space into another.
+
+The problem: SigLIP2 produces image vectors in its own space, Whisper produces audio vectors in its own space. Neither is compatible with v5-text's space — they were trained on completely different objectives with different data.
+
+A projector learns a transformation: *given a vector from space A, output a vector in space B.*
+
+For Omni specifically:
+- **Image projector**: SigLIP2 image vector → 1024-dim vector in v5-text coordinate system
+- **Audio projector**: Whisper audio vector → 1024-dim vector in v5-text coordinate system
+
+What makes this approach notable:
+1. **They're tiny** — only ~5.5M parameters total. The underlying encoders (SigLIP2 = billions of params, Whisper-large = 1.5B) stay frozen. You train a small adapter at the end, not the whole stack.
+2. **The target space is fixed** — v5-text backbone is frozen, so projectors must map *into* an already-settled geometry. Harder than joint training, but it's exactly what guarantees text vectors stay bit-identical.
+3. **The training signal** — feed matched pairs (hotel photo + text description of that hotel), and the loss pushes the projected image vector to land near the text vector in v5 space. Same for audio.
+
+**FE line**: *"Think of projectors as translators that learned to speak v5-text's language, so images and audio can be looked up in the same index as your existing text documents."*
+
+---
+
 ### The bit-identical claim is the commercial unlock
 
 FEs see customers stall on model upgrades constantly. The reason is almost never quality — it's **migration cost**. A customer with 50M documents on v5-text-small has, somewhere in Jira, a ticket called "evaluate new model" that nobody wants to touch. Re-indexing means: re-running inference (real cost), double-storing vectors during cutover, a parallel write path, A/B testing quality, retraining downstream rerankers, recalibrating personalization layers. All-in: often six figures and three months. So they don't do it.
@@ -144,7 +165,7 @@ POST /_inference/embedding/.jina-embeddings-v5-omni-small
 
 ### All modalities confirmed working via EIS (tested 2026-05-13)
 
-**Audio works through EIS** — same pattern as images, base64 data URI in the `input` field.
+**All 4 modalities work through EIS** — same pattern for all: base64 data URI in the `input` field.
 Use `/_inference/embedding/` (not `text_embedding/`).
 
 ```bash
@@ -156,12 +177,16 @@ POST /_inference/embedding/.jina-embeddings-v5-omni-small
 POST /_inference/embedding/.jina-embeddings-v5-omni-small
 { "input": ["data:image/png;base64,<base64>"] }
 
-# Audio
+# Audio — you do NOT need to pre-cut; model handles 30s segmentation internally
 POST /_inference/embedding/.jina-embeddings-v5-omni-small
 { "input": ["data:audio/wav;base64,<base64>"] }
+
+# Video — just base64 the MP4 and go; model extracts up to 32 frames automatically
+POST /_inference/embedding/.jina-embeddings-v5-omni-small
+{ "input": ["data:video/mp4;base64,<base64>"] }
 ```
 
-All three return a **1024-dim vector**. Cross-modal cosine similarity works as expected
+All four return a **1024-dim vector**. Cross-modal cosine similarity works as expected
 (casino text scores higher against a Vegas hotel image than beach text does).
 
 **Python example — embed an audio file via EIS:**

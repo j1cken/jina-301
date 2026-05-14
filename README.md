@@ -156,43 +156,61 @@ Run `make fallbacks` before the event to capture fresh responses.
 
 ## Setup & Running
 
-### Prerequisites
+### Quickstart (recommended)
+
+```bash
+make wizard     # Interactive setup — checks prereqs, configures env, indexes data
+```
+
+The wizard walks you through everything: prerequisites, credentials, Elasticsearch connectivity, EIS endpoint validation, dependency install, and data indexing. Re-run anytime:
+
+```bash
+./scripts/setup.sh --reconfigure    # Update credentials only
+./scripts/setup.sh --skip-install   # Skip npm/uv install
+./scripts/setup.sh --skip-index     # Skip data indexing
+```
+
+---
+
+### Manual Setup
+
+#### Prerequisites
 - Node.js 18+, Python 3.11+
-- `uv` for Python venv management
-- `nano-banana` CLI (`bun install -g nano-banana`)
-- Elastic Cloud Serverless project with EIS enabled
-- Jina AI API key
-- Google Cloud project with Vertex AI enabled and ADC configured (`gcloud auth application-default login`)
+- [`uv`](https://astral.sh/uv) for Python venv management (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
+- Elastic Cloud Serverless or Cloud Hosted project with EIS enabled
+  - Required inference endpoints: `.jina-embeddings-v5-text-small`, `.jina-reranker-v3`
+  - These are pre-provisioned — check Kibana → Machine Learning → Inference Endpoints
+- Jina AI API key — [jina.ai](https://jina.ai) (free tier available)
+- `nano-banana` CLI — only needed if regenerating hotel images (`bun install -g nano-banana`)
 
-### Environment
+#### Environment
 Copy `.env.example` to `ui/.env.local` and fill in:
-```
-ELASTICSEARCH_URL=
-ELASTICSEARCH_API_KEY=
-JINA_API_KEY=
-GEMINI_API_KEY=         # For nano-banana image generation only
+
+| Variable | Required | Description |
+|---|---|---|
+| `JINA_API_KEY` | ✅ | Jina AI API key — Reader, CLIP, VLM |
+| `ELASTICSEARCH_URL` | ✅ | Elastic Cloud endpoint |
+| `ELASTICSEARCH_API_KEY` | ✅ | Elastic Cloud API key |
+| `KIBANA_URL` | Agent station | Kibana endpoint (same project) |
+| `KIBANA_API_KEY` | Agent station | Kibana API key |
+| `GEMINI_API_KEY` | Image gen only | Only needed to re-run `make images` |
+| `CLIP_VIA_EIS` | — | Route CLIP through EIS (default: `true`) |
+| `OMNI_VIA_EIS` | — | Route Omni through EIS (default: `true`) |
+
+#### Install & Run
+```bash
+make install    # Node.js dependencies
+make setup      # Python venv + dependencies
+make index      # Index pre-built hotel data into Elasticsearch (~3–5 min)
+make dev        # Start Next.js at http://localhost:3000
+make fallbacks  # Capture fallback responses for offline mode
 ```
 
-### One-Time Setup
+#### Generate Data from Scratch (~45 min)
 ```bash
-make setup      # Create Python venv, install dependencies
-make install    # Install Node dependencies
-```
-
-### Generate Data (Full Pipeline)
-```bash
-make all-data   # hotels → images → index (takes ~30-60 min)
-```
-
-Or generate a quick sample to verify the pipeline first:
-```bash
-make sample-data  # 2 hotels/region, 10 images, index 10
-```
-
-### Run the Demo
-```bash
-make dev        # Starts Next.js at http://localhost:3000
-make fallbacks  # Capture fallback responses (run before the event)
+make all-data   # hotels → images → describe → index
+# or
+make sample-data  # 2 hotels/region, 10 images — quick smoke test
 ```
 
 ---

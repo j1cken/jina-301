@@ -104,15 +104,15 @@ function Waveform() {
 function OmniResultCard({ hotel }: { hotel: Hotel }) {
   const img = hotel.image_paths?.[0];
   return (
-    <div className="flex gap-3 rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+    <div className="flex gap-3 rounded-xl p-3" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
       {img && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={resolveImageUrl(img) ?? img} alt="" className="w-16 h-14 object-cover rounded-lg shrink-0"
           onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
       )}
       <div className="flex flex-col justify-center gap-0.5 min-w-0">
-        <p className="text-sm font-semibold text-white truncate">{hotel.name}</p>
-        <p className="text-xs text-white/50 truncate">{hotel.location_name}, {hotel.country}</p>
+        <p className="text-sm font-semibold truncate">{hotel.name}</p>
+        <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{hotel.location_name}, {hotel.country}</p>
         <p className="text-xs font-mono" style={{ color: ACCENT }}>${hotel.price_per_night_usd}/night</p>
       </div>
     </div>
@@ -136,13 +136,13 @@ function DemoCard({
     <div className="rounded-2xl p-6 flex flex-col gap-4" style={{ background: ACCENT + '08', border: `1px solid ${ACCENT}25` }}>
       <div className="flex items-center gap-2">
         <span className="text-2xl">{icon}</span>
-        <h3 className="text-lg font-bold text-white">{title}</h3>
+        <h3 className="text-lg font-bold">{title}</h3>
       </div>
 
-      <p className="text-sm text-white/60 leading-relaxed">{description}</p>
+      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{description}</p>
 
       {/* Input area */}
-      <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="rounded-xl p-4" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {inputSlot}
       </div>
 
@@ -152,7 +152,7 @@ function DemoCard({
         className="w-full py-3 rounded-xl font-bold text-base transition-all"
         style={{
           background: loading ? ACCENT + '30' : ACCENT,
-          color: loading ? 'rgba(255,255,255,0.5)' : '#0A0F1E',
+          color: loading ? 'var(--text-muted)' : '#0A0F1E',
           cursor: loading ? 'not-allowed' : 'pointer',
         }}>
         {loading ? (
@@ -174,7 +174,7 @@ function DemoCard({
         {results.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="flex flex-col gap-2">
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide">
+            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-muted)', opacity: 0.7 }}>
               {results.length} matches · one index · one inference call
             </p>
             {results.slice(0, 3).map(h => <OmniResultCard key={h.id} hotel={h} />)}
@@ -200,10 +200,10 @@ function ModalitySwitcher() {
   const withoutCount = activeModels.length;
 
   return (
-    <div className="rounded-2xl p-6 flex flex-col gap-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div className="rounded-2xl p-6 flex flex-col gap-5" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
       <div>
-        <h3 className="text-2xl font-bold text-white mb-1">Modality Switcher</h3>
-        <p className="text-lg text-white/70">Query: <span className="text-white/90 italic">&ldquo;romantic beachfront with private pool villa and spa&rdquo;</span> — toggle which input types you have</p>
+        <h3 className="text-2xl font-bold mb-1">Modality Switcher</h3>
+        <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Query: <span className="italic" style={{ color: 'var(--text-primary)' }}>&ldquo;romantic beachfront with private pool villa and spa&rdquo;</span> — toggle which input types you have</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -211,9 +211,9 @@ function ModalitySwitcher() {
           <button key={m.id} onClick={() => toggle(m.id)}
             className="min-h-[56px] px-5 py-3 rounded-xl border text-lg font-semibold transition-all"
             style={{
-              background: active.includes(m.id) ? m.color : 'rgba(255,255,255,0.05)',
-              borderColor: active.includes(m.id) ? m.color : 'rgba(255,255,255,0.15)',
-              color: active.includes(m.id) ? '#0A0F1E' : 'rgba(255,255,255,0.5)',
+              background: active.includes(m.id) ? m.color : 'var(--bg-card)',
+              borderColor: active.includes(m.id) ? m.color : 'var(--border)',
+              color: active.includes(m.id) ? '#0A0F1E' : 'var(--text-muted)',
             }}>
             {m.label}
           </button>
@@ -236,7 +236,7 @@ function ModalitySwitcher() {
               </motion.div>
             ))}
           </AnimatePresence>
-          <div className="text-base text-white/70 mt-1">
+          <div className="text-base mt-1" style={{ color: 'var(--text-secondary)' }}>
             {withoutCount} model{withoutCount !== 1 ? 's' : ''} · {withoutCount} index{withoutCount !== 1 ? 'es' : ''} · {withoutCount > 1 ? 'fusion layer required' : 'standard'}
           </div>
         </div>
@@ -329,14 +329,14 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
               Drop-in for v5-text indices
             </span>
           </div>
-          <h1 className="text-5xl font-black text-white leading-tight tracking-tight">
+          <h1 className="text-5xl font-black leading-tight tracking-tight">
             ONE MODEL.<br />EVERY MODALITY.
           </h1>
           <div className="flex flex-col gap-2">
-            <p className="text-lg text-white/80 leading-relaxed">
-              Omni handles text, images, audio, and video in the same vector space. Text embeddings are identical to v5-text — <strong className="text-white">existing indices don&apos;t need rebuilding</strong>.
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Omni handles text, images, audio, and video in the same vector space. Text embeddings are identical to v5-text — <strong style={{ color: 'var(--text-primary)' }}>existing indices don&apos;t need rebuilding</strong>.
             </p>
-            <p className="text-lg text-white/80 leading-relaxed">
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               One inference call. One index. No fusion code.
             </p>
             <p className="text-base" style={{ color: ACCENT }}>
@@ -361,8 +361,8 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
 
       {/* Live Demo Cards */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-3xl font-bold text-white">Omni in action</h2>
-        <p className="text-base text-white/50">Three ways to query the same index — text, image, audio — one model handles all of them.</p>
+        <h2 className="text-3xl font-bold">Omni in action</h2>
+        <p className="text-base" style={{ color: 'var(--text-muted)' }}>Three ways to query the same index — text, image, audio — one model handles all of them.</p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
           <DemoCard
@@ -375,7 +375,7 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
                 onChange={e => setTextQuery(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleTextRun(); } }}
                 rows={2}
-                className="w-full bg-transparent text-base text-white outline-none placeholder-white/30 resize-none"
+                className="w-full bg-transparent text-base outline-none resize-none omni-textarea-placeholder"
                 placeholder="describe what you're looking for…"
               />
             }
@@ -430,7 +430,7 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
                     style={{ background: GOLD + '20', color: GOLD, border: `1px solid ${GOLD}40` }}>
                     ▶ play clip
                   </button>
-                  <span className="text-xs text-white/30 font-mono">hotel-ambient.wav · 5s</span>
+                  <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>hotel-ambient.wav · 5s</span>
                   <audio ref={audioRef} src="/audio/hotel-ambient.wav" preload="none" />
                 </div>
               </div>
@@ -449,7 +449,7 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
           <div className="flex items-center justify-center gap-3 py-3 rounded-2xl"
             style={{ background: ACCENT + '12', border: `1px solid ${ACCENT}40` }}>
             <span style={{ color: ACCENT }} className="text-lg font-bold">✓</span>
-            <span className="text-sm font-semibold text-white">
+            <span className="text-sm font-semibold">
               <span style={{ color: ACCENT }}>{textResults[0]?.name}</span>
               {' '}ranked #1 by text, image, and audio — one index · one inference call
             </span>
@@ -460,17 +460,17 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
       {/* When to reach for Omni */}
       <div className="flex flex-col gap-5">
         <div>
-          <h2 className="text-3xl font-bold text-white">When to reach for Omni</h2>
-          <p className="text-base text-white/50 mt-1">Read this once. Repeat it back to the customer.</p>
+          <h2 className="text-3xl font-bold">When to reach for Omni</h2>
+          <p className="text-base mt-1" style={{ color: 'var(--text-muted)' }}>Read this once. Repeat it back to the customer.</p>
         </div>
         <ul className="flex flex-col gap-3 p-5 rounded-2xl"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
           {[
-            <>One embedding model — text, image, audio, and video in the <strong className="text-white">same vector space</strong></>,
-            <>Text embeddings are bit-identical to v5-text-small — <strong className="text-white">existing indices don&apos;t re-index</strong></>,
-            <>Beats CLIP v2 on image retrieval · eliminates separate text/image/audio pipelines — <strong className="text-white">reach for it when a customer&apos;s data has more than one modality</strong></>,
+            <>One embedding model — text, image, audio, and video in the <strong style={{ color: 'var(--text-primary)' }}>same vector space</strong></>,
+            <>Text embeddings are bit-identical to v5-text-small — <strong style={{ color: 'var(--text-primary)' }}>existing indices don&apos;t re-index</strong></>,
+            <>Beats CLIP v2 on image retrieval · eliminates separate text/image/audio pipelines — <strong style={{ color: 'var(--text-primary)' }}>reach for it when a customer&apos;s data has more than one modality</strong></>,
           ].map((bullet, i) => (
-            <li key={i} className="flex gap-3 text-base text-white/80 leading-relaxed">
+            <li key={i} className="flex gap-3 text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full" style={{ background: ACCENT }} />
               <span>{bullet}</span>
             </li>
@@ -481,10 +481,10 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
             <motion.div key={i}
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
               className="rounded-2xl p-5 flex flex-col gap-3"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
               <div className="flex gap-1 text-2xl">{s.icon}{s.icon2}</div>
-              <p className="text-base font-semibold text-white leading-snug">{s.title}</p>
-              <p className="text-sm text-white/60 leading-relaxed italic">{s.say}</p>
+              <p className="text-base font-semibold leading-snug">{s.title}</p>
+              <p className="text-sm leading-relaxed italic" style={{ color: 'var(--text-muted)' }}>{s.say}</p>
             </motion.div>
           ))}
         </div>
@@ -492,23 +492,23 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
 
       {/* Model comparison table */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-3xl font-bold text-white">Model comparison</h2>
-        <p className="text-sm text-white/40">Frontier-class performance in a compact footprint. Drops into existing v5-text pipelines without re-indexing. Screenshot this for the &ldquo;which model?&rdquo; conversation.</p>
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
+        <h2 className="text-3xl font-bold">Model comparison</h2>
+        <p className="text-sm" style={{ color: 'var(--text-muted)', opacity: 0.7 }}>Frontier-class performance in a compact footprint. Drops into existing v5-text pipelines without re-indexing. Screenshot this for the &ldquo;which model?&rdquo; conversation.</p>
+        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.08)', borderBottom: '2px solid rgba(255,255,255,0.15)' }}>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Model</th>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Modalities</th>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Dims</th>
-                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide text-white">Use when</th>
+              <tr style={{ background: 'var(--bg-card-hover)', borderBottom: '2px solid var(--border)' }}>
+                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide">Model</th>
+                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide">Modalities</th>
+                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide">Dims</th>
+                <th className="text-left px-5 py-4 text-sm font-bold uppercase tracking-wide">Use when</th>
               </tr>
             </thead>
             <tbody>
               {MODELS.map((m, i) => (
                 <tr key={m.id}
                   style={{
-                    borderBottom: i < MODELS.length - 1 ? '1px solid rgba(255,255,255,0.07)' : undefined,
+                    borderBottom: i < MODELS.length - 1 ? '1px solid var(--border)' : undefined,
                     background: m.highlight ? ACCENT + '0C' : undefined,
                   }}>
                   <td className="px-5 py-4">
@@ -516,9 +516,9 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
                     {m.highlight && <span className="ml-2 text-xs px-1.5 py-0.5 rounded font-semibold"
                       style={{ background: ACCENT + '25', color: ACCENT }}>new</span>}
                   </td>
-                  <td className="px-5 py-4 text-sm text-white/80">{m.modalities}</td>
-                  <td className="px-5 py-4 text-sm font-mono text-white/70">{m.dims}</td>
-                  <td className="px-5 py-4 text-sm text-white/80 leading-relaxed">{m.when}</td>
+                  <td className="px-5 py-4 text-sm" style={{ color: 'var(--text-secondary)' }}>{m.modalities}</td>
+                  <td className="px-5 py-4 text-sm font-mono" style={{ color: 'var(--text-muted)' }}>{m.dims}</td>
+                  <td className="px-5 py-4 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{m.when}</td>
                 </tr>
               ))}
             </tbody>
@@ -530,17 +530,15 @@ export default function OmniStation({ demoMode: _demoMode }: { demoMode?: boolea
       <div className="flex items-center justify-between gap-4 rounded-2xl px-6 py-4"
         style={{ background: ACCENT + '0A', border: `1px solid ${ACCENT}30` }}>
         <div>
-          <p className="text-sm font-semibold text-white">Want the full technical deep-dive?</p>
+          <p className="text-sm font-semibold">Want the full technical deep-dive?</p>
           <p className="text-xs mt-0.5" style={{ color: ACCENT }}>elastic.co/search-labs/blog — jina-embeddings-v5-omni</p>
         </div>
-        <a
-          href="https://www.elastic.co/search-labs/blog/jina-embeddings-v5-omni-all-media-one-index"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-all"
-          style={{ background: ACCENT, color: '#0A0F1E' }}>
-          Read more →
-        </a>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={apiUrl('/images/jina-omni-blog-qr.png')}
+          alt="QR code for Jina Omni blog post"
+          className="shrink-0 w-24 h-24 rounded-lg"
+        />
       </div>
 
     </div>

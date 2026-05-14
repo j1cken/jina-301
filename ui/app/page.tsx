@@ -251,6 +251,7 @@ export default function Home() {
                 <RankStation
                   demoMode={demoMode}
                   onTopRanked={setTopRanked}
+                  isFlowing={flow.isFlowing}
                   flowRankReveal={flowRankReveal}
                   onFlowRankRevealConsumed={() => setFlowRankReveal(null)}
                 />

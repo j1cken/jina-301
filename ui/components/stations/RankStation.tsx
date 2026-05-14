@@ -25,6 +25,7 @@ const DEMO_QUERIES = [
 interface RankStationProps {
   demoMode: boolean;
   onTopRanked?: (hotel: RankedHotel) => void;
+  isFlowing?: boolean;
   // Flow player props
   flowRankReveal?: boolean | null;
   onFlowRankRevealConsumed?: () => void;
@@ -154,7 +155,7 @@ function RankedCard({ hotel, rank, showExplanation, query, demoMode }: { hotel: 
   );
 }
 
-export default function RankStation({ demoMode, onTopRanked, flowRankReveal, onFlowRankRevealConsumed }: RankStationProps) {
+export default function RankStation({ demoMode, onTopRanked, isFlowing, flowRankReveal, onFlowRankRevealConsumed }: RankStationProps) {
   const [query, setQuery] = useState(DEMO_QUERIES[0]);
   const [useGeo, setUseGeo] = useState(false);
   const [results, setResults] = useState<RerankResponse | null>(null);
@@ -176,6 +177,7 @@ export default function RankStation({ demoMode, onTopRanked, flowRankReveal, onF
     setLoading(true);
     setResults(null);
     setError(null);
+    if (isFlowing) setRevealReranked(false);
 
     const geo = useGeo ? { ...VENETIAN, radiusMiles: 0.5 } : undefined;
 
@@ -188,6 +190,7 @@ export default function RankStation({ demoMode, onTopRanked, flowRankReveal, onF
       if (!res.ok) throw new Error(`Server error ${res.status}`);
       const data = await res.json();
       setResults(data);
+      if (!isFlowing) setRevealReranked(true);
       if (onTopRanked && data.reranked?.[0]) onTopRanked(data.reranked[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load results. Check your connection.');

@@ -206,12 +206,16 @@ mark {
   -webkit-backdrop-filter: none !important;
 }
 
-/* === OmniStation: always dark, always light text — overrides blueprint === */
+/* === OmniStation: uses theme CSS vars so light/dark both work === */
 .omni-dark {
-  background: #07101F;
-  color: #F0F4F8;
+  background: var(--bg-base);
+  color: var(--text-primary);
   border-radius: 12px;
   padding: 8px;
+}
+.omni-dark .omni-textarea-placeholder::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
 }
 /* Specificity 0,2,1 beats blueprint's 0,1,1 for headings */
 .demo-blueprint .omni-dark h1,

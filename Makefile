@@ -1,6 +1,6 @@
 PYTHON := .venv/bin/python
 
-.PHONY: dev dev-hot index fallbacks images hotels install setup sample-data deploy agent agent-delete
+.PHONY: dev dev-hot index fallbacks images hotels install setup wizard sample-data deploy agent agent-delete
 
 dev:
 	cd ui && npm run dev
@@ -48,3 +48,6 @@ install:
 setup:
 	uv venv .venv
 	uv pip install --python .venv/bin/python google-genai python-dotenv requests elasticsearch
+
+wizard:
+	@bash scripts/setup.sh
