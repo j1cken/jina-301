@@ -212,7 +212,7 @@ header "Phase 3 — Elasticsearch Connectivity"
 ES_URL=$(get_env "ELASTICSEARCH_URL")
 ES_KEY=$(get_env "ELASTICSEARCH_API_KEY")
 
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+HTTP_STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" \
   -H "Authorization: ApiKey $ES_KEY" \
   "$ES_URL" 2>/dev/null || echo "000")
 
@@ -233,7 +233,7 @@ header "Phase 4 — Elastic Inference Service (EIS) Endpoints"
 check_eis() {
   local endpoint="$1" label="$2"
   local status
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
+  status=$(curl -k -s -o /dev/null -w "%{http_code}" \
     -H "Authorization: ApiKey $ES_KEY" \
     "$ES_URL/_inference/${endpoint}" 2>/dev/null || echo "000")
   if [[ "$status" == "200" ]]; then

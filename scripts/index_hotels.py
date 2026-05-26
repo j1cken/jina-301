@@ -38,7 +38,7 @@ for var, val in [("ELASTICSEARCH_URL", ES_URL), ("ELASTICSEARCH_API_KEY", ES_KEY
         print(f"Missing {var}")
         sys.exit(1)
 
-es = Elasticsearch(hosts=[ES_URL], api_key=ES_KEY)
+es = Elasticsearch(hosts=[ES_URL], api_key=ES_KEY, verify_certs=False)
 
 INDEX_MAPPING = {
     "mappings": {
