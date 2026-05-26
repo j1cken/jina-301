@@ -2,9 +2,7 @@
 const nextConfig = {
   basePath: '/horizon',
   output: 'standalone',
-  experimental: {
-    serverComponentsExternalPackages: ['@google/genai'],
-  },
+  serverExternalPackages: ['@google/genai'],
 };
 
 export default nextConfig;
