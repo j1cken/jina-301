@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "framer-motion": "^12.40.0",
+    "lucide-react": "^1.16.0",
+    "next": "^15.2.8",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-leaflet": "^5.0.0"
+  }
+}

@@ -1,6 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import https from 'node:https';
+import { GoogleAuth } from 'google-auth-library';
 import { getHotelById } from '@/lib/elasticsearch';
+
+export const dynamic = 'force-dynamic';
+
+const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
+
+/** Call Vertex AI using native https to bypass Next.js's patched global fetch */
+async function callVertexGemini(prompt: string): Promise<string> {
+  console.log('[explain-rank] getting ADC token...');
+  const token = await auth.getAccessToken();
+  console.log('[explain-rank] token OK, making https request...');
+  const body = JSON.stringify({
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: 'application/json',
+      thinkingConfig: { thinkingBudget: 0 },
+      responseSchema: {
+        type: 'OBJECT',
+        properties: {
+          quotedPhrase: { type: 'STRING' },
+          explanation: { type: 'STRING' },
+          mismatch: { type: 'STRING', nullable: true },
+        },
+        required: ['quotedPhrase', 'explanation'],
+      },
+    },
+  });
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'us-central1-aiplatform.googleapis.com',
+      path: '/v1/projects/elastic-sa/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent',
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    }, (res) => {
+      console.log('[explain-rank] https response status:', res.statusCode);
+      let data = '';
+      res.on('data', (chunk: Buffer) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`Vertex AI ${res.statusCode}: ${data.slice(0, 200)}`));
+          return;
+        }
+        try {
+          const json = JSON.parse(data);
+          const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+          resolve(text);
+        } catch {
+          reject(new Error(`Vertex AI parse error: ${data.slice(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 const inFlight = new Set<string>();
 
@@ -46,12 +107,9 @@ export async function POST(req: NextRequest) {
       : `Moved ${delta > 0 ? 'up' : 'down'} ${Math.abs(delta)} position${Math.abs(delta) !== 1 ? 's' : ''} after reranking.`;
 
   inFlight.add(key);
-  const ai = new GoogleGenAI({ vertexai: true, project: 'elastic-sa', location: 'us-central1' });
 
   const t0 = Date.now();
-  const geminiCall = ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: `You are explaining to an Elastic Field Engineer why Jina Reranker v3 re-ordered a hotel search result.
+  const geminiCall = callVertexGemini(`You are explaining to an Elastic Field Engineer why Jina Reranker v3 re-ordered a hotel search result.
 
 Query: "${query}"
 Hotel: "${hotel.name}"${score > 0 ? `\nReranker score: ${score.toFixed(3)}` : ''}
@@ -66,32 +124,17 @@ Return JSON with:
 Example:
 {"quotedPhrase":"soundproofed co-working rooms","explanation":"The bi-encoder under-weighted 'soundproofed' because 'quiet' wasn't a verbatim match; the reranker caught the semantic equivalence.","mismatch":null}
 
-Rules: quotedPhrase MUST appear verbatim in the description. No marketing language. Be honest about mismatches.`,
-    config: {
-      temperature: 0.2,
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          quotedPhrase: { type: Type.STRING },
-          explanation: { type: Type.STRING },
-          mismatch: { type: Type.STRING, nullable: true },
-        },
-        required: ['quotedPhrase', 'explanation'],
-      },
-    },
-  });
+Rules: quotedPhrase MUST appear verbatim in the description. No marketing language. Be honest about mismatches.`);
   const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error('Gemini timeout')), 10_000)
+    setTimeout(() => reject(new Error('Gemini timeout')), 20_000)
   );
 
   try {
     console.log('[explain-rank] calling Gemini...');
-    const response = await Promise.race([geminiCall, timeoutPromise]);
+    const raw = await Promise.race([geminiCall, timeoutPromise]);
 
     console.log('[explain-rank] Gemini OK in %dms', Date.now() - t0);
 
-    const raw = response.text ?? '';
     const parsed = JSON.parse(raw) as { quotedPhrase: string; explanation: string; mismatch?: string | null };
 
     console.log('[explain-rank] quotedPhrase=%s inDesc=%s', parsed.quotedPhrase?.slice(0,30), descriptionText.includes(parsed.quotedPhrase));

@@ -8,6 +8,32 @@ import type { Hotel } from '@/lib/types';
 import { resolveImageUrl } from '@/lib/images';
 import { apiUrl } from '@/lib/api';
 
+/** Resize an image to max `maxDim` px on longest side and return JPEG base64. */
+function resizeToBase64(
+  src: string,
+  maxDim = 512,
+): Promise<{ base64: string; mime: string }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > maxDim || h > maxDim) {
+        if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      resolve({ base64: dataUrl.split(',')[1], mime: 'image/jpeg' });
+    };
+    img.onerror = () => reject(new Error('Image resize failed'));
+    img.src = src;
+  });
+}
+
 const EXAMPLE_IMAGES = [
   { src: '/images/samples/bellagio-las-vegas_1.png', label: 'Luxury Casino' },
   { src: '/images/samples/eco-camp-patagonia_1.png', label: 'Eco Lodge' },
@@ -45,9 +71,8 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64, mimeType: mime, demoMode }),
       });
-      if (!res.ok) throw new Error(`CLIP API error ${res.status}`);
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (!res.ok || data.error) throw new Error(data.error || `CLIP API error ${res.status}`);
       logFn?.('[ok] Embedding + kNN complete');
       const hotels = data.results ?? [];
       setResults(hotels);
@@ -78,12 +103,18 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
     setVectorPreview(null);
 
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async e => {
       const dataUrl = e.target?.result as string;
       setPreview(dataUrl);
-      addLog('[ok] Converting to base64...');
-      const base64 = dataUrl.split(',')[1];
-      search(base64, file.type, addLog);
+      addLog('[ok] Resizing + converting to base64...');
+      try {
+        const { base64, mime: resizedMime } = await resizeToBase64(dataUrl);
+        search(base64, resizedMime, addLog);
+      } catch {
+        addLog('[err] Failed to resize image');
+        setLoading(false);
+        inFlightRef.current = false;
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -117,13 +148,19 @@ export default function LookStation({ demoMode, onVlmPrewarm, onSelectStation }:
       }
       const buf = await res.arrayBuffer();
       const kb = Math.round(buf.byteLength / 1024);
-      addLog(`[ok] Converting to base64 (${kb}KB)...`);
-      const bytes = new Uint8Array(buf);
-      let binary = '';
-      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-      const base64 = btoa(binary);
+      addLog(`[ok] Resizing image (${kb}KB)...`);
       const mime = res.headers.get('content-type') ?? 'image/png';
-      await search(base64, mime, addLog);
+      const objectUrl = URL.createObjectURL(new Blob([buf], { type: mime }));
+      try {
+        const { base64, mime: resizedMime } = await resizeToBase64(objectUrl);
+        URL.revokeObjectURL(objectUrl);
+        await search(base64, resizedMime, addLog);
+      } catch {
+        URL.revokeObjectURL(objectUrl);
+        addLog('[err] Failed to resize image');
+        setLoading(false);
+        inFlightRef.current = false;
+      }
     } catch {
       addLog('[err] Failed to fetch image');
       setLoading(false);

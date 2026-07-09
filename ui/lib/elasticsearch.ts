@@ -211,20 +211,14 @@ export async function searchByClipVector(
 export async function getClipEmbeddingViaEIS(
   imageBase64: string,
 ): Promise<number[]> {
-  const url = `${process.env.ELASTICSEARCH_URL}/_inference/embedding/.jina-clip-v2`;
-  const res = await fetch(url, {
+  // Use the ES client transport so the shared TLS config (rejectUnauthorized:false)
+  // is applied — raw fetch() would reject the self-signed certificate.
+  const es = getClient();
+  const data = await es.transport.request({
     method: "POST",
-    headers: {
-      Authorization: `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ input: [imageBase64] }),
-  });
-  if (!res.ok)
-    throw new Error(
-      `EIS CLIP ${res.status}: ${(await res.text()).slice(0, 200)}`,
-    );
-  const data = await res.json();
+    path: "/_inference/embedding/.jina-clip-v2",
+    body: { input: [imageBase64] },
+  }) as any;
   const vector = data.embeddings?.[0]?.embedding;
   if (!Array.isArray(vector) || vector.length !== 1024)
     throw new Error(
@@ -234,20 +228,14 @@ export async function getClipEmbeddingViaEIS(
 }
 
 export async function getOmniEmbeddingViaEIS(input: string): Promise<number[]> {
-  const url = `${process.env.ELASTICSEARCH_URL}/_inference/embedding/.jina-embeddings-v5-omni-small`;
-  const res = await fetch(url, {
+  // Use the ES client transport so the shared TLS config (rejectUnauthorized:false)
+  // is applied — raw fetch() would reject the self-signed certificate.
+  const es = getClient();
+  const data = await es.transport.request({
     method: "POST",
-    headers: {
-      Authorization: `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ input: [input] }),
-  });
-  if (!res.ok)
-    throw new Error(
-      `EIS Omni ${res.status}: ${(await res.text()).slice(0, 200)}`,
-    );
-  const data = await res.json();
+    path: "/_inference/embedding/.jina-embeddings-v5-omni-small",
+    body: { input: [input] },
+  }) as any;
   const vector = data.embeddings?.[0]?.embedding;
   if (!Array.isArray(vector) || vector.length !== 1024)
     throw new Error(
